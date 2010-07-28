@@ -1495,8 +1495,15 @@ DEPEND_OPTIONS = -MMD -MP -MF "$(ObjDir)/$*.d.tmp" \
 
 # If the build succeeded, move the dependency file over, otherwise
 # remove it.
+ifeq ($(OS),MingW)
+DEPEND_MOVEFILE = then $(SED) 's/^\([ \t]*\)\([A-Za-z]\):/\1\/\2/g' \
+                        "$(ObjDir)/$*.d.tmp" > "$(ObjDir)/$*.d"; \
+                        $(RM) "$(ObjDir)/$*.d.tmp"; \
+                  else $(RM) "$(ObjDir)/$*.d.tmp"; exit 1; fi
+else
 DEPEND_MOVEFILE = then $(MV) -f "$(ObjDir)/$*.d.tmp" "$(ObjDir)/$*.d"; \
                   else $(RM) "$(ObjDir)/$*.d.tmp"; exit 1; fi
+endif
 
 $(ObjDir)/%.o: %.cpp $(ObjDir)/.dir $(BUILT_SOURCES) $(PROJ_MAKEFILE)
 	$(Echo) "Compiling $*.cpp for $(BuildMode) build" $(PIC_FLAG)
