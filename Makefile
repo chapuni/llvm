@@ -31,7 +31,7 @@ ifeq ($(BUILD_DIRS_ONLY),1)
   OPTIONAL_DIRS :=
 else
   DIRS := lib/Support utils lib/VMCore lib tools/llvm-shlib \
-          tools/llvm-config tools runtime docs unittests
+          tools/llvm-config tools lib/Transforms/Hello runtime docs unittests
   OPTIONAL_DIRS := projects bindings
 endif
 
@@ -45,6 +45,9 @@ include $(LEVEL)/Makefile.config
 
 ifneq ($(ENABLE_SHARED),1)
   DIRS := $(filter-out tools/llvm-shlib, $(DIRS))
+  ifneq (,$(filter $(HOST_OS), Cygwin MingW Minix))
+    DIRS := $(filter-out lib/Transforms/Hello, $(DIRS))
+  endif
 endif
 
 ifneq ($(ENABLE_DOCS),1)
