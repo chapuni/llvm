@@ -135,16 +135,17 @@ void WinCOFFStreamer::AddCommonSymbol(MCSymbol *Symbol, uint64_t Size,
                                       unsigned ByteAlignment, bool External) {
   assert(!Symbol->isInSection() && "Symbol must not already have a section!");
 
-  std::string SectionName(".bss$linkonce");
-  SectionName.append(Symbol->getName().begin(), Symbol->getName().end());
+  std::string SectionName(".bss$");
+  SectionName.append(Symbol->getName().begin() + 1, Symbol->getName().end());
 
   MCSymbolData &SymbolData = getAssembler().getOrCreateSymbolData(*Symbol);
 
   unsigned Characteristics =
-    COFF::IMAGE_SCN_LNK_COMDAT |
     COFF::IMAGE_SCN_CNT_UNINITIALIZED_DATA |
     COFF::IMAGE_SCN_MEM_READ |
     COFF::IMAGE_SCN_MEM_WRITE;
+
+  if (External) Characteristics |= COFF::IMAGE_SCN_LNK_COMDAT;
 
   int Selection = COFF::IMAGE_COMDAT_SELECT_LARGEST;
 
