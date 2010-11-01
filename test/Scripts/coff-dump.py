@@ -579,6 +579,9 @@ def handle_element(entry):
 
 if len(sys.argv) <= 1 or sys.argv[1] == '-':
   import StringIO
+  if sys.platform == "win32":
+    import os, msvcrt
+    msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
   Input = StringIO.StringIO(sys.stdin.read())
 else:
   Input = open (sys.argv[1], "rb")

@@ -226,6 +226,9 @@ if __name__ == "__main__":
 
     if not args:
         args.append('-')
+        if sys.platform == "win32":
+          import os, msvcrt
+          msvcrt.setmode(sys.stdin.fileno(), os.O_BINARY)
 
     for arg in args:
         dumpELF(arg, opts)
