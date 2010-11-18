@@ -1,4 +1,5 @@
-; RUN: llc < %s -mtriple=i686-linux -x86-asm-syntax=intel | FileCheck %s
+; RUN: llc < %s -mtriple=i386-linux -x86-asm-syntax=intel | FileCheck %s
+; RUN: llc < %s -mtriple=i386-win32 -x86-asm-syntax=intel | FileCheck %s -check-prefix=WIN32
 
 target datalayout = "e-p:32:32"
         %struct.Macroblock = type { i32, i32, i32, i32, i32, [8 x i32], %struct.Macroblock*, %struct.Macroblock*, i32, [2 x [4 x [4 x [2 x i32]]]], [16 x i8], [16 x i8], i32, i64, [4 x i32], [4 x i32], i64, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i32, i16, double, i32, i32, i32, i32, i32, i32, i32, i32, i32 }
@@ -20,5 +21,9 @@ cond_true2732.preheader:                ; preds = %entry
 ; CHECK:	and	DWORD PTR [356], {{E..}}
 ; CHECK:	mov	DWORD PTR [360], {{E..}}
 
-}
+; Since Win32's layout has 'i64:64:64', 13th i64 has alignment of 8.
+; WIN32: 	and	{{E..}}, DWORD PTR [364]
+; WIN32:	and	DWORD PTR [360], {{E..}}
+; WIN32:	mov	DWORD PTR [364], {{E..}}
 
+}
