@@ -148,9 +148,9 @@ if( MSVC )
     -wd4180 # Suppress 'qualifier applied to function type has no meaning; ignored'
     -wd4224 # Suppress 'nonstandard extension used : formal parameter 'identifier' was previously defined as a type'
     -wd4244 # Suppress ''argument' : conversion from 'type1' to 'type2', possible loss of data'
-    -wd4267 # Suppress ''var' : conversion from 'size_t' to 'type', possible loss of data'
+#    -wd4267 # Suppress ''var' : conversion from 'size_t' to 'type', possible loss of data'
     -wd4275 # Suppress 'An exported class was derived from a class that was not exported.'
-    -wd4291 # Suppress ''declaration' : no matching operator delete found; memory will not be freed if initialization throws an exception'
+#    -wd4291 # Suppress ''declaration' : no matching operator delete found; memory will not be freed if initialization throws an exception'
     -wd4345 # Suppress 'behavior change: an object of POD type constructed with an initializer of the form () will be default-initialized'
     -wd4351 # Suppress 'new behavior: elements of array 'array' will be default initialized'
     -wd4355 # Suppress ''this' : used in base member initializer list'
@@ -160,6 +160,22 @@ if( MSVC )
     -wd4800 # Suppress ''type' : forcing value to bool 'true' or 'false' (performance warning)'
     -wd4065 # Suppress 'switch statement contains 'default' but no 'case' labels'
     -wd4181 # Suppress 'qualifier applied to reference type; ignored'
+
+    # With optimization
+    -wd4018
+    -wd4146
+    -wd4305
+    -wd4717
+    -wd4722
+    -wd4804
+    -wd4805
+
+    # MSC14
+    -wd4288
+
+    # MSC16
+    -wd4551
+
     -w14062 # Promote "enumerator in switch of enum is not handled" to level 1 warning.
     )
 
