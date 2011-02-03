@@ -1,15 +1,33 @@
-/**************************************
-** Created by Kevin from config.h.in **
-***************************************/
+/* Created from include/llvm/Config/config.h.in. */
 
 #ifndef CONFIG_H
 #define CONFIG_H
+
+#if 0 /* Don't do now. */
+/* Relative directory for resource files */
+#undef CLANG_RESOURCE_DIR
+
+/* 32 bit multilib directory. */
+#undef CXX_INCLUDE_32BIT_DIR
+
+/* 64 bit multilib directory. */
+#undef CXX_INCLUDE_64BIT_DIR
+
+/* Arch the libstdc++ headers. */
+#undef CXX_INCLUDE_ARCH
+
+/* Directory with the libstdc++ headers. */
+#undef CXX_INCLUDE_ROOT
+
+/* Directories clang will search for headers */
+#undef C_INCLUDE_DIRS
+#endif
 
 /* Define if CBE is enabled for printf %a output */
 #cmakedefine ENABLE_CBE_PRINTF_A ${ENABLE_CBE_PRINTF_A}
 
 /* Define if position independent code is enabled */
-#cmakedefine ENABLE_PIC
+#cmakedefine ENABLE_PIC ${ENABLE_PIC}
 
 /* Define if threads enabled */
 #cmakedefine ENABLE_THREADS ${ENABLE_THREADS}
@@ -437,6 +455,12 @@
 /* Define to 1 if you have the <termios.h> header file. */
 #cmakedefine HAVE_TERMIOS_H ${HAVE_TERMIOS_H}
 
+/* Define if the neat program is available */
+#cmakedefine HAVE_TWOPI ${HAVE_TWOPI}
+
+/* Define to 1 if the system has the type `uint64_t'. */
+#cmakedefine HAVE_UINT64_T ${HAVE_UINT64_T}
+
 /* Define to 1 if you have the <unistd.h> header file. */
 #cmakedefine HAVE_UNISTD_H ${HAVE_UNISTD_H}
 
@@ -518,7 +542,7 @@
 /* Time at which LLVM was configured */
 #undef LLVM_CONFIGTIME
 
-/* Installation directory for documentation */
+/* Installation directory for data files */
 #undef LLVM_DATADIR
 
 /* Installation directory for documentation */
@@ -543,7 +567,7 @@
 #undef LLVM_MANDIR
 
 /* Build multithreading support into LLVM */
-#cmakedefine LLVM_MULTITHREADED ${LLVM_MULTITHREADED}
+#cmakedefine01 LLVM_MULTITHREADED
 
 /* LLVM architecture name for the native architecture, if available */
 #cmakedefine LLVM_NATIVE_ARCH ${LLVM_NATIVE_ARCH}
@@ -638,17 +662,6 @@
 /* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
 #undef STAT_MACROS_BROKEN
 
-/* If using the C implementation of alloca, define if you know the
-   direction of stack growth for your system; otherwise it will be
-   automatically deduced at runtime.
-	STACK_DIRECTION > 0 => grows toward higher addresses
-	STACK_DIRECTION < 0 => grows toward lower addresses
-	STACK_DIRECTION = 0 => direction of growth unknown */
-#undef STACK_DIRECTION
-
-/* Define to 1 if the `S_IS*' macros in <sys/stat.h> do not work properly. */
-#undef STAT_MACROS_BROKEN
-
 /* Define to 1 if you have the ANSI C header files. */
 #undef STDC_HEADERS
 
@@ -675,16 +688,6 @@
 
 /* Define to `unsigned int' if <sys/types.h> does not define. */
 #undef size_t
-
-/* Define if the neat program is available */
-#cmakedefine HAVE_TWOPI ${HAVE_TWOPI}
-
-/* Define to 1 if the system has the type `uint64_t'. */
-#cmakedefine HAVE_UINT64_T ${HAVE_UINT64_T}
-
-/* Define to 1 if `lex' declares `yytext' as a `char *' by default, not a
-   `char[]'. */
-#undef YYTEXT_POINTER
 
 /* Define to a type to use for `mode_t' if it is not otherwise available. */
 #cmakedefine mode_t ${mode_t}
