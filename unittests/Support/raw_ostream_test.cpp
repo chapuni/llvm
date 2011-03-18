@@ -11,6 +11,7 @@
 #include "llvm/ADT/SmallString.h"
 #include "llvm/Support/Format.h"
 #include "llvm/Support/raw_ostream.h"
+#include <float.h>
 
 using namespace llvm;
 
@@ -67,6 +68,30 @@ TEST(raw_ostreamTest, Types_Buffered) {
 
   // Double
   EXPECT_EQ("1.100000e+00", printToString(1.1));
+  EXPECT_EQ("0.000000e+00", printToString(0.0));
+  EXPECT_EQ("-0.000000e+00", printToString(-0.0));
+  EXPECT_EQ("2.225074e-308", printToString(DBL_MIN));
+  EXPECT_EQ("1.797693e+308", printToString(DBL_MAX));
+  EXPECT_EQ("2.220446e-16", printToString(DBL_EPSILON));
+
+  // 54B_249AD06E636CE
+  EXPECT_EQ("9.999999e+99",  printToString(9.9999990e+99));
+  // 54B_249AD163D7D25
+  EXPECT_EQ("9.999999e+99",  printToString(9.9999995e+99));
+  // 54B_249AD163D7D26
+  const double d9 = pow(2.0, 0x54B - 0x3FF - 52);
+  EXPECT_EQ("1.000000e+100", printToString(9.9999995e+99 + d9));
+  // 54B_249AD2594C37D
+  EXPECT_EQ("1.000000e+100", printToString(1e100));
+
+  // Denormalized
+  const double dm = DBL_MIN / 0x10000000000000LL;
+  // 000_0000000000001
+  EXPECT_EQ("4.940656e-324", printToString(dm));
+  // 000_8000000000000
+  EXPECT_EQ("1.112537e-308", printToString(DBL_MIN / 2.0));
+  // 000_FFFFFFFFFFFFF
+  EXPECT_EQ("2.225074e-308", printToString(DBL_MIN - dm));
 
   // void*
   EXPECT_EQ("0x0", printToString((void*) 0));
@@ -98,6 +123,30 @@ TEST(raw_ostreamTest, Types_Unbuffered) {
 
   // Double
   EXPECT_EQ("1.100000e+00", printToStringUnbuffered(1.1));
+  EXPECT_EQ("0.000000e+00", printToStringUnbuffered(0.0));
+  EXPECT_EQ("-0.000000e+00", printToStringUnbuffered(-0.0));
+  EXPECT_EQ("2.225074e-308", printToStringUnbuffered(DBL_MIN));
+  EXPECT_EQ("1.797693e+308", printToStringUnbuffered(DBL_MAX));
+  EXPECT_EQ("2.220446e-16", printToStringUnbuffered(DBL_EPSILON));
+
+  // 54B_249AD06E636CE
+  EXPECT_EQ("9.999999e+99",  printToStringUnbuffered(9.9999990e+99));
+  // 54B_249AD163D7D25
+  EXPECT_EQ("9.999999e+99",  printToStringUnbuffered(9.9999995e+99));
+  // 54B_249AD163D7D26
+  const double d9 = pow(2.0, 0x54B - 0x3FF - 52);
+  EXPECT_EQ("1.000000e+100", printToStringUnbuffered(9.9999995e+99 + d9));
+  // 54B_249AD2594C37D
+  EXPECT_EQ("1.000000e+100", printToStringUnbuffered(1e100));
+
+  // Denormalized
+  const double dm = DBL_MIN / 0x10000000000000LL;
+  // 000_0000000000001
+  EXPECT_EQ("4.940656e-324", printToStringUnbuffered(dm));
+  // 000_8000000000000
+  EXPECT_EQ("1.112537e-308", printToStringUnbuffered(DBL_MIN / 2.0));
+  // 000_FFFFFFFFFFFFF
+  EXPECT_EQ("2.225074e-308", printToStringUnbuffered(DBL_MIN - dm));
 
   // void*
   EXPECT_EQ("0x0", printToStringUnbuffered((void*) 0));
