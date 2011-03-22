@@ -310,7 +310,7 @@ void WinCOFFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
   assert((Symbol->isInSection()
          ? Symbol->getSection().getVariant() == MCSection::SV_COFF
          : true) && "Got non COFF section in the COFF backend!");
-  AddCommonSymbol(Symbol, Size, 1, false);
+  AddCommonSymbol(Symbol, Size, 1U << AlignLog, false);
 }
 
 void WinCOFFStreamer::EmitZerofill(const MCSection *Section, MCSymbol *Symbol,

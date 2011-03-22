@@ -30,6 +30,16 @@ namespace llvm {
     enum ExceptionsType { None, DwarfCFI, SjLj, ARM, Win64 };
   }
 
+  /// Availability of ".lcomm"
+  namespace LCOMM {
+    enum LCOMMType {
+      None,      /// Unavailable.
+      NoAlign,   /// .lcomm <symbol>,<length>
+      ByteAlign, /// .lcomm <symbol>,<length>,<align>
+      LogAlign   /// .lcomm <symbol>,<length>,<1 << align>
+    };
+  }
+
   /// MCAsmInfo - This class is intended to be used as a base class for asm
   /// properties and features specific to the target.
   class MCAsmInfo {
@@ -208,9 +218,9 @@ namespace llvm {
     /// .long a - b
     bool HasAggressiveSymbolFolding;           // Defaults to true.
 
-    /// HasLCOMMDirective - This is true if the target supports the .lcomm
-    /// directive.
-    bool HasLCOMMDirective;                  // Defaults to false.
+    /// LCOMMDirectiveType -This has availability of .lcomm directive,
+    /// See also llvm::LCOMM::LCOMMType.
+    LCOMM::LCOMMType LCOMMDirectiveType; // Defaults to LCOMM::None.
 
     /// COMMDirectiveAlignmentIsInBytes - True is COMMDirective's optional
     /// alignment is to be specified in bytes instead of log2(n).
@@ -426,7 +436,10 @@ namespace llvm {
     bool hasAggressiveSymbolFolding() const {
       return HasAggressiveSymbolFolding;
     }
-    bool hasLCOMMDirective() const { return HasLCOMMDirective; }
+    bool hasLCOMMDirective() const { return LCOMMDirectiveType != LCOMM::None; }
+    LCOMM::LCOMMType getLCOMMDirectiveType() const {
+      return LCOMMDirectiveType;
+    }
     bool hasDotTypeDotSizeDirective() const {return HasDotTypeDotSizeDirective;}
     bool getCOMMDirectiveAlignmentIsInBytes() const {
       return COMMDirectiveAlignmentIsInBytes;

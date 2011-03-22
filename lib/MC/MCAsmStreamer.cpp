@@ -483,6 +483,11 @@ void MCAsmStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
                                           unsigned AlignLog) {
   assert(MAI.hasLCOMMDirective() && "Doesn't have .lcomm, can't emit it!");
   OS << "\t.lcomm\t" << *Symbol << ',' << Size;
+  switch (MAI.getLCOMMDirectiveType()) {
+  default: break;
+  case LCOMM::ByteAlign: OS << "," << (1U << AlignLog); break;
+  case LCOMM::LogAlign: OS << "," << AlignLog; break;
+  }
   EmitEOL();
 }
 

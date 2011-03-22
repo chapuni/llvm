@@ -227,8 +227,7 @@ void MCELFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
   MCELF::SetBinding(SD, ELF::STB_LOCAL);
   SD.setExternal(false);
   BindingExplicitlySet.insert(Symbol);
-  // FIXME: ByteAlignment is not needed here, but is required.
-  EmitCommonSymbol(Symbol, Size, 1);
+  EmitCommonSymbol(Symbol, Size, 1U << AlignLog);
 }
 
 void MCELFStreamer::EmitBytes(StringRef Data, unsigned AddrSpace) {

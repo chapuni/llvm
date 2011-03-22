@@ -68,7 +68,7 @@ ARMELFMCAsmInfo::ARMELFMCAsmInfo() {
   HasLEB128 = true;
   PrivateGlobalPrefix = ".L";
   WeakRefDirective = "\t.weak\t";
-  HasLCOMMDirective = true;
+  LCOMMDirectiveType = LCOMM::NoAlign;
 
   SupportsDebugInformation = true;
 
