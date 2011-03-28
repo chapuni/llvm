@@ -2209,9 +2209,14 @@ bool SimplifyCFGOpt::SimplifyUnreachable(UnreachableInst *UI) {
       // If the default value is unreachable, figure out the most popular
       // destination and make it the default.
       if (SI->getSuccessor(0) == BB) {
+        // The case indexes are encoded into the lower bits so we will
+        // get consistent results when multiple destinations would
+        // otherwise have the same popularity.
         std::map<BasicBlock*, unsigned> Popularity;
         for (unsigned i = 1, e = SI->getNumCases(); i != e; ++i)
-          Popularity[SI->getSuccessor(i)]++;
+          Popularity[SI->getSuccessor(i)] = i;
+        for (unsigned i = 1, e = SI->getNumCases(); i != e; ++i)
+          Popularity[SI->getSuccessor(i)] += e;
         
         // Find the most popular block.
         unsigned MaxPop = 0;
