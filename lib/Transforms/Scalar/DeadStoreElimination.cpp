@@ -647,11 +647,6 @@ bool DSE::handleEndBlock(BasicBlock &BB) {
       SmallVector<Value*, 8> LiveAllocas;
       for (SmallPtrSet<Value*, 16>::iterator I = DeadStackObjects.begin(),
            E = DeadStackObjects.end(); I != E; ++I) {
-        // If we detect that our AA is imprecise, it's not worth it to scan the
-        // rest of the DeadPointers set.  Just assume that the AA will return
-        // ModRef for everything, and go ahead and bail out.
-        if (NumModRef >= 16 && NumOther == 0)
-          return MadeChange;
 
         // See if the call site touches it.
         AliasAnalysis::ModRefResult A = 
@@ -666,6 +661,10 @@ bool DSE::handleEndBlock(BasicBlock &BB) {
           LiveAllocas.push_back(*I);
       }
       
+      // All of DeadStackObjects would be erased, go ahead and bail out.
+      if (NumOther == 0)
+        return MadeChange;
+
       for (SmallVector<Value*, 8>::iterator I = LiveAllocas.begin(),
            E = LiveAllocas.end(); I != E; ++I)
         DeadStackObjects.erase(*I);
