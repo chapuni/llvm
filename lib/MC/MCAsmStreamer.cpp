@@ -153,7 +153,8 @@ public:
   ///
   /// @param Symbol - The common symbol to emit.
   /// @param Size - The size of the common symbol.
-  virtual void EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size);
+  virtual void EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                     unsigned AlignLog);
 
   virtual void EmitZerofill(const MCSection *Section, MCSymbol *Symbol = 0,
                             unsigned Size = 0, unsigned ByteAlignment = 0);
@@ -478,7 +479,8 @@ void MCAsmStreamer::EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
 ///
 /// @param Symbol - The common symbol to emit.
 /// @param Size - The size of the common symbol.
-void MCAsmStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size) {
+void MCAsmStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                          unsigned AlignLog) {
   assert(MAI.hasLCOMMDirective() && "Doesn't have .lcomm, can't emit it!");
   OS << "\t.lcomm\t" << *Symbol << ',' << Size;
   EmitEOL();

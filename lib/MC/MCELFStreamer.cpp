@@ -220,7 +220,8 @@ void MCELFStreamer::EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
   SD.setSize(MCConstantExpr::Create(Size, getContext()));
 }
 
-void MCELFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size) {
+void MCELFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                          unsigned AlignLog) {
   // FIXME: Should this be caught and done earlier?
   MCSymbolData &SD = getAssembler().getOrCreateSymbolData(*Symbol);
   MCELF::SetBinding(SD, ELF::STB_LOCAL);

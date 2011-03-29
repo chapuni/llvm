@@ -63,7 +63,8 @@ public:
   virtual void EmitELFSize(MCSymbol *Symbol, const MCExpr *Value);
   virtual void EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
                                 unsigned ByteAlignment);
-  virtual void EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size);
+  virtual void EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                     unsigned AlignLog);
   virtual void EmitZerofill(const MCSection *Section, MCSymbol *Symbol,
                             unsigned Size,unsigned ByteAlignment);
   virtual void EmitTBSSSymbol(const MCSection *Section, MCSymbol *Symbol,
@@ -304,7 +305,8 @@ void WinCOFFStreamer::EmitCommonSymbol(MCSymbol *Symbol, uint64_t Size,
   AddCommonSymbol(Symbol, Size, ByteAlignment, true);
 }
 
-void WinCOFFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size) {
+void WinCOFFStreamer::EmitLocalCommonSymbol(MCSymbol *Symbol, uint64_t Size,
+                                            unsigned AlignLog) {
   assert((Symbol->isInSection()
          ? Symbol->getSection().getVariant() == MCSection::SV_COFF
          : true) && "Got non COFF section in the COFF backend!");
