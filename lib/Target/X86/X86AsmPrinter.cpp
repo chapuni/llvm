@@ -29,6 +29,7 @@
 #include "llvm/MC/MCAsmInfo.h"
 #include "llvm/MC/MCContext.h"
 #include "llvm/MC/MCExpr.h"
+#include "llvm/MC/MCInst.h"
 #include "llvm/MC/MCSectionMachO.h"
 #include "llvm/MC/MCStreamer.h"
 #include "llvm/MC/MCSymbol.h"
@@ -65,6 +66,15 @@ bool X86AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
 
   // Have common code print out the function header with linkage info etc.
   EmitFunctionHeader();
+
+  // Avoid zero-length function on cygming.
+  if (Subtarget->isTargetCygMing() &&
+      MF.getNumBlockIDs() == 1 && MF.getBlockNumbered(0)->size() == 0) {
+      MCInst UD;
+      UD.setOpcode(X86::TRAP);
+      OutStreamer.AddComment("avoids zero-length function");
+      OutStreamer.EmitInstruction(UD);
+  }
 
   // Emit the rest of the function body.
   EmitFunctionBody();
