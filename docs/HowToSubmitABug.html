@@ -258,23 +258,19 @@ Backend, and then link in the shared object it generates.</p>
 
 <p>To debug the JIT:</p>
 
-<div class="doc_code">
 <pre>
 bugpoint -run-jit -output=[correct output file] [bitcode file]  \
          --tool-args -- [arguments to pass to lli]              \
          --args -- [program arguments]
 </pre>
-</div>
 
 <p>Similarly, to debug the LLC, one would run:</p>
 
-<div class="doc_code">
 <pre>
 bugpoint -run-llc -output=[correct output file] [bitcode file]  \
          --tool-args -- [arguments to pass to llc]              \
          --args -- [program arguments]
 </pre>
-</div>
 
 <p><b>Special note:</b> if you are debugging MultiSource or SPEC tests that
 already exist in the <tt>llvm/test</tt> hierarchy, there is an easier way to

@@ -266,7 +266,7 @@ LLVM have been ported to a plethora of platforms.</p>
   <li><p>Run <tt>configure</tt> with an alternative <tt>PATH</tt> that is
       correct. In a Borne compatible shell, the syntax would be:</p>
 
-<pre class="doc_code">
+<pre>
 % PATH=[the path without the bad program] ./configure ...
 </pre>
 
@@ -307,7 +307,7 @@ LLVM have been ported to a plethora of platforms.</p>
 <p>If the Makefile already exists in your object tree, you can just run the
    following command in the top level directory of your object tree:</p>
 
-<pre class="doc_code">
+<pre>
 % ./config.status &lt;relative path to Makefile&gt;
 </pre>
 
@@ -341,13 +341,13 @@ LLVM have been ported to a plethora of platforms.</p>
 
 <p>For example, if you built LLVM with the command:</p>
 
-<pre class="doc_code">
+<pre>
 % gmake ENABLE_PROFILING=1
 </pre>
 
 <p>...then you must run the tests with the following commands:</p>
 
-<pre class="doc_code">
+<pre>
 % cd llvm/test
 % gmake ENABLE_PROFILING=1
 </pre>
@@ -399,7 +399,7 @@ LLVM have been ported to a plethora of platforms.</p>
 <div class="answer">
 <p>If the error is of the form:</p>
 
-<pre class="doc_code">
+<pre>
 gmake[2]: *** No rule to make target `/path/to/somefile', needed by
 `/path/to/another/file.d'.<br>
 Stop.
@@ -409,7 +409,7 @@ Stop.
    removed entirely.  In this case, the best solution is to erase all
    <tt>.d</tt> files, which list dependencies for source files, and rebuild:</p>
 
-<pre class="doc_code">
+<pre>
 % cd $LLVM_OBJ_DIR
 % rm -f `find . -name \*\.d` 
 % gmake 
@@ -601,7 +601,7 @@ Stop.
 <p>The only way this can happen is if you haven't installed the runtime
    library. To correct this, do:</p>
 
-<pre class="doc_code">
+<pre>
 % cd llvm/runtime
 % make clean ; make install-bytecode
 </pre>
@@ -636,13 +636,13 @@ Stop.
 <ol>
   <li><p>Compile your program with llvm-g++:</p>
 
-<pre class="doc_code">
+<pre>
 % llvm-g++ -emit-llvm x.cpp -o program.bc -c
 </pre>
 
       <p>or:</p>
 
-<pre class="doc_code">
+<pre>
 % llvm-g++ a.cpp -c -emit-llvm
 % llvm-g++ b.cpp -c -emit-llvm
 % llvm-ld a.o b.o -o program
@@ -654,13 +654,13 @@ Stop.
   <li><p>Convert the LLVM code to C code, using the LLC tool with the C
       backend:</p>
 
-<pre class="doc_code">
+<pre>
 % llc -march=c program.bc -o program.c
 </pre></li>
 
   <li><p>Finally, compile the C file:</p>
 
-<pre class="doc_code">
+<pre>
 % cc x.c -lstdc++
 </pre></li>
 
@@ -778,7 +778,7 @@ Stop.
    representing a value that is not defined.  You can get these if you do not
    initialize a variable before you use it.  For example, the C function:</p>
 
-<pre class="doc_code">
+<pre>
 int X() { int i; return i; }
 </pre>
 
@@ -800,7 +800,7 @@ custom calling conventions: you need to make sure to set the right calling
 convention on both the function and on each call to the function.  For example,
 this code:</p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
         ret void
 }
@@ -812,7 +812,7 @@ define void @bar() {
 
 <p>Is optimized to:</p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
 	ret void
 }
@@ -833,7 +833,7 @@ create this sort of construct (in dead code).  The sorts of things that can
 cause this to happen are fairly contrived, but we still need to accept them.
 Here's an example:</p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
         ret void
 }
@@ -860,7 +860,7 @@ define void @test() {
    a bunch of stuff):
 </p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
 	ret void
 }
@@ -885,7 +885,7 @@ bar.exit:
   was an input argument to @test, the inliner would produce this:
 </p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
 	ret void
 }
@@ -910,7 +910,7 @@ turns the undefined call into unreachable, we end up with a branch on a
 condition that goes to unreachable: a branch to unreachable can never happen, so
 "-inline -instcombine -simplifycfg" is able to produce:</p>
 
-<pre class="doc_code">
+<pre>
 define fastcc void @foo() {
 	ret void
 }

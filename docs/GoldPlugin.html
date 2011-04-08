@@ -50,7 +50,7 @@ such as an &#8220;unknown option&#8221; error then you will either need to
 build gold or install a version with plugin support.</p>
 <ul>
   <li>To build gold with plugin support:
-    <pre class="doc_code">
+    <pre>
 mkdir binutils
 cd binutils
 cvs -z 9 -d :pserver:anoncvs@sourceware.org:/cvs/src login
@@ -104,7 +104,7 @@ placed.
 <div>
   <p>The following example shows a worked example of the gold plugin mixing
   LLVM bitcode and native code.
-<pre class="doc_code">
+<pre>
 --- a.c ---
 #include &lt;stdio.h&gt;
 
@@ -169,7 +169,7 @@ $ llvm-gcc -use-gold-plugin a.a b.o -o main # &lt;-- link with LLVMgold plugin
     <tt>$PREFIX/lib/bfd-plugins/</tt></li>
     <li>Set environment variables (<tt>$PREFIX</tt> is where you installed llvm-gcc and
     binutils):
-    <pre class="doc_code">
+    <pre>
 export CC="$PREFIX/bin/llvm-gcc -use-gold-plugin"
 export CXX="$PREFIX/bin/llvm-g++ -use-gold-plugin"
 export AR="$PREFIX/bin/ar"
@@ -179,7 +179,7 @@ export CFLAGS="-O4"
 </pre>
      </li>
      <li>Or you can just set your path:
-    <pre class="doc_code">
+    <pre>
 export PATH="$PREFIX/bin:$PATH"
 export CC="llvm-gcc -use-gold-plugin"
 export CXX="llvm-g++ -use-gold-plugin"

@@ -255,8 +255,7 @@ into <tt>llc</tt> and works even with the interpreter and C backends.</p>
 
 <p>To turn the shadow stack on for your functions, first call:</p>
 
-<div class="doc_code"><pre
->F.setGC("shadow-stack");</pre></div>
+<pre>F.setGC("shadow-stack");</pre>
 
 <p>for each function your compiler emits. Since the shadow stack is built into
 LLVM, you do not need to load a plugin.</p>
@@ -292,8 +291,8 @@ code.)</p>
 
 </div>
 
-<div class="doc_code"><pre
->/// @brief The map for a single function's stack frame. One of these is
+<pre>
+/// @brief The map for a single function's stack frame. One of these is
 ///        compiled as constant data into the executable for each function.
 /// 
 /// Storage of metadata values is elided if the %metadata parameter to
@@ -338,7 +337,8 @@ void visitGCRoots(void (*Visitor)(void **Root, const void *Meta)) {
     for (unsigned e = R->Map->NumRoots; i != e; ++i)
       Visitor(&amp;R->Roots[i], NULL);
   }
-}</pre></div>
+}
+</pre>
 
 <!-- ======================================================================= -->
 <h3>

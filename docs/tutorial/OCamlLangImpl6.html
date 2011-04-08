@@ -90,7 +90,6 @@ as the JIT runs.</p>
 now, Kaleidoscope has no unary operators at all) as well as binary operators.
 An example of this is:</p>
 
-<div class="doc_code">
 <pre>
 # Logical unary not.
 def unary!(v)
@@ -116,7 +115,6 @@ def binary| 5 (LHS RHS)
 def binary= 9 (LHS RHS)
   !(LHS &lt; RHS | LHS &gt; RHS);
 </pre>
-</div>
 
 <p>Many languages aspire to being able to implement their standard runtime
 library in the language itself.  In Kaleidoscope, we can implement significant
@@ -137,7 +135,6 @@ operators.</p>
 <p>Adding support for user-defined binary operators is pretty simple with our
 current framework.  We'll first add support for the unary/binary keywords:</p>
 
-<div class="doc_code">
 <pre>
 type token =
   ...
@@ -153,7 +150,6 @@ and lex_ident buffer = parser
       <b>| "binary" -&gt; [&lt; 'Token.Binary; stream &gt;]
       | "unary" -&gt; [&lt; 'Token.Unary; stream &gt;]</b>
 </pre>
-</div>
 
 <p>This just adds lexer support for the unary and binary keywords, like we
 did in <a href="OCamlLangImpl5.html#iflexer">previous chapters</a>.  One nice
@@ -169,7 +165,6 @@ grammar so far, the "name" for the function definition is parsed as the
 represent our new user-defined operators as prototypes, we have to extend
 the  <tt>Ast.Prototype</tt> AST node like this:</p>
 
-<div class="doc_code">
 <pre>
 (* proto - This type represents the "prototype" for a function, which captures
  * its name, and its argument names (thus implicitly the number of arguments the
@@ -178,7 +173,6 @@ type proto =
   | Prototype of string * string array
   <b>| BinOpPrototype of string * string array * int</b>
 </pre>
-</div>
 
 <p>Basically, in addition to knowing a name for the prototype, we now keep track
 of whether it was an operator, and if it was, what precedence level the operator
@@ -186,7 +180,6 @@ is at.  The precedence is only used for binary operators (as you'll see below,
 it just doesn't apply for unary operators).  Now that we have a way to represent
 the prototype for a user-defined operator, we need to parse it:</p>
 
-<div class="doc_code">
 <pre>
 (* prototype
  *   ::= id '(' id* ')'
@@ -233,7 +226,6 @@ let parse_prototype =
   | [&lt; &gt;] -&gt;
       raise (Stream.Error "expected function name in prototype")
 </pre>
-</div>
 
 <p>This is all fairly straightforward parsing code, and we have already seen
 a lot of similar code in the past.  One interesting part about the code above is
@@ -246,7 +238,6 @@ have any character in them, including embedded nul characters.</p>
 operators.  Given our current structure, this is a simple addition of a default
 case for our existing binary operator node:</p>
 
-<div class="doc_code">
 <pre>
 let codegen_expr = function
   ...
@@ -274,7 +265,6 @@ let codegen_expr = function
             build_call callee [|lhs_val; rhs_val|] "binop" builder</b>
       end
 </pre>
-</div>
 
 <p>As you can see above, the new code is actually really simple.  It just does
 a lookup for the appropriate operator in the symbol table and generates a
@@ -284,7 +274,6 @@ name) everything falls into place.</p>
 
 <p>The final piece of code we are missing, is a bit of top level magic:</p>
 
-<div class="doc_code">
 <pre>
 let codegen_func the_fpm = function
   | Ast.Function (proto, body) -&gt;
@@ -304,7 +293,6 @@ let codegen_func the_fpm = function
       position_at_end bb builder;
       ...
 </pre>
-</div>
 
 <p>Basically, before codegening a function, if it is a user-defined operator, we
 register it in the precedence table.  This allows the binary operator parsing
@@ -330,7 +318,6 @@ language, we'll need to add everything to support them.  Above, we added simple
 support for the 'unary' keyword to the lexer.  In addition to that, we need an
 AST node:</p>
 
-<div class="doc_code">
 <pre>
 type expr =
   ...
@@ -338,14 +325,12 @@ type expr =
   | Unary of char * expr
   ...
 </pre>
-</div>
 
 <p>This AST node is very simple and obvious by now.  It directly mirrors the
 binary operator AST node, except that it only has one child.  With this, we
 need to add the parsing logic.  Parsing a unary operator is pretty simple: we'll
 add a new function to do it:</p>
 
-<div class="doc_code">
 <pre>
 (* unary
  *   ::= primary
@@ -358,7 +343,6 @@ and parse_unary = parser
   (* If the current token is not an operator, it must be a primary expr. *)
   | [&lt; stream &gt;] -&gt; parse_primary stream
 </pre>
-</div>
 
 <p>The grammar we add is pretty straightforward here.  If we see a unary
 operator when parsing a primary operator, we eat the operator as a prefix and
@@ -371,7 +355,6 @@ information.</p>
 somewhere.  To do this, we change previous callers of ParsePrimary to call
 <tt>parse_unary</tt> instead:</p>
 
-<div class="doc_code">
 <pre>
 (* binoprhs
  *   ::= ('+' primary)* *)
@@ -388,14 +371,12 @@ and parse_bin_rhs expr_prec lhs stream =
 and parse_expr = parser
   | [&lt; lhs=<b>parse_unary</b>; stream &gt;] -&gt; parse_bin_rhs 0 lhs stream
 </pre>
-</div>
 
 <p>With these two simple changes, we are now able to parse unary operators and build the
 AST for them.  Next up, we need to add parser support for prototypes, to parse
 the unary operator prototype.  We extend the binary operator code above
 with:</p>
 
-<div class="doc_code">
 <pre>
 (* prototype
  *   ::= id '(' id* ')'
@@ -442,14 +423,12 @@ let parse_prototype =
   | [&lt; &gt;] -&gt;
       raise (Stream.Error "expected function name in prototype")
 </pre>
-</div>
 
 <p>As with binary operators, we name unary operators with a name that includes
 the operator character.  This assists us at code generation time.  Speaking of,
 the final piece we need to add is codegen support for unary operators.  It looks
 like this:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   ...
@@ -463,7 +442,6 @@ let rec codegen_expr = function
       in
       build_call callee [|operand|] "unop" builder
 </pre>
-</div>
 
 <p>This code is similar to, but simpler than, the code for binary operators.  It
 is simpler primarily because it doesn't need to handle any predefined operators.
@@ -483,7 +461,6 @@ can do a lot of interesting things, including I/O, math, and a bunch of other
 things.  For example, we can now add a nice sequencing operator (printd is
 defined to print out the specified value and a newline):</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern printd(x);</b>
 Read extern: declare double @printd(double)
@@ -495,11 +472,9 @@ ready&gt; <b>printd(123) : printd(456) : printd(789);</b>
 789.000000
 Evaluated to 0.000000
 </pre>
-</div>
 
 <p>We can also define a bunch of other "primitive" operations, such as:</p>
 
-<div class="doc_code">
 <pre>
 # Logical unary not.
 def unary!(v)
@@ -537,7 +512,6 @@ def binary = 9 (LHS RHS)
   !(LHS &lt; RHS | LHS &gt; RHS);
 
 </pre>
-</div>
 
 
 <p>Given the previous if/then/else support, we can also define interesting
@@ -545,7 +519,6 @@ functions for I/O.  For example, the following prints out a character whose
 "density" reflects the value passed in: the lower the value, the denser the
 character:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt;
 <b>
@@ -565,14 +538,12 @@ ready&gt; <b>printdensity(1): printdensity(2): printdensity(3) :
 *++..
 Evaluated to 0.000000
 </pre>
-</div>
 
 <p>Based on these simple primitive operations, we can start to define more
 interesting things.  For example, here's a little function that solves for the
 number of iterations it takes a function in the complex plane to
 converge:</p>
 
-<div class="doc_code">
 <pre>
 # determine whether the specific location diverges.
 # Solve for z = z^2 + c in the complex plane.
@@ -588,7 +559,6 @@ def mandleconverger(real imag iters creal cimag)
 def mandleconverge(real imag)
   mandleconverger(real, imag, 0, real, imag);
 </pre>
-</div>
 
 <p>This "z = z<sup>2</sup> + c" function is a beautiful little creature that is the basis
 for computation of the <a
@@ -600,7 +570,6 @@ you can see the Mandelbrot set.  Given that we are limited to using putchard
 here, our amazing graphical output is limited, but we can whip together
 something using the density plotter above:</p>
 
-<div class="doc_code">
 <pre>
 # compute and plot the mandlebrot set with the specified 2 dimensional range
 # info.
@@ -617,11 +586,9 @@ def mandel(realstart imagstart realmag imagmag)
   mandelhelp(realstart, realstart+realmag*78, realmag,
              imagstart, imagstart+imagmag*40, imagmag);
 </pre>
-</div>
 
 <p>Given this, we can try plotting out the mandlebrot set!  Lets try it out:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>mandel(-2.3, -1.3, 0.05, 0.07);</b>
 *******************************+++++++++++*************************************
@@ -754,7 +721,6 @@ ready&gt; <b>mandel(-0.9, -1.4, 0.02, 0.03);</b>
 Evaluated to 0.000000
 ready&gt; <b>^D</b>
 </pre>
-</div>
 
 <p>At this point, you may be starting to realize that Kaleidoscope is a real
 and powerful language.  It may not be self-similar :), but it can be used to
@@ -788,20 +754,18 @@ Here is the complete code listing for our running example, enhanced with the
 if/then/else and for expressions..  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
 # Compile
 ocamlbuild toy.byte
 # Run
 ./toy.byte
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
 <dl>
 <dt>_tags:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 &lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
 &lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
@@ -811,7 +775,7 @@ ocamlbuild toy.byte
 </dd>
 
 <dt>myocamlbuild.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 open Ocamlbuild_plugin;;
 
@@ -827,7 +791,7 @@ dep ["link"; "ocaml"; "use_bindings"] ["bindings.o"];;
 </dd>
 
 <dt>token.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer Tokens
@@ -855,7 +819,7 @@ type token =
 </dd>
 
 <dt>lexer.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer
@@ -920,7 +884,7 @@ and lex_comment = parser
 </dd>
 
 <dt>ast.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Abstract Syntax Tree (aka Parse Tree)
@@ -962,7 +926,7 @@ type func = Function of proto * expr
 </dd>
 
 <dt>parser.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===---------------------------------------------------------------------===
  * Parser
@@ -1163,7 +1127,7 @@ let parse_extern = parser
 </dd>
 
 <dt>codegen.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Code Generation
@@ -1420,7 +1384,7 @@ let codegen_func the_fpm = function
 </dd>
 
 <dt>toplevel.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Top-Level parsing and JIT Driver
@@ -1475,7 +1439,7 @@ let rec main_loop the_fpm the_execution_engine stream =
 </dd>
 
 <dt>toy.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Main driver code.
@@ -1534,7 +1498,7 @@ main ()
 </dd>
 
 <dt>bindings.c</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 #include &lt;stdio.h&gt;
 

@@ -371,7 +371,7 @@
    what is considered 'well formed'.  For example, the following instruction is
    syntactically okay, but not well formed:</p>
 
-<pre class="doc_code">
+<pre>
 %x = <a href="#i_add">add</a> i32 1, %x
 </pre>
 
@@ -438,19 +438,19 @@
 
 <p>The easy way:</p>
 
-<pre class="doc_code">
+<pre>
 %result = <a href="#i_mul">mul</a> i32 %X, 8
 </pre>
 
 <p>After strength reduction:</p>
 
-<pre class="doc_code">
+<pre>
 %result = <a href="#i_shl">shl</a> i32 %X, i8 3
 </pre>
 
 <p>And the hard way:</p>
 
-<pre class="doc_code">
+<pre>
 %0 = <a href="#i_add">add</a> i32 %X, %X           <i>; yields {i32}:%0</i>
 %1 = <a href="#i_add">add</a> i32 %0, %0           <i>; yields {i32}:%1</i>
 %result = <a href="#i_add">add</a> i32 %1, %1
@@ -494,7 +494,7 @@
    forward declarations, and merges symbol table entries. Here is an example of
    the "hello world" module:</p>
 
-<pre class="doc_code">
+<pre>
 <i>; Declare the string constant as a global constant.</i>&nbsp;
 <a href="#identifiers">@.LC0</a> = <a href="#linkage_internal">internal</a>&nbsp;<a href="#globalvars">constant</a>&nbsp;<a href="#t_array">[13 x i8]</a> c"hello world\0A\00"      <i>; [13 x i8]*</i>&nbsp;
 
@@ -797,7 +797,7 @@ define i32 @main() {   <i>; i32()* </i>&nbsp;
    it easier to read the IR and make the IR more condensed (particularly when
    recursive types are involved).  An example of a name specification is:</p>
 
-<pre class="doc_code">
+<pre>
 %mytype = type { %mytype*, i32 }
 </pre>
 
@@ -878,7 +878,7 @@ define i32 @main() {   <i>; i32()* </i>&nbsp;
 <p>For example, the following defines a global in a numbered address space with
    an initializer, section, and alignment:</p>
 
-<pre class="doc_code">
+<pre>
 @G = addrspace(5) constant float 1.0, section "foo", align 4
 </pre>
 
@@ -938,7 +938,7 @@ define i32 @main() {   <i>; i32()* </i>&nbsp;
   be significant and two identical functions can be merged</p>.
 
 <h5>Syntax:</h5>
-<pre class="doc_code">
+<pre>
 define [<a href="#linkage">linkage</a>] [<a href="#visibility">visibility</a>]
        [<a href="#callingconv">cconv</a>] [<a href="#paramattrs">ret attrs</a>]
        &lt;ResultType&gt; @&lt;FunctionName&gt; ([argument list])
@@ -961,7 +961,7 @@ define [<a href="#linkage">linkage</a>] [<a href="#visibility">visibility</a>]
    optional <a href="#visibility">visibility style</a>.</p>
 
 <h5>Syntax:</h5>
-<pre class="doc_code">
+<pre>
 @&lt;Name&gt; = alias [Linkage] [Visibility] &lt;AliaseeTy&gt; @&lt;Aliasee&gt;
 </pre>
 
@@ -979,7 +979,7 @@ define [<a href="#linkage">linkage</a>] [<a href="#visibility">visibility</a>]
    a named metadata.</p>
 
 <h5>Syntax:</h5>
-<pre class="doc_code">
+<pre>
 ; Some unnamed metadata nodes, which are referenced by the named metadata.
 !0 = metadata !{metadata !"zero"}
 !1 = metadata !{metadata !"one"}
@@ -1008,7 +1008,7 @@ define [<a href="#linkage">linkage</a>] [<a href="#visibility">visibility</a>]
    multiple parameter attributes are needed, they are space separated. For
    example:</p>
 
-<pre class="doc_code">
+<pre>
 declare i32 @printf(i8* noalias nocapture, ...)
 declare i32 @atoi(i8 zeroext)
 declare signext i8 @returns_signed_char()
@@ -1111,7 +1111,7 @@ declare signext i8 @returns_signed_char()
 <p>Each function may specify a garbage collector name, which is simply a
    string:</p>
 
-<pre class="doc_code">
+<pre>
 define void @f() gc "name" { ... }
 </pre>
 
@@ -1136,7 +1136,7 @@ define void @f() gc "name" { ... }
 <p>Function attributes are simple keywords that follow the type specified. If
    multiple attributes are needed, they are space separated. For example:</p>
 
-<pre class="doc_code">
+<pre>
 define void @f() noinline { ... }
 define void @f() alwaysinline { ... }
 define void @f() alwaysinline optsize { ... }
@@ -1256,7 +1256,7 @@ define void @f() optsize { ... }
    concatenated by LLVM and treated as a single unit, but may be separated in
    the <tt>.ll</tt> file if desired.  The syntax is very simple:</p>
 
-<pre class="doc_code">
+<pre>
 module asm "inline asm code goes here"
 module asm "more can go here"
 </pre>
@@ -1281,7 +1281,7 @@ module asm "more can go here"
    data is to be laid out in memory. The syntax for the data layout is
    simply:</p>
 
-<pre class="doc_code">
+<pre>
 target datalayout = "<i>layout specification</i>"
 </pre>
 
@@ -2206,7 +2206,7 @@ synchronization behavior.</p>
    have <a href="#t_pointer">pointer</a> type. For example, the following is a
    legal LLVM file:</p>
 
-<pre class="doc_code">
+<pre>
 @X = global i32 17
 @Y = global i32 42
 @Z = global [2 x i32*] [ i32* @X, i32* @Y ]
@@ -2232,7 +2232,7 @@ synchronization behavior.</p>
    surprising) transformations that are valid (in pseudo IR):</p>
 
 
-<pre class="doc_code">
+<pre>
   %A = add %X, undef
   %B = sub %X, undef
   %C = xor %X, undef
@@ -2245,7 +2245,7 @@ Safe:
 <p>This is safe because all of the output bits are affected by the undef bits.
    Any output bit can have a zero or one depending on the input bits.</p>
 
-<pre class="doc_code">
+<pre>
   %A = or %X, undef
   %B = and %X, undef
 Safe:
@@ -2266,7 +2266,7 @@ Unsafe:
    all the bits of the '<tt>undef</tt>' operand to the '<tt>or</tt>' could be
    set, allowing the '<tt>or</tt>' to be folded to -1.</p>
 
-<pre class="doc_code">
+<pre>
   %A = select undef, %X, %Y
   %B = select undef, 42, %Y
   %C = select %X, %Y, undef
@@ -2289,7 +2289,7 @@ Unsafe:
    same as <tt>%Y</tt>, allowing the whole '<tt>select</tt>' to be
    eliminated.</p>
 
-<pre class="doc_code">
+<pre>
   %A = xor undef, undef
 
   %B = undef
@@ -2320,7 +2320,7 @@ Safe:
    need to have the same semantics or the core LLVM "replace all uses with"
    concept would not hold.</p>
 
-<pre class="doc_code">
+<pre>
   %A = fdiv undef, %X
   %B = fdiv %X, undef
 Safe:
@@ -2341,7 +2341,7 @@ b: unreachable
   all code after it. Because the undefined operation "can't happen", the
   optimizer can assume that it occurs in dead code.</p>
 
-<pre class="doc_code">
+<pre>
 a:  store undef -> %X
 b:  store %X -> undef
 Safe:
@@ -2432,7 +2432,7 @@ b: unreachable
 
 <p>Here are some examples:</p>
 
-<pre class="doc_code">
+<pre>
 entry:
   %trap = sub nuw i32 0, 1           ; Results in a trap value.
   %still_trap = and i32 %trap, 0     ; Whereas (and i32 undef, 0) would return 0.
@@ -2667,7 +2667,7 @@ second_end:
    containing the asm needs to align its stack conservatively.  An example
    inline assembler expression is:</p>
 
-<pre class="doc_code">
+<pre>
 i32 (i32) asm "bswap $0", "=r,r"
 </pre>
 
@@ -2675,7 +2675,7 @@ i32 (i32) asm "bswap $0", "=r,r"
    a <a href="#i_call"><tt>call</tt> instruction</a>.  Thus, typically we
    have:</p>
 
-<pre class="doc_code">
+<pre>
 %X = call i32 asm "<a href="#int_bswap">bswap</a> $0", "=r,r"(i32 %Y)
 </pre>
 
@@ -2683,7 +2683,7 @@ i32 (i32) asm "bswap $0", "=r,r"
    marked as having side effects.  This is done through the use of the
    '<tt>sideeffect</tt>' keyword, like so:</p>
 
-<pre class="doc_code">
+<pre>
 call void asm sideeffect "eieio", ""()
 </pre>
 
@@ -2694,7 +2694,7 @@ call void asm sideeffect "eieio", ""()
    contain and should generate its usual stack alignment code in the prologue
    if the '<tt>alignstack</tt>' keyword is present:</p>
 
-<pre class="doc_code">
+<pre>
 call void asm alignstack "eieio", ""()
 </pre>
 
@@ -2719,7 +2719,7 @@ call void asm alignstack "eieio", ""()
    front-end to correlate backend errors that occur with inline asm back to the
    source code that produced it.  For example:</p>
 
-<pre class="doc_code">
+<pre>
 call void asm sideeffect "something bad", ""()<b>, !srcloc !42</b>
 ...
 !42 = !{ i32 1234567 }
@@ -2763,20 +2763,16 @@ call void asm sideeffect "something bad", ""()<b>, !srcloc !42</b>
 <p>Metadata can be used as function arguments. Here <tt>llvm.dbg.value</tt> 
    function is using two metadata arguments.</p>
 
-<div class="doc_code">
 <pre>
 call void @llvm.dbg.value(metadata !24, i64 0, metadata !25)
 </pre>
-</div>
 
 <p>Metadata can be attached with an instruction. Here metadata <tt>!21</tt> is
    attached with <tt>add</tt> instruction using <tt>!dbg</tt> identifier.</p>
 
-<div class="doc_code">
 <pre>
 %indvar.next = add i64 %indvar, 1, !dbg !21
 </pre>
-</div>
 
 </div>
 
@@ -4558,7 +4554,7 @@ that the invoke/unwind semantics are likely to change in future versions.</p>
 <p>For example, let's consider a C code fragment and how it gets compiled to
    LLVM:</p>
 
-<pre class="doc_code">
+<pre>
 struct RT {
   char A;
   int B[10][20];
@@ -4577,7 +4573,7 @@ int *foo(struct ST *s) {
 
 <p>The LLVM code generated by the GCC frontend is:</p>
 
-<pre class="doc_code">
+<pre>
 %RT = <a href="#namedtypes">type</a> { i8 , [10 x [20 x i32]], i8  }
 %ST = <a href="#namedtypes">type</a> { i32, double, %RT }
 
@@ -5680,7 +5676,7 @@ freestanding environments and non-C-based languages.</p>
    instruction and the variable argument handling intrinsic functions are
    used.</p>
 
-<pre class="doc_code">
+<pre>
 define i32 @test(i32 %X, ...) {
   ; Initialize variable argument processing
   %ap = alloca i8*
@@ -7087,7 +7083,7 @@ LLVM</a>.</p>
    pointer has signature <tt>i32 (i32, i32)*</tt>.  It can be created as
    follows:</p>
 
-<pre class="doc_code">
+<pre>
   %tramp = alloca [10 x i8], align 4 ; size and alignment only correct for X86
   %tramp1 = getelementptr [10 x i8]* %tramp, i32 0, i32 0
   %p = call i8* @llvm.init.trampoline(i8* %tramp1, i8* bitcast (i32 (i8* nest , i32, i32)* @f to i8*), i8* %nval)

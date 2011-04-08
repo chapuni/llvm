@@ -364,7 +364,6 @@ file (note that you very rarely have to include this file directly).</p>
   that something is of the right type.  An example of the <tt>isa&lt;&gt;</tt>
   and <tt>cast&lt;&gt;</tt> template is:</p>
 
-<div class="doc_code">
 <pre>
 static bool isLoopInvariant(const <a href="#Value">Value</a> *V, const Loop *L) {
   if (isa&lt;<a href="#Constant">Constant</a>&gt;(V) || isa&lt;<a href="#Argument">Argument</a>&gt;(V) || isa&lt;<a href="#GlobalValue">GlobalValue</a>&gt;(V))
@@ -374,7 +373,6 @@ static bool isLoopInvariant(const <a href="#Value">Value</a> *V, const Loop *L) 
   return !L-&gt;contains(cast&lt;<a href="#Instruction">Instruction</a>&gt;(V)-&gt;getParent());
 }
 </pre>
-</div>
 
   <p>Note that you should <b>not</b> use an <tt>isa&lt;&gt;</tt> test followed
   by a <tt>cast&lt;&gt;</tt>, for that use the <tt>dyn_cast&lt;&gt;</tt>
@@ -393,13 +391,11 @@ static bool isLoopInvariant(const <a href="#Value">Value</a> *V, const Loop *L) 
   operator is used in an <tt>if</tt> statement or some other flow control
   statement like this:</p>
 
-<div class="doc_code">
 <pre>
 if (<a href="#AllocationInst">AllocationInst</a> *AI = dyn_cast&lt;<a href="#AllocationInst">AllocationInst</a>&gt;(Val)) {
   // <i>...</i>
 }
 </pre>
-</div>
    
   <p>This form of the <tt>if</tt> statement effectively combines together a call
   to <tt>isa&lt;&gt;</tt> and a call to <tt>cast&lt;&gt;</tt> into one
@@ -474,13 +470,13 @@ on <tt>std:string</tt>, but does not require heap allocation.</p>
 an <tt>std::string</tt>, or explicitly with a character pointer and length.
 For example, the <tt>StringRef</tt> find function is declared as:</p>
 
-<pre class="doc_code">
+<pre>
   iterator find(StringRef Key);
 </pre>
 
 <p>and clients can call it using any one of:</p>
 
-<pre class="doc_code">
+<pre>
   Map.find("foo");                 <i>// Lookup "foo"</i>
   Map.find(std::string("bar"));    <i>// Lookup "bar"</i>
   Map.find(StringRef("\0baz", 4)); <i>// Lookup "\0baz"</i>
@@ -510,11 +506,9 @@ small and pervasive enough in LLVM that it should always be passed by value.</p>
 strings.  For example, a common LLVM paradigm is to name one instruction based on
 the name of another instruction with a suffix, for example:</p>
 
-<div class="doc_code">
 <pre>
     New = CmpInst::Create(<i>...</i>, SO->getName() + ".cmp");
 </pre>
-</div>
 
 <p>The <tt>Twine</tt> class is effectively a
 lightweight <a href="http://en.wikipedia.org/wiki/Rope_(computer_science)">rope</a>
@@ -559,22 +553,18 @@ this problem.  Basically, you can put arbitrary code into the argument of the
 <tt>DEBUG</tt> macro, and it is only executed if '<tt>opt</tt>' (or any other
 tool) is run with the '<tt>-debug</tt>' command line argument:</p>
 
-<div class="doc_code">
 <pre>
 DEBUG(errs() &lt;&lt; "I am here!\n");
 </pre>
-</div>
 
 <p>Then you can run your pass like this:</p>
 
-<div class="doc_code">
 <pre>
 $ opt &lt; a.bc &gt; /dev/null -mypass
 <i>&lt;no output&gt;</i>
 $ opt &lt; a.bc &gt; /dev/null -mypass -debug
 I am here!
 </pre>
-</div>
 
 <p>Using the <tt>DEBUG()</tt> macro instead of a home-brewed solution allows you
 to not have to create "yet another" command line option for the debug output for
@@ -602,7 +592,6 @@ generator).  If you want to enable debug information with more fine-grained
 control, you define the <tt>DEBUG_TYPE</tt> macro and the <tt>-debug</tt> only
 option as follows:</p>
 
-<div class="doc_code">
 <pre>
 #undef  DEBUG_TYPE
 DEBUG(errs() &lt;&lt; "No debug type\n");
@@ -615,11 +604,9 @@ DEBUG(errs() &lt;&lt; "'bar' debug type\n"));
 #define DEBUG_TYPE ""
 DEBUG(errs() &lt;&lt; "No debug type (2)\n");
 </pre>
-</div>
 
 <p>Then you can run your pass like this:</p>
 
-<div class="doc_code">
 <pre>
 $ opt &lt; a.bc &gt; /dev/null -mypass
 <i>&lt;no output&gt;</i>
@@ -633,7 +620,6 @@ $ opt &lt; a.bc &gt; /dev/null -mypass -debug-only=foo
 $ opt &lt; a.bc &gt; /dev/null -mypass -debug-only=bar
 'bar' debug type
 </pre>
-</div>
 
 <p>Of course, in practice, you should only set <tt>DEBUG_TYPE</tt> at the top of
 a file, to specify the debug type for the entire module (if you do this before
@@ -651,14 +637,12 @@ statement. It takes an additional first parameter, which is the type to use. For
 example, the preceding example could be written as:</p>
 
 
-<div class="doc_code">
 <pre>
 DEBUG_WITH_TYPE("", errs() &lt;&lt; "No debug type\n");
 DEBUG_WITH_TYPE("foo", errs() &lt;&lt; "'foo' debug type\n");
 DEBUG_WITH_TYPE("bar", errs() &lt;&lt; "'bar' debug type\n"));
 DEBUG_WITH_TYPE("", errs() &lt;&lt; "No debug type (2)\n");
 </pre>
-</div>
 
 </div>
 
@@ -692,12 +676,10 @@ it are as follows:</p>
 <ol>
     <li><p>Define your statistic like this:</p>
 
-<div class="doc_code">
 <pre>
 #define <a href="#DEBUG_TYPE">DEBUG_TYPE</a> "mypassname"   <i>// This goes before any #includes.</i>
 STATISTIC(NumXForms, "The # of times I did stuff");
 </pre>
-</div>
 
   <p>The <tt>STATISTIC</tt> macro defines a static variable, whose name is
     specified by the first argument.  The pass name is taken from the DEBUG_TYPE
@@ -706,11 +688,9 @@ STATISTIC(NumXForms, "The # of times I did stuff");
 
     <li><p>Whenever you make a transformation, bump the counter:</p>
 
-<div class="doc_code">
 <pre>
 ++NumXForms;   // <i>I did stuff!</i>
 </pre>
-</div>
 
     </li>
   </ol>
@@ -718,17 +698,14 @@ STATISTIC(NumXForms, "The # of times I did stuff");
   <p>That's all you have to do.  To get '<tt>opt</tt>' to print out the
   statistics gathered, use the '<tt>-stats</tt>' option:</p>
 
-<div class="doc_code">
 <pre>
 $ opt -stats -mypassname &lt; program.bc &gt; /dev/null
 <i>... statistics output ...</i>
 </pre>
-</div>
 
   <p> When running <tt>opt</tt> on a C file from the SPEC benchmark
 suite, it gives a report that looks like this:</p>
 
-<div class="doc_code">
 <pre>
    7646 bitcodewriter   - Number of normal instructions
     725 bitcodewriter   - Number of oversized instructions
@@ -756,7 +733,6 @@ suite, it gives a report that looks like this:</p>
      75 mem2reg         - Number of alloca's promoted
    1444 cfgsimplify     - Number of blocks simplified
 </pre>
-</div>
 
 <p>Obviously, with so many optimizations, having a unified framework for this
 stuff is very nice.  Making your pass fit well into the framework makes it more
@@ -973,18 +949,15 @@ vector is also useful when interfacing with code that expects vectors :).
 
 <p>One worthwhile note about std::vector: avoid code like this:</p>
 
-<div class="doc_code">
 <pre>
 for ( ... ) {
    std::vector&lt;foo&gt; V;
    use V;
 }
 </pre>
-</div>
 
 <p>Instead, write this as:</p>
 
-<div class="doc_code">
 <pre>
 std::vector&lt;foo&gt; V;
 for ( ... ) {
@@ -992,7 +965,6 @@ for ( ... ) {
    V.clear();
 }
 </pre>
-</div>
 
 <p>Doing so will save (at least) one heap allocation and free per iteration of
 the loop.</p>
@@ -1735,7 +1707,6 @@ the <tt>BasicBlock</tt>s that constitute the <tt>Function</tt>. The following is
 an example that prints the name of a <tt>BasicBlock</tt> and the number of
 <tt>Instruction</tt>s it contains:</p>
 
-<div class="doc_code">
 <pre>
 // <i>func is a pointer to a Function instance</i>
 for (Function::iterator i = func-&gt;begin(), e = func-&gt;end(); i != e; ++i)
@@ -1744,7 +1715,6 @@ for (Function::iterator i = func-&gt;begin(), e = func-&gt;end(); i != e; ++i)
   errs() &lt;&lt; "Basic block (name=" &lt;&lt; i-&gt;getName() &lt;&lt; ") has "
              &lt;&lt; i-&gt;size() &lt;&lt; " instructions.\n";
 </pre>
-</div>
 
 <p>Note that i can be used as if it were a pointer for the purposes of
 invoking member functions of the <tt>Instruction</tt> class.  This is
@@ -1768,7 +1738,6 @@ easy to iterate over the individual instructions that make up
 <tt>BasicBlock</tt>s. Here's a code snippet that prints out each instruction in
 a <tt>BasicBlock</tt>:</p>
 
-<div class="doc_code">
 <pre>
 // <i>blk is a pointer to a BasicBlock instance</i>
 for (BasicBlock::iterator i = blk-&gt;begin(), e = blk-&gt;end(); i != e; ++i)
@@ -1776,7 +1745,6 @@ for (BasicBlock::iterator i = blk-&gt;begin(), e = blk-&gt;end(); i != e; ++i)
    // <i>is overloaded for Instruction&amp;</i>
    errs() &lt;&lt; *i &lt;&lt; "\n";
 </pre>
-</div>
 
 <p>However, this isn't really the best way to print out the contents of a
 <tt>BasicBlock</tt>!  Since the ostream operators are overloaded for virtually
@@ -1801,7 +1769,6 @@ href="/doxygen/InstIterator_8h-source.html"><tt>llvm/Support/InstIterator.h</tt>
 and then instantiate <tt>InstIterator</tt>s explicitly in your code.  Here's a
 small example that shows how to dump all instructions in a function to the standard error stream:<p>
 
-<div class="doc_code">
 <pre>
 #include "<a href="/doxygen/InstIterator_8h-source.html">llvm/Support/InstIterator.h</a>"
 
@@ -1809,14 +1776,12 @@ small example that shows how to dump all instructions in a function to the stand
 for (inst_iterator I = inst_begin(F), E = inst_end(F); I != E; ++I)
   errs() &lt;&lt; *I &lt;&lt; "\n";
 </pre>
-</div>
 
 <p>Easy, isn't it?  You can also use <tt>InstIterator</tt>s to fill a
 work list with its initial contents.  For example, if you wanted to
 initialize a work list to contain all instructions in a <tt>Function</tt>
 F, all you would need to do is something like:</p>
 
-<div class="doc_code">
 <pre>
 std::set&lt;Instruction*&gt; worklist;
 // or better yet, SmallPtrSet&lt;Instruction*, 64&gt; worklist;
@@ -1824,7 +1789,6 @@ std::set&lt;Instruction*&gt; worklist;
 for (inst_iterator I = inst_begin(F), E = inst_end(F); I != E; ++I)
    worklist.insert(&amp;*I);
 </pre>
-</div>
 
 <p>The STL set <tt>worklist</tt> would now contain all instructions in the
 <tt>Function</tt> pointed to by F.</p>
@@ -1845,13 +1809,11 @@ a reference or a pointer from an iterator is very straight-forward.
 Assuming that <tt>i</tt> is a <tt>BasicBlock::iterator</tt> and <tt>j</tt>
 is a <tt>BasicBlock::const_iterator</tt>:</p>
 
-<div class="doc_code">
 <pre>
 Instruction&amp; inst = *i;   // <i>Grab reference to instruction reference</i>
 Instruction* pinst = &amp;*i; // <i>Grab pointer to instruction reference</i>
 const Instruction&amp; inst = *j;
 </pre>
-</div>
 
 <p>However, the iterators you'll be working with in the LLVM framework are
 special: they will automatically convert to a ptr-to-instance type whenever they
@@ -1861,19 +1823,15 @@ you get the dereference and address-of operation as a result of the assignment
 (behind the scenes, this is a result of overloading casting mechanisms).  Thus
 the last line of the last example,</p>
 
-<div class="doc_code">
 <pre>
 Instruction *pinst = &amp;*i;
 </pre>
-</div>
 
 <p>is semantically equivalent to</p>
 
-<div class="doc_code">
 <pre>
 Instruction *pinst = i;
 </pre>
-</div>
 
 <p>It's also possible to turn a class pointer into the corresponding iterator,
 and this is a constant time operation (very efficient).  The following code
@@ -1881,7 +1839,6 @@ snippet illustrates use of the conversion constructors provided by LLVM
 iterators.  By using these, you can explicitly grab the iterator of something
 without actually obtaining it via iteration over some structure:</p>
 
-<div class="doc_code">
 <pre>
 void printNextInstruction(Instruction* inst) {
   BasicBlock::iterator it(inst);
@@ -1889,7 +1846,6 @@ void printNextInstruction(Instruction* inst) {
   if (it != inst-&gt;getParent()-&gt;end()) errs() &lt;&lt; *it &lt;&lt; "\n";
 }
 </pre>
-</div>
 
 <p>Unfortunately, these implicit conversions come at a cost; they prevent
 these iterators from conforming to standard iterator conventions, and thus
@@ -1897,11 +1853,9 @@ from being usable with standard algorithms and containers. For example, they
 prevent the following code, where <tt>B</tt> is a <tt>BasicBlock</tt>,
 from compiling:</p>
 
-<div class="doc_code">
 <pre>
   llvm::SmallVector&lt;llvm::Instruction *, 16&gt;(B-&gt;begin(), B-&gt;end());
 </pre>
-</div>
 
 <p>Because of this, these implicit conversions may be removed some day,
 and <tt>operator*</tt> changed to return a pointer instead of a reference.</p>
@@ -1924,7 +1878,6 @@ much more straight-forward manner, but this example will allow us to explore how
 you'd do it if you didn't have <tt>InstVisitor</tt> around. In pseudo-code, this
 is what we want to do:</p>
 
-<div class="doc_code">
 <pre>
 initialize callCounter to zero
 for each Function f in the Module
@@ -1933,13 +1886,11 @@ for each Function f in the Module
       if (i is a CallInst and calls the given function)
         increment callCounter
 </pre>
-</div>
 
 <p>And the actual code is (remember, because we're writing a
 <tt>FunctionPass</tt>, our <tt>FunctionPass</tt>-derived class simply has to
 override the <tt>runOnFunction</tt> method):</p>
 
-<div class="doc_code">
 <pre>
 Function* targetFunc = ...;
 
@@ -1966,7 +1917,6 @@ class OurFunctionPass : public FunctionPass {
     unsigned callCounter;
 };
 </pre>
-</div>
 
 </div>
 
@@ -2013,7 +1963,6 @@ particular function <tt>foo</tt>. Finding all of the instructions that
 <i>use</i> <tt>foo</tt> is as simple as iterating over the <i>def-use</i> chain
 of <tt>F</tt>:</p>
 
-<div class="doc_code">
 <pre>
 Function *F = ...;
 
@@ -2023,7 +1972,6 @@ for (Value::use_iterator i = F-&gt;use_begin(), e = F-&gt;use_end(); i != e; ++i
     errs() &lt;&lt; *Inst &lt;&lt; "\n";
   }
 </pre>
-</div>
 
 <p>Note that dereferencing a <tt>Value::use_iterator</tt> is not a very cheap
 operation. Instead of performing <tt>*i</tt> above several times, consider
@@ -2037,7 +1985,6 @@ href="/doxygen/classllvm_1_1User.html">User Class</a> and need to know what
 all of the values that a particular instruction uses (that is, the operands of
 the particular <tt>Instruction</tt>):</p>
 
-<div class="doc_code">
 <pre>
 Instruction *pi = ...;
 
@@ -2046,7 +1993,6 @@ for (User::op_iterator i = pi-&gt;op_begin(), e = pi-&gt;op_end(); i != e; ++i) 
   // <i>...</i>
 }
 </pre>
-</div>
 
 <p>Declaring objects as <tt>const</tt> is an important tool of enforcing
 mutation free algorithms (such as analyses, etc.). For this purpose above
@@ -2070,7 +2016,6 @@ successors of blocks</a>
 with the routines defined in <tt>"llvm/Support/CFG.h"</tt>.  Just use code like
 this to iterate over all predecessors of BB:</p>
 
-<div class="doc_code">
 <pre>
 #include "llvm/Support/CFG.h"
 BasicBlock *BB = ...;
@@ -2080,7 +2025,6 @@ for (pred_iterator PI = pred_begin(BB), E = pred_end(BB); PI != E; ++PI) {
   // <i>...</i>
 }
 </pre>
-</div>
 
 <p>Similarly, to iterate over successors use
 succ_iterator/succ_begin/succ_end.</p>
@@ -2117,11 +2061,9 @@ constructor for the kind of instruction to instantiate and provide the necessary
 parameters. For example, an <tt>AllocaInst</tt> only <i>requires</i> a
 (const-ptr-to) <tt>Type</tt>. Thus:</p> 
 
-<div class="doc_code">
 <pre>
 AllocaInst* ai = new AllocaInst(Type::Int32Ty);
 </pre>
-</div>
 
 <p>will create an <tt>AllocaInst</tt> instance that represents the allocation of
 one integer in the current stack frame, at run time. Each <tt>Instruction</tt>
@@ -2145,11 +2087,9 @@ used as some kind of index by some other code.  To accomplish this, I place an
 <tt>Function</tt>, and I'm intending to use it within the same
 <tt>Function</tt>. I might do:</p>
 
-<div class="doc_code">
 <pre>
 AllocaInst* pa = new AllocaInst(Type::Int32Ty, 0, "indexLoc");
 </pre>
-</div>
 
 <p>where <tt>indexLoc</tt> is now the logical name of the instruction's
 execution value, which is a pointer to an integer on the run time stack.</p>
@@ -2166,7 +2106,6 @@ into an existing sequence of instructions that form a <tt>BasicBlock</tt>:</p>
     <tt>BasicBlock</tt>, and a newly-created instruction we wish to insert
     before <tt>*pi</tt>, we do the following: </p>
 
-<div class="doc_code">
 <pre>
 BasicBlock *pb = ...;
 Instruction *pi = ...;
@@ -2174,7 +2113,6 @@ Instruction *newInst = new Instruction(...);
 
 pb-&gt;getInstList().insert(pi, newInst); // <i>Inserts newInst before pi in pb</i>
 </pre>
-</div>
 
     <p>Appending to the end of a <tt>BasicBlock</tt> is so common that
     the <tt>Instruction</tt> class and <tt>Instruction</tt>-derived
@@ -2182,23 +2120,19 @@ pb-&gt;getInstList().insert(pi, newInst); // <i>Inserts newInst before pi in pb<
     <tt>BasicBlock</tt> to be appended to. For example code that
     looked like: </p>
 
-<div class="doc_code">
 <pre>
 BasicBlock *pb = ...;
 Instruction *newInst = new Instruction(...);
 
 pb-&gt;getInstList().push_back(newInst); // <i>Appends newInst to pb</i>
 </pre>
-</div>
 
     <p>becomes: </p>
 
-<div class="doc_code">
 <pre>
 BasicBlock *pb = ...;
 Instruction *newInst = new Instruction(..., pb);
 </pre>
-</div>
 
     <p>which is much cleaner, especially if you are creating
     long instruction streams.</p></li>
@@ -2211,14 +2145,12 @@ Instruction *newInst = new Instruction(..., pb);
     thing as the above code without being given a <tt>BasicBlock</tt> by doing:
     </p>
 
-<div class="doc_code">
 <pre>
 Instruction *pi = ...;
 Instruction *newInst = new Instruction(...);
 
 pi-&gt;getParent()-&gt;getInstList().insert(pi, newInst);
 </pre>
-</div>
 
     <p>In fact, this sequence of steps occurs so frequently that the
     <tt>Instruction</tt> class and <tt>Instruction</tt>-derived classes provide
@@ -2230,12 +2162,10 @@ pi-&gt;getParent()-&gt;getInstList().insert(pi, newInst);
     <tt>Instruction</tt> constructor with a <tt>insertBefore</tt> (default)
     parameter, the above code becomes:</p>
 
-<div class="doc_code">
 <pre>
 Instruction* pi = ...;
 Instruction* newInst = new Instruction(..., pi);
 </pre>
-</div>
 
     <p>which is much cleaner, especially if you're creating a lot of
     instructions and adding them to <tt>BasicBlock</tt>s.</p></li>
@@ -2254,12 +2184,10 @@ Instruction* newInst = new Instruction(..., pi);
 <a href="#BasicBlock"><tt>BasicBlock</tt></a> is very straight-forward: just
 call the instruction's eraseFromParent() method.  For example:</p>
 
-<div class="doc_code">
 <pre>
 <a href="#Instruction">Instruction</a> *I = .. ;
 I-&gt;eraseFromParent();
 </pre>
-</div>
 
 <p>This unlinks the instruction from its containing basic block and deletes 
 it.  If you'd just like to unlink the instruction from its containing basic
@@ -2292,14 +2220,13 @@ and <tt>ReplaceInstWithInst</tt>.</p>
     <tt>AllocaInst</tt> that allocates memory for a single integer with a null
     pointer to an integer.</p>
 
-<div class="doc_code">
 <pre>
 AllocaInst* instToReplace = ...;
 BasicBlock::iterator ii(instToReplace);
 
 ReplaceInstWithValue(instToReplace-&gt;getParent()-&gt;getInstList(), ii,
                      Constant::getNullValue(PointerType::getUnqual(Type::Int32Ty)));
-</pre></div></li>
+</pre></li>
 
   <li><tt>ReplaceInstWithInst</tt> 
 
@@ -2309,14 +2236,13 @@ ReplaceInstWithValue(instToReplace-&gt;getParent()-&gt;getInstList(), ii,
     instruction with the new instruction. The following example illustrates
     the replacement of one <tt>AllocaInst</tt> with another.</p>
 
-<div class="doc_code">
 <pre>
 AllocaInst* instToReplace = ...;
 BasicBlock::iterator ii(instToReplace);
 
 ReplaceInstWithInst(instToReplace-&gt;getParent()-&gt;getInstList(), ii,
                     new AllocaInst(Type::Int32Ty, 0, "ptrToReplacedInt"));
-</pre></div></li>
+</pre></li>
 </ul>
 
 <p><i>Replacing multiple uses of <tt>User</tt>s and <tt>Value</tt>s</i></p>
@@ -2345,13 +2271,11 @@ Instruction. First, you must have a pointer to the global variable that you wish
  to delete.  You use this pointer to erase it from its parent, the module.
  For example:</p>
 
-<div class="doc_code">
 <pre>
 <a href="#GlobalVariable">GlobalVariable</a> *GV = .. ;
 
 GV-&gt;eraseFromParent();
 </pre>
-</div>
 
 </div>
 
@@ -2376,21 +2300,17 @@ namespace and pointers, functions, arrays, etc. built of
 those.  <tt>TypeBuilder&lt;T, false&gt;</tt> additionally allows native C types
 whose size may depend on the host compiler.  For example,</p>
 
-<div class="doc_code">
 <pre>
 FunctionType *ft = TypeBuilder&lt;types::i&lt;8&gt;(types::i&lt;32&gt;*), true&gt;::get();
 </pre>
-</div>
 
 <p>is easier to read and write than the equivalent</p>
 
-<div class="doc_code">
 <pre>
 std::vector&lt;const Type*&gt; params;
 params.push_back(PointerType::getUnqual(Type::Int32Ty));
 FunctionType *ft = FunctionType::get(Type::Int8Ty, params, false);
 </pre>
-</div>
 
 <p>See the <a href="/doxygen/TypeBuilder_8h-source.html#l00001">class
 comment</a> for more details.</p>
@@ -2649,17 +2569,14 @@ we answer it now and explain it as we go.  Here we include enough to cause this
 to be emitted to an output .ll file:
 </p>
 
-<div class="doc_code">
 <pre>
 %mylist = type { %mylist*, i32 }
 </pre>
-</div>
 
 <p>
 To build this, use the following LLVM APIs:
 </p>
 
-<div class="doc_code">
 <pre>
 // <i>Create the initial outer struct</i>
 <a href="#PATypeHolder">PATypeHolder</a> StructTy = OpaqueType::get();
@@ -2679,7 +2596,6 @@ NewSTy = cast&lt;StructType&gt;(StructTy.get());
 // <i>Add a name for the type to the module symbol table (optional)</i>
 MyModule-&gt;addTypeName("mylist", NewSTy);
 </pre>
-</div>
 
 <p>
 This code shows the basic approach used to build recursive types: build a
@@ -2929,7 +2845,6 @@ stops, so that the <i>worst case is 20 memory accesses</i> when there are
 <p>
 The following literate Haskell fragment demonstrates the concept:</p>
 
-<div class="doc_code">
 <pre>
 > import Test.QuickCheck
 > 
@@ -2949,14 +2864,12 @@ The following literate Haskell fragment demonstrates the concept:</p>
 > test = takeLast 40 $ dist 20 []
 > 
 </pre>
-</div>
 <p>
 Printing &lt;test&gt; gives: <tt>"1s100000s11010s10100s1111s1010s110s11s1S"</tt></p>
 <p>
 The reverse algorithm computes the length of the string just by examining
 a certain prefix:</p>
 
-<div class="doc_code">
 <pre>
 > pref :: [Char] -> Int
 > pref "S" = 1
@@ -2968,13 +2881,11 @@ a certain prefix:</p>
 > decode walk acc _ = walk + acc
 > 
 </pre>
-</div>
 <p>
 Now, as expected, printing &lt;pref test&gt; gives <tt>40</tt>.</p>
 <p>
 We can <i>quickCheck</i> this with following property:</p>
 
-<div class="doc_code">
 <pre>
 > testcase = dist 2000 []
 > testcaseLength = length testcase
@@ -2983,7 +2894,6 @@ We can <i>quickCheck</i> this with following property:</p>
 >     where arr = takeLast n testcase
 > 
 </pre>
-</div>
 <p>
 As expected &lt;quickCheck identityProp&gt; gives:</p>
 
@@ -2994,13 +2904,11 @@ OK, passed 100 tests.
 <p>
 Let's be a bit more exhaustive:</p>
 
-<div class="doc_code">
 <pre>
 > 
 > deepCheck p = check (defaultConfig { configMaxTest = 500 }) p
 > 
 </pre>
-</div>
 <p>
 And here is the result of &lt;deepCheck identityProp&gt;:</p>
 
@@ -3323,11 +3231,9 @@ and this <a href="#Type">Type</a> is available through the <tt>getType()</tt>
 method. In addition, all LLVM values can be named.  The "name" of the
 <tt>Value</tt> is a symbolic string printed in the LLVM code:</p>
 
-<div class="doc_code">
 <pre>
 %<b>foo</b> = add i32 1, 2
 </pre>
-</div>
 
 <p><a name="nameWarning">The name of this instruction is "foo".</a> <b>NOTE</b>
 that the name of any value may be missing (an empty string), so names should
@@ -3386,11 +3292,9 @@ be aware of the <a href="#nameWarning">precaution above</a>.</p>
     produces a constant value (for example through constant folding), you can
     replace all uses of the instruction with the constant like this:</p>
 
-<div class="doc_code">
 <pre>
 Inst-&gt;replaceAllUsesWith(ConstVal);
 </pre>
-</div>
 
 </ul>
 

@@ -66,7 +66,6 @@ releases page</a>.</p>
 In order to generate LLVM IR, we want some simple setup to get started.  First
 we define virtual code generation (codegen) methods in each AST class:</p>
 
-<div class="doc_code">
 <pre>
 /// ExprAST - Base class for all expression nodes.
 class ExprAST {
@@ -84,7 +83,6 @@ public:
 };
 ...
 </pre>
-</div>
 
 <p>The Codegen() method says to emit IR for that AST node along with all the things it
 depends on, and they all return an LLVM Value object. 
@@ -110,7 +108,6 @@ second thing we want is an "Error" method like we used for the parser, which wil
 be used to report errors found during code generation (for example, use of an
 undeclared parameter):</p>
 
-<div class="doc_code">
 <pre>
 Value *ErrorV(const char *Str) { Error(Str); return 0; }
 
@@ -118,7 +115,6 @@ static Module *TheModule;
 static IRBuilder&lt;&gt; Builder(getGlobalContext());
 static std::map&lt;std::string, Value*&gt; NamedValues;
 </pre>
-</div>
 
 <p>The static variables will be used during code generation.  <tt>TheModule</tt>
 is the LLVM construct that contains all of the functions and global variables in
@@ -156,13 +152,11 @@ has already been done, and we'll just use it to emit code.
 than 45 lines of commented code for all four of our expression nodes.  First
 we'll do numeric literals:</p>
 
-<div class="doc_code">
 <pre>
 Value *NumberExprAST::Codegen() {
   return ConstantFP::get(getGlobalContext(), APFloat(Val));
 }
 </pre>
-</div>
 
 <p>In the LLVM IR, numeric constants are represented with the
 <tt>ConstantFP</tt> class, which holds the numeric value in an <tt>APFloat</tt>
@@ -172,7 +166,6 @@ creates and returns a <tt>ConstantFP</tt>.  Note that in the LLVM IR
 that constants are all uniqued together and shared.  For this reason, the API
 uses the "foo::get(...)" idiom instead of "new foo(..)" or "foo::Create(..)".</p>
 
-<div class="doc_code">
 <pre>
 Value *VariableExprAST::Codegen() {
   // Look this variable up in the function.
@@ -180,7 +173,6 @@ Value *VariableExprAST::Codegen() {
   return V ? V : ErrorV("Unknown variable name");
 }
 </pre>
-</div>
 
 <p>References to variables are also quite simple using LLVM.  In the simple version
 of Kaleidoscope, we assume that the variable has already been emitted somewhere
@@ -192,7 +184,6 @@ chapters, we'll add support for <a href="LangImpl5.html#for">loop induction
 variables</a> in the symbol table, and for <a 
 href="LangImpl7.html#localvars">local variables</a>.</p>
 
-<div class="doc_code">
 <pre>
 Value *BinaryExprAST::Codegen() {
   Value *L = LHS-&gt;Codegen();
@@ -212,7 +203,6 @@ Value *BinaryExprAST::Codegen() {
   }
 }
 </pre>
-</div>
 
 <p>Binary operators start to get more interesting.  The basic idea here is that
 we recursively emit code for the left-hand side of the expression, then the 
@@ -248,7 +238,6 @@ as an unsigned value.  In contrast, if we used the <a
 href="../LangRef.html#i_sitofp">sitofp instruction</a>, the Kaleidoscope '&lt;'
 operator would return 0.0 and -1.0, depending on the input value.</p>
 
-<div class="doc_code">
 <pre>
 Value *CallExprAST::Codegen() {
   // Look up the name in the global module table.
@@ -269,7 +258,6 @@ Value *CallExprAST::Codegen() {
   return Builder.CreateCall(CalleeF, ArgsV.begin(), ArgsV.end(), "calltmp");
 }
 </pre>
-</div>
 
 <p>Code generation for function calls is quite straightforward with LLVM.  The
 code above initially does a function name lookup in the LLVM Module's symbol
@@ -304,7 +292,6 @@ generation, but allows us to  illustrate some important points.  First, lets
 talk about code generation for prototypes: they are used both for function 
 bodies and external function declarations.  The code starts with:</p>
 
-<div class="doc_code">
 <pre>
 Function *PrototypeAST::Codegen() {
   // Make the function type:  double(double,double) etc.
@@ -315,7 +302,6 @@ Function *PrototypeAST::Codegen() {
   
   Function *F = Function::Create(FT, Function::ExternalLinkage, Name, TheModule);
 </pre>
-</div>
 
 <p>This code packs a lot of power into a few lines.  Note first that this 
 function returns a "Function*" instead of a "Value*".  Because a "prototype"
@@ -341,7 +327,6 @@ user specified: since "<tt>TheModule</tt>" is specified, this name is registered
 in "<tt>TheModule</tt>"s symbol table, which is used by the function call code
 above.</p>
 
-<div class="doc_code">
 <pre>
   // If F conflicted, there was already something named 'Name'.  If it has a
   // body, don't allow redefinition or reextern.
@@ -350,7 +335,6 @@ above.</p>
     F-&gt;eraseFromParent();
     F = TheModule-&gt;getFunction(Name);
 </pre>
-</div>
 
 <p>The Module symbol table works just like the Function symbol table when it
 comes to name conflicts: if a new function is created with a name that was previously
@@ -373,7 +357,6 @@ that many APIs in LLVM have "erase" forms and "remove" forms.  The "remove" form
 unlinks the object from its parent (e.g. a Function from a Module) and returns
 it.  The "erase" form unlinks the object and then deletes it.</p>
    
-<div class="doc_code">
 <pre>
     // If F already has a body, reject this.
     if (!F-&gt;empty()) {
@@ -388,7 +371,6 @@ it.  The "erase" form unlinks the object and then deletes it.</p>
     }
   }
 </pre>
-</div>
 
 <p>In order to verify the logic above, we first check to see if the pre-existing
 function is "empty".  In this case, empty means that it has no basic blocks in
@@ -398,7 +380,6 @@ function, the code rejects this case.  If the previous reference to a function
 was an 'extern', we simply verify that the number of arguments for that
 definition and this one match up.  If not, we emit an error.</p>
 
-<div class="doc_code">
 <pre>
   // Set names for all arguments.
   unsigned Idx = 0;
@@ -412,7 +393,6 @@ definition and this one match up.  If not, we emit an error.</p>
   return F;
 }
 </pre>
-</div>
 
 <p>The last bit of code for prototypes loops over all of the arguments in the
 function, setting the name of the LLVM Argument objects to match, and registering
@@ -422,7 +402,6 @@ object to the caller.  Note that we don't check for conflicting
 argument names here (e.g. "extern foo(a b a)").  Doing so would be very
 straight-forward with the mechanics we have already used above.</p>
 
-<div class="doc_code">
 <pre>
 Function *FunctionAST::Codegen() {
   NamedValues.clear();
@@ -431,7 +410,6 @@ Function *FunctionAST::Codegen() {
   if (TheFunction == 0)
     return 0;
 </pre>
-</div>
 
 <p>Code generation for function definitions starts out simply enough: we just
 codegen the prototype (Proto) and verify that it is ok.  We then clear out the
@@ -439,7 +417,6 @@ codegen the prototype (Proto) and verify that it is ok.  We then clear out the
 last function we compiled.  Code generation of the prototype ensures that there
 is an LLVM Function object that is ready to go for us.</p>
 
-<div class="doc_code">
 <pre>
   // Create a new basic block to start insertion into.
   BasicBlock *BB = BasicBlock::Create(getGlobalContext(), "entry", TheFunction);
@@ -447,7 +424,6 @@ is an LLVM Function object that is ready to go for us.</p>
   
   if (Value *RetVal = Body-&gt;Codegen()) {
 </pre>
-</div>
 
 <p>Now we get to the point where the <tt>Builder</tt> is set up.  The first
 line creates a new <a href="http://en.wikipedia.org/wiki/Basic_block">basic
@@ -459,7 +435,6 @@ href="http://en.wikipedia.org/wiki/Control_flow_graph">Control Flow Graph</a>.
 Since we don't have any control flow, our functions will only contain one 
 block at this point.  We'll fix this in <a href="LangImpl5.html">Chapter 5</a> :).</p>
 
-<div class="doc_code">
 <pre>
   if (Value *RetVal = Body-&gt;Codegen()) {
     // Finish off the function.
@@ -471,7 +446,6 @@ block at this point.  We'll fix this in <a href="LangImpl5.html">Chapter 5</a> :
     return TheFunction;
   }
 </pre>
-</div>
 
 <p>Once the insertion point is set up, we call the <tt>CodeGen()</tt> method for
 the root expression of the function.  If no error happens, this emits code to
@@ -484,14 +458,12 @@ generated code, to determine if our compiler is doing everything right.  Using
 this is important: it can catch a lot of bugs.  Once the function is finished
 and validated, we return it.</p>
   
-<div class="doc_code">
 <pre>
   // Error reading body, remove function.
   TheFunction-&gt;eraseFromParent();
   return 0;
 }
 </pre>
-</div>
 
 <p>The only piece left here is handling of the error case.  For simplicity, we
 handle this by merely deleting the function we produced with the 
@@ -504,13 +476,11 @@ can return a previously defined forward declaration, our code can actually delet
 a forward declaration.  There are a number of ways to fix this bug, see what you
 can come up with!  Here is a testcase:</p>
 
-<div class="doc_code">
 <pre>
 extern foo(a b);     # ok, defines foo.
 def foo(a b) c;      # error, 'c' is invalid.
 def bar() foo(1, 2); # error, unknown function "foo"
 </pre>
-</div>
 
 </div>
 
@@ -528,7 +498,6 @@ dumps out the LLVM IR.  This gives a nice way to look at the LLVM IR for simple
 functions.  For example:
 </p>
 
-<div class="doc_code">
 <pre>
 ready> <b>4+5</b>;
 Read top-level expression:
@@ -537,7 +506,6 @@ entry:
         ret double 9.000000e+00
 }
 </pre>
-</div>
 
 <p>Note how the parser turns the top-level expression into anonymous functions
 for us.  This will be handy when we add <a href="LangImpl4.html#jit">JIT 
@@ -547,7 +515,6 @@ folding done by IRBuilder.  We will
 <a href="LangImpl4.html#trivialconstfold">add optimizations</a> explicitly in
 the next chapter.</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def foo(a b) a*a + 2*a*b + b*b;</b>
 Read function definition:
@@ -562,12 +529,10 @@ entry:
         ret double %addtmp4
 }
 </pre>
-</div>
 
 <p>This shows some simple arithmetic. Notice the striking similarity to the
 LLVM builder calls that we use to create the instructions.</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def bar(a) foo(a, 4.0) + bar(31337);</b>
 Read function definition:
@@ -579,13 +544,11 @@ entry:
         ret double %addtmp
 }
 </pre>
-</div>
 
 <p>This shows some function calls.  Note that this function will take a long
 time to execute if you call it.  In the future we'll add conditional control 
 flow to actually make recursion useful :).</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern cos(x);</b>
 Read extern: 
@@ -599,12 +562,10 @@ entry:
         ret double %calltmp
 }
 </pre>
-</div>
 
 <p>This shows an extern for the libm "cos" function, and a call to it.</p>
 
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>^D</b>
 ; ModuleID = 'my cool jit'
@@ -642,7 +603,6 @@ entry:
         ret double %calltmp
 }
 </pre>
-</div>
 
 <p>When you quit the current demo, it dumps out the IR for the entire module
 generated.  Here you can see the big picture with all the functions referencing
@@ -668,18 +628,15 @@ them in.  To do this, we use the <a
 href="http://llvm.org/cmds/llvm-config.html">llvm-config</a> tool to inform
 our makefile/command line about which options to use:</p>
 
-<div class="doc_code">
 <pre>
    # Compile
    g++ -g -O3 toy.cpp `llvm-config --cppflags --ldflags --libs core` -o toy
    # Run
    ./toy
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
-<div class="doc_code">
 <pre>
 // To build this:
 // See example below.
@@ -1248,7 +1205,6 @@ int main() {
   return 0;
 }
 </pre>
-</div>
 <a href="LangImpl4.html">Next: Adding JIT and Optimizer Support</a>
 </div>
 

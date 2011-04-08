@@ -65,7 +65,6 @@ Our demonstration for Chapter 3 is elegant and easy to extend.  Unfortunately,
 it does not produce wonderful code.  For example, when compiling simple code,
 we don't get obvious optimizations:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) 1+2+x;</b>
 Read function definition:
@@ -76,7 +75,6 @@ entry:
         ret double %addtmp1
 }
 </pre>
-</div>
 
 <p>This code is a very, very literal transcription of the AST built by parsing
 the input. As such, this transcription lacks optimizations like constant folding
@@ -97,7 +95,6 @@ class does.
 instructions implicitly constant folded without us having to do anything
 about it.  For example, the input above now compiles to:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) 1+2+x;</b>
 Read function definition:
@@ -107,7 +104,6 @@ entry:
         ret double %addtmp
 }
 </pre>
-</div>
 
 <p>Well, that was easy :).  In practice, we recommend always using
 <tt>LLVMFoldingBuilder</tt> when generating code like this.  It has no
@@ -120,7 +116,6 @@ preprocessor or that use a lot of constants).</p>
 that it does all of its analysis inline with the code as it is built.  If you
 take a slightly more complex example:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) (1+2+x)*(x+(1+2));</b>
 ready&gt; Read function definition:
@@ -132,7 +127,6 @@ entry:
         ret double %multmp
 }
 </pre>
-</div>
 
 <p>In this case, the LHS and RHS of the multiplication are the same value.  We'd
 really like to see this generate "<tt>tmp = x+3; result = tmp*tmp;</tt>" instead
@@ -181,7 +175,6 @@ we would defer running the optimizer until the entire file has been parsed.</p>
 organize the LLVM optimizations that we want to run.  Once we have that, we can
 add a set of optimizations to run.  The code looks like this:</p>
 
-<div class="doc_code">
 <pre>
   (* Create the JIT. *)
   let the_execution_engine = ExecutionEngine.create Codegen.the_module in
@@ -208,7 +201,6 @@ add a set of optimizations to run.  The code looks like this:</p>
   (* Run the main "interpreter loop" now. *)
   Toplevel.main_loop the_fpm the_execution_engine stream;
 </pre>
-</div>
 
 <p>The meat of the matter here, is the definition of "<tt>the_fpm</tt>".  It
 requires a pointer to the <tt>the_module</tt> to construct itself.  Once it is
@@ -227,7 +219,6 @@ they are a good starting place :).</p>
 We do this by running it after our newly created function is constructed (in
 <tt>Codegen.codegen_func</tt>), but before it is returned to the client:</p>
 
-<div class="doc_code">
 <pre>
 let codegen_func the_fpm = function
       ...
@@ -245,13 +236,11 @@ let codegen_func the_fpm = function
 
         the_function
 </pre>
-</div>
 
 <p>As you can see, this is pretty straightforward.  The <tt>the_fpm</tt>
 optimizes and updates the LLVM Function* in place, improving (hopefully) its
 body.  With this in place, we can try our test above again:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) (1+2+x)*(x+(1+2));</b>
 ready&gt; Read function definition:
@@ -262,7 +251,6 @@ entry:
         ret double %multmp
 }
 </pre>
-</div>
 
 <p>As expected, we now get our nicely optimized code, saving a floating point
 add instruction from every execution of this function.</p>
@@ -304,7 +292,6 @@ command line.</p>
 <p>In order to do this, we first declare and initialize the JIT.  This is done
 by adding a global variable and a call in <tt>main</tt>:</p>
 
-<div class="doc_code">
 <pre>
 ...
 let main () =
@@ -313,7 +300,6 @@ let main () =
   let the_execution_engine = ExecutionEngine.create Codegen.the_module in</b>
   ...
 </pre>
-</div>
 
 <p>This creates an abstract "Execution Engine" which can be either a JIT
 compiler or the LLVM interpreter.  LLVM will automatically pick a JIT compiler
@@ -327,7 +313,6 @@ function.  This method JIT compiles the specified LLVM Function and returns a
 function pointer to the generated machine code.  In our case, this means that we
 can change the code that parses a top-level expression to look like this:</p>
 
-<div class="doc_code">
 <pre>
             (* Evaluate a top-level expression into an anonymous function. *)
             let e = Parser.parse_toplevel stream in
@@ -343,7 +328,6 @@ can change the code that parses a top-level expression to look like this:</p>
             print_float (GenericValue.as_float Codegen.double_type result);
             print_newline ();
 </pre>
-</div>
 
 <p>Recall that we compile top-level expressions into a self-contained LLVM
 function that takes no arguments and returns the computed double.  Because the
@@ -354,7 +338,6 @@ code that is statically linked into your application.</p>
 
 <p>With just these two changes, lets see how Kaleidoscope works now!</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>4+5;</b>
 define double @""() {
@@ -364,14 +347,12 @@ entry:
 
 <em>Evaluated to 9.000000</em>
 </pre>
-</div>
 
 <p>Well this looks like it is basically working.  The dump of the function
 shows the "no argument function that always returns double" that we synthesize
 for each top level expression that is typed in.  This demonstrates very basic
 functionality, but can we do more?</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def testfunc(x y) x + y*2; </b>
 Read function definition:
@@ -391,7 +372,6 @@ entry:
 
 <em>Evaluated to 24.000000</em>
 </pre>
-</div>
 
 <p>This illustrates that we can now call user code, but there is something a bit
 subtle going on here.  Note that we only invoke the JIT on the anonymous
@@ -407,7 +387,6 @@ However, even with this simple code, we get some surprisingly powerful
 capabilities - check this out (I removed the dump of the anonymous functions,
 you should get the idea by now :) :</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern sin(x);</b>
 Read extern:
@@ -435,7 +414,6 @@ entry:
 ready&gt; <b>foo(4.0);</b>
 <em>Evaluated to 1.000000</em>
 </pre>
-</div>
 
 <p>Whoa, how does the JIT know about sin and cos?  The answer is surprisingly
 simple: in this example, the JIT started execution of a function and got to a
@@ -458,7 +436,6 @@ first time they're called.</p>
 by writing arbitrary C code to implement operations.  For example, if we add:
 </p>
 
-<div class="doc_code">
 <pre>
 /* putchard - putchar that takes a double and returns 0. */
 extern "C"
@@ -467,7 +444,6 @@ double putchard(double X) {
   return 0;
 }
 </pre>
-</div>
 
 <p>Now we can produce simple output to the console by using things like:
 "<tt>extern putchard(x); putchard(120);</tt>", which prints a lowercase 'x' on
@@ -494,20 +470,18 @@ Here is the complete code listing for our running example, enhanced with the
 LLVM JIT and optimizer.  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
 # Compile
 ocamlbuild toy.byte
 # Run
 ./toy.byte
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
 <dl>
 <dt>_tags:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 &lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
 &lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
@@ -517,7 +491,7 @@ ocamlbuild toy.byte
 </dd>
 
 <dt>myocamlbuild.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 open Ocamlbuild_plugin;;
 
@@ -533,7 +507,7 @@ dep ["link"; "ocaml"; "use_bindings"] ["bindings.o"];;
 </dd>
 
 <dt>token.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer Tokens
@@ -554,7 +528,7 @@ type token =
 </dd>
 
 <dt>lexer.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer
@@ -612,7 +586,7 @@ and lex_comment = parser
 </dd>
 
 <dt>ast.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Abstract Syntax Tree (aka Parse Tree)
@@ -643,7 +617,7 @@ type func = Function of proto * expr
 </dd>
 
 <dt>parser.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===---------------------------------------------------------------------===
  * Parser
@@ -771,7 +745,7 @@ let parse_extern = parser
 </dd>
 
 <dt>codegen.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Code Generation
@@ -880,7 +854,7 @@ let codegen_func the_fpm = function
 </dd>
 
 <dt>toplevel.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Top-Level parsing and JIT Driver
@@ -935,7 +909,7 @@ let rec main_loop the_fpm the_execution_engine stream =
 </dd>
 
 <dt>toy.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Main driver code.
@@ -994,7 +968,7 @@ main ()
 </dd>
 
 <dt>bindings.c</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 #include &lt;stdio.h&gt;
 

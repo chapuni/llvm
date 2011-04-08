@@ -150,7 +150,6 @@ declarations.  This gives the language a very nice and simple syntax.  For
 example, the following simple example computes <a
 href="http://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci numbers:</a></p>
 
-<div class="doc_code">
 <pre>
 # Compute the x'th fibonacci number.
 def fib(x)
@@ -162,14 +161,12 @@ def fib(x)
 # This expression will compute the 40th number.
 fib(40)
 </pre>
-</div>
 
 <p>We also allow Kaleidoscope to call into standard library functions (the LLVM
 JIT makes this completely trivial).  This means that you can use the 'extern'
 keyword to define a function before you use it (this is also useful for mutually
 recursive functions).  For example:</p>
 
-<div class="doc_code">
 <pre>
 extern sin(arg);
 extern cos(arg);
@@ -177,7 +174,6 @@ extern atan2(arg1 arg2);
 
 atan2(sin(.4), cos(42))
 </pre>
-</div>
 
 <p>A more interesting example is included in Chapter 6 where we write a little
 Kaleidoscope application that <a href="OCamlLangImpl6.html#example">displays
@@ -202,7 +198,6 @@ a token code and potentially some metadata (e.g. the numeric value of a number).
 First, we define the possibilities:
 </p>
 
-<div class="doc_code">
 <pre>
 (* The lexer returns these 'Kwd' if it is an unknown character, otherwise one of
  * these others for known things. *)
@@ -216,7 +211,6 @@ type token =
   (* unknown *)
   | Kwd of char
 </pre>
-</div>
 
 <p>Each token returned by our lexer will be one of the token variant values.
 An unknown character like '+' will be returned as <tt>Token.Kwd '+'</tt>.  If
@@ -232,7 +226,6 @@ called to return the next token from standard input.  We will use
 to simplify the tokenization of the standard input.  Its definition starts
 as:</p>
 
-<div class="doc_code">
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer
@@ -242,7 +235,6 @@ let rec lex = parser
   (* Skip any whitespace. *)
   | [&lt; ' (' ' | '\n' | '\r' | '\t'); stream &gt;] -&gt; lex stream
 </pre>
-</div>
 
 <p>
 <tt>Lexer.lex</tt> works by recursing over a <tt>char Stream.t</tt> to read
@@ -255,7 +247,6 @@ recursive call above.</p>
 specific keywords like "def".  Kaleidoscope does this with a pattern match
 and a helper function.<p>
 
-<div class="doc_code">
 <pre>
   (* identifier: [a-zA-Z][a-zA-Z0-9] *)
   | [&lt; ' ('A' .. 'Z' | 'a' .. 'z' as c); stream &gt;] -&gt;
@@ -275,11 +266,9 @@ and lex_ident buffer = parser
       | "extern" -&gt; [&lt; 'Token.Extern; stream &gt;]
       | id -&gt; [&lt; 'Token.Ident id; stream &gt;]
 </pre>
-</div>
 
 <p>Numeric values are similar:</p>
 
-<div class="doc_code">
 <pre>
   (* number: [0-9.]+ *)
   | [&lt; ' ('0' .. '9' as c); stream &gt;] -&gt;
@@ -296,7 +285,6 @@ and lex_number buffer = parser
   | [&lt; stream=lex &gt;] -&gt;
       [&lt; 'Token.Number (float_of_string (Buffer.contents buffer)); stream &gt;]
 </pre>
-</div>
 
 <p>This is all pretty straight-forward code for processing input.  When reading
 a numeric value from input, we use the ocaml <tt>float_of_string</tt> function
@@ -306,7 +294,6 @@ if the string "1.23.45.67".  Feel free to extend it :).  Next we handle
 comments:
 </p>
 
-<div class="doc_code">
 <pre>
   (* Comment until end of line. *)
   | [&lt; ' ('#'); stream &gt;] -&gt;
@@ -319,14 +306,12 @@ and lex_comment = parser
   | [&lt; 'c; e=lex_comment &gt;] -&gt; e
   | [&lt; &gt;] -&gt; [&lt; &gt;]
 </pre>
-</div>
 
 <p>We handle comments by skipping to the end of the line and then return the
 next token.  Finally, if the input doesn't match one of the above cases, it is
 either an operator character like '+' or the end of the file.  These are handled
 with this code:</p>
 
-<div class="doc_code">
 <pre>
   (* Otherwise, just return the character as its ascii value. *)
   | [&lt; 'c; stream &gt;] -&gt;
@@ -335,7 +320,6 @@ with this code:</p>
   (* end of stream. *)
   | [&lt; &gt;] -&gt; [&lt; &gt;]
 </pre>
-</div>
 
 <p>With this, we have the complete lexer for the basic Kaleidoscope language
 (the <a href="OCamlLangImpl2.html#code">full code listing</a> for the Lexer is

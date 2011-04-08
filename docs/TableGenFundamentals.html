@@ -119,7 +119,6 @@ all of the classes, then all of the definitions.  This is a good way to see what
 the various definitions expand to fully.  Running this on the <tt>X86.td</tt>
 file prints this (at the time of this writing):</p>
 
-<div class="doc_code">
 <pre>
 ...
 <b>def</b> ADD32rr {   <i>// Instruction X86Inst I</i>
@@ -170,7 +169,6 @@ file prints this (at the time of this writing):</p>
 }
 ...
 </pre>
-</div>
 
 <p>This definition corresponds to a 32-bit register-register add instruction in
 the X86.  The string after the '<tt>def</tt>' string indicates the name of the
@@ -189,7 +187,6 @@ unmaintainable, prone to bugs, and tiring to do in the first place.  Because we
 are using TableGen, all of the information was derived from the following
 definition:</p>
 
-<div class="doc_code">
 <pre>
 let Defs = [EFLAGS],
     isCommutable = 1,                  <i>// X = ADD Y,Z --&gt; X = ADD Z,Y</i>
@@ -199,7 +196,6 @@ def ADD32rr  : I&lt;0x01, MRMDestReg, (outs GR32:$dst),
                  "add{l}\t{$src2, $dst|$dst, $src2}",
                  [(set GR32:$dst, (add GR32:$src1, GR32:$src2))]&gt;;
 </pre>
-</div>
 
 <p>This definition makes use of the custom class <tt>I</tt> (extended from the
 custom class <tt>X86Inst</tt>), which is defined in the X86-specific TableGen
@@ -224,7 +220,6 @@ used.  These backends are selectable on the command line (type '<tt>tblgen
 that subclass a particular type (which can be useful for building up an enum
 list of these records), use the <tt>-print-enums</tt> option:</p>
 
-<div class="doc_code">
 <pre>
 $ tblgen X86.td -print-enums -class=Register
 AH, AL, AX, BH, BL, BP, BPL, BX, CH, CL, CX, DH, DI, DIL, DL, DX, EAX, EBP, EBX,
@@ -243,7 +238,6 @@ ADC64rm, ADC64rr, ADD16mi, ADD16mi8, ADD16mr, ADD16ri, ADD16ri8, ADD16rm,
 ADD16rr, ADD32mi, ADD32mi8, ADD32mr, ADD32ri, ADD32ri8, ADD32rm, ADD32rr,
 ADD64mi32, ADD64mi8, ADD64mr, ADD64ri32, ...
 </pre>
-</div>
 
 <p>The default backend prints out all of the records, as described <a
 href="#example">above</a>.</p>
@@ -454,7 +448,6 @@ semicolon.</p>
 
 <p>Here is a simple TableGen file:</p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> C { <b>bit</b> V = 1; }
 <b>def</b> X : C;
@@ -462,7 +455,6 @@ semicolon.</p>
   <b>string</b> Greeting = "hello";
 }
 </pre>
-</div>
 
 <p>This example defines two definitions, <tt>X</tt> and <tt>Y</tt>, both of
 which derive from the <tt>C</tt> class.  Because of this, they both get the
@@ -504,12 +496,10 @@ consist of the '<tt>let</tt>' keyword followed by a value name, an equal sign
 ("<tt>=</tt>"), and a new value.  For example, a new class could be added to the
 example above, redefining the <tt>V</tt> field for all of its subclasses:</p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> D : C { let V = 0; }
 <b>def</b> Z : D;
 </pre>
-</div>
 
 <p>In this case, the <tt>Z</tt> definition will have a zero value for its "V"
 value, despite the fact that it derives (indirectly) from the <tt>C</tt> class,
@@ -529,7 +519,6 @@ concrete classes.  Parameterized TableGen classes specify a list of variable
 bindings (which may optionally have defaults) that are bound when used.  Here is
 a simple example:</p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> FPFormat&lt;<b>bits</b>&lt;3&gt; val&gt; {
   <b>bits</b>&lt;3&gt; Value = val;
@@ -543,7 +532,6 @@ a simple example:</p>
 <b>def</b> CondMovFP  : FPFormat&lt;6&gt;;
 <b>def</b> SpecialFP  : FPFormat&lt;7&gt;;
 </pre>
-</div>
 
 <p>In this case, template arguments are used as a space efficient way to specify
 a list of "enumeration values", each with a "<tt>Value</tt>" field set to the
@@ -552,7 +540,6 @@ specified integer.</p>
 <p>The more esoteric forms of <a href="#values">TableGen expressions</a> are
 useful in conjunction with template arguments.  As an example:</p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> ModRefVal&lt;<b>bits</b>&lt;2&gt; val&gt; {
   <b>bits</b>&lt;2&gt; Value = val;
@@ -577,14 +564,12 @@ useful in conjunction with template arguments.  As an example:</p>
 <b>def</b> zork : Value&lt;Ref&gt;;
 <b>def</b> hork : Value&lt;ModRef&gt;;
 </pre>
-</div>
 
 <p>This is obviously a contrived example, but it shows how template arguments
 can be used to decouple the interface provided to the user of the class from the
 actual internal data representation expected by the class.  In this case,
 running <tt>tblgen</tt> on the example prints the following definitions:</p>
 
-<div class="doc_code">
 <pre>
 <b>def</b> bork {      <i>// Value</i>
   <b>bit</b> isMod = 1;
@@ -599,7 +584,6 @@ running <tt>tblgen</tt> on the example prints the following definitions:</p>
   <b>bit</b> isRef = 1;
 }
 </pre>
-</div>
 
 <p> This shows that TableGen was able to dig into the argument and extract a
 piece of information that was requested by the designer of the "Value" class.
@@ -629,7 +613,6 @@ commonality exists, then in a separate place indicate what all the ops are.
 Here is an example TableGen fragment that shows this idea:
 </p>
 
-<div class="doc_code">
 <pre>
 <b>def</b> ops;
 <b>def</b> GPR;
@@ -649,7 +632,6 @@ Here is an example TableGen fragment that shows this idea:
 <b>defm</b> MUL : ri_inst&lt;0b100, "mul"&gt;;
 ...
 </pre>
-</div>
 
 <p>The name of the resultant definitions has the multidef fragment names
    appended to them, so this defines <tt>ADD_rr</tt>, <tt>ADD_ri</tt>,
@@ -658,7 +640,6 @@ Here is an example TableGen fragment that shows this idea:
    this way is exactly equivalent to instantiating the classes multiple
    times yourself, e.g. by writing:</p>
 
-<div class="doc_code">
 <pre>
 <b>def</b> ops;
 <b>def</b> GPR;
@@ -682,14 +663,12 @@ Here is an example TableGen fragment that shows this idea:
 <b>def</b> MUL_ri : riinst&lt;0b100, "mul"&gt;;
 ...
 </pre>
-</div>
 
 <p>
 A defm can also be used inside a multiclass providing several levels of
 multiclass instanciations.
 </p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> Instruction&lt;bits&lt;4&gt; opc, string Name&gt; {
   bits&lt;4&gt; opcode = opc;
@@ -726,7 +705,6 @@ multiclass instanciations.
 <b>def</b> ADDY { ...
 <b>def</b> ADDX { ...
 </pre>
-</div>
 
 <p>
 defm declarations can inherit from classes too, the
@@ -735,7 +713,6 @@ last multiclass, and there must be at least one multiclass
 before them.
 </p>
 
-<div class="doc_code">
 <pre>
 <b>class</b> XD { bits&lt;4&gt; Prefix = 11; }
 <b>class</b> XS { bits&lt;4&gt; Prefix = 12; }
@@ -767,7 +744,6 @@ before them.
   bits&lt;4&gt; Prefix = { 1, 0, 1, 1 };
 }
 </pre>
-</div>
 
 </div>
 
@@ -791,11 +767,9 @@ the specified file in place of the include directive.  The filename should be
 specified as a double quoted string immediately after the '<tt>include</tt>'
 keyword.  Example:</p>
 
-<div class="doc_code">
 <pre>
 <b>include</b> "foo.td"
 </pre>
-</div>
 
 </div>
 
@@ -816,7 +790,6 @@ end-user to factor out commonality from the records.</p>
 apply, and one or more records to bind the values in.  Here are some
 examples:</p>
 
-<div class="doc_code">
 <pre>
 <b>let</b> isTerminator = 1, isReturn = 1, isBarrier = 1, hasCtrlDep = 1 <b>in</b>
   <b>def</b> RET : I&lt;0xC3, RawFrm, (outs), (ins), "ret", [(X86retflag 0)]&gt;;
@@ -834,7 +807,6 @@ examples:</p>
                         "call\t{*}$dst", []&gt;;
   }
 </pre>
-</div>
 
 <p>File-scope "let" expressions are often useful when a couple of definitions
 need to be added to several records, and the records do not otherwise need to be
@@ -845,7 +817,7 @@ more ways to factor out commonality from the records, specially if using
 several levels of multiclass instanciations. This also avoids the need of using
 "let" expressions within subsequent records inside a multiclass.</p> 
 
-<pre class="doc_code">
+<pre>
 <b>multiclass </b>basic_r&lt;bits&lt;4&gt; opc&gt; {
   <b>let </b>Predicates = [HasSSE2] in {
     <b>def </b>rr : Instruction&lt;opc, "rr"&gt;;
@@ -865,6 +837,7 @@ several levels of multiclass instanciations. This also avoids the need of using
 
 <b>defm </b>ADD : basic_ss&lt;0xf&gt;;
 </pre>
+
 </div>
 
 </div>

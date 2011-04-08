@@ -44,18 +44,14 @@ llvm-gcc3 in the past.</p>
          from a read-only mirror using subversion.  To check out the 4.2 code
          for first time use:</p>
 
-<div class="doc_code">
 <pre>
 svn co http://llvm.org/svn/llvm-project/llvm-gcc-4.2/trunk <i>dst-directory</i>
 </pre>
-</div>
 
       <p>After that, the code can be be updated in the destination directory
          using:</p>
 
-<div class="doc_code">
 <pre>svn update</pre>
-</div>
 
       <p>The mirror is brought up to date every evening.</p></li>
 
@@ -115,7 +111,7 @@ top-level <tt>README.LLVM</tt> file, adding ",ada" to EXTRALANGS, for example:
   <li><p>Download the <a href="http://llvm.org/releases/download.html">LLVM source</a>
       and unpack it:</p>
 
-<pre class="doc_code">
+<pre>
 wget http://llvm.org/releases/2.7/llvm-2.7.tgz
 tar xzf llvm-2.7.tgz
 mv llvm-2.7 llvm
@@ -124,7 +120,7 @@ mv llvm-2.7 llvm
       <p>or <a href="GettingStarted.html#checkout">check out the
       latest version from subversion</a>:</p>
 
-<pre class="doc_code">svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm</pre>
+<pre>svn co http://llvm.org/svn/llvm-project/llvm/trunk llvm</pre>
 
       </li>
 
@@ -132,7 +128,7 @@ mv llvm-2.7 llvm
       <a href="http://llvm.org/releases/download.html">llvm-gcc-4.2 source</a>
       and unpack it:</p>
 
-<pre class="doc_code">
+<pre>
 wget http://llvm.org/releases/2.7/llvm-gcc-4.2-2.7.source.tgz
 tar xzf llvm-gcc-4.2-2.7.source.tgz
 mv llvm-gcc-4.2-2.7.source llvm-gcc-4.2
@@ -141,7 +137,7 @@ mv llvm-gcc-4.2-2.7.source llvm-gcc-4.2
       <p>or <a href="GettingStarted.html#checkout">check out the
       latest version from subversion</a>:</p>
 
-<pre class="doc_code">
+<pre>
 svn co http://llvm.org/svn/llvm-project/llvm-gcc-4.2/trunk llvm-gcc-4.2
 </pre>
       </li>
@@ -149,7 +145,7 @@ svn co http://llvm.org/svn/llvm-project/llvm-gcc-4.2/trunk llvm-gcc-4.2
   <li><p>Make a build directory <tt>llvm-objects</tt> for llvm and make it the
       current directory:</p>
 
-<pre class="doc_code">
+<pre>
 mkdir llvm-objects
 cd llvm-objects
 </pre>
@@ -157,14 +153,14 @@ cd llvm-objects
 
   <li><p>Configure LLVM (here it is configured to install into <tt>/usr/local</tt>):</p>
 
-<pre class="doc_code">
+<pre>
 ../llvm/configure --prefix=<b>/usr/local</b> --enable-optimized --enable-assertions
 </pre>
 
       <p>If you have a multi-compiler setup and the C++ compiler is not the
       default, then you can configure like this:</p>
 
-<pre class="doc_code">
+<pre>
 CXX=<b>PATH_TO_C++_COMPILER</b> ../llvm/configure --prefix=<b>/usr/local</b> --enable-optimized --enable-assertions
 </pre>
 
@@ -175,14 +171,14 @@ CXX=<b>PATH_TO_C++_COMPILER</b> ../llvm/configure --prefix=<b>/usr/local</b> --e
 
   <li><p>Build LLVM:</p>
 
-<pre class="doc_code">
+<pre>
 make
 </pre>
       </li>
 
   <li><p>Install LLVM (optional):</p>
 
-<pre class="doc_code">
+<pre>
 make install
 </pre>
       </li>
@@ -190,7 +186,7 @@ make install
   <li><p>Make a build directory <tt>llvm-gcc-4.2-objects</tt> for llvm-gcc and make it the
       current directory:</p>
 
-<pre class="doc_code">
+<pre>
 cd ..
 mkdir llvm-gcc-4.2-objects
 cd llvm-gcc-4.2-objects
@@ -204,7 +200,7 @@ cd llvm-gcc-4.2-objects
       Additional languages can be appended to the <tt>--enable-languages</tt> switch,
       for example <tt>--enable-languages=ada,c,c++</tt>.</p>
 
-<pre class="doc_code">
+<pre>
 ../llvm-gcc-4.2/configure --prefix=<b>/usr/local</b> --enable-languages=ada,c \
                           --enable-checking --enable-llvm=$PWD/../llvm-objects \
 			  --disable-bootstrap --disable-multilib
@@ -212,7 +208,7 @@ cd llvm-gcc-4.2-objects
 
       <p>If you have a multi-compiler setup, then you can configure like this:</p>
 
-<pre class="doc_code">
+<pre>
 export CC=<b>PATH_TO_C_AND_ADA_COMPILER</b>
 export CXX=<b>PATH_TO_C++_COMPILER</b>
 ../llvm-gcc-4.2/configure --prefix=<b>/usr/local</b> --enable-languages=ada,c \
@@ -223,7 +219,7 @@ export CXX=<b>PATH_TO_C++_COMPILER</b>
 
   <li><p>Build and install the compiler:</p>
 
-<pre class="doc_code">
+<pre>
 make
 make install
 </pre>
@@ -240,7 +236,7 @@ make install
 <p>To build with support for Fortran, follow the directions in the top-level
 <tt>README.LLVM</tt> file, adding ",fortran" to EXTRALANGS, for example:</p>
 
-<pre class="doc_code">
+<pre>
 EXTRALANGS=,fortran
 </pre>
 

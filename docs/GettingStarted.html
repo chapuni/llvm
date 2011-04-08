@@ -772,12 +772,10 @@ subdirectories of the '<tt>tags</tt>' directory:</p>
 <p>If you would like to get the LLVM test suite (a separate package as of 1.4),
 you get it from the Subversion repository:</p>
 
-<div class="doc_code">
 <pre>
 % cd llvm/projects
 % svn co http://llvm.org/svn/llvm-project/test-suite/trunk test-suite
 </pre>
-</div>
 
 <p>By placing it in the <tt>llvm/projects</tt>, it will be automatically
 configured by the LLVM configure script as well as automatically updated when
@@ -988,14 +986,13 @@ script to configure the build system:</p>
 <ol>
     <li><p>Change directory into the object root directory:</p>
 
-    <div class="doc_code"><pre>% cd <i>OBJ_ROOT</i></pre></div></li>
+    <pre>% cd <i>OBJ_ROOT</i></pre></li>
 
     <li><p>Run the <tt>configure</tt> script located in the LLVM source
     tree:</p>
 
-    <div class="doc_code">
     <pre>% <i>SRC_ROOT</i>/configure --prefix=/install/path [other options]</pre>
-    </div></li>
+    </li>
 </ol>
 
 </div>
@@ -1042,7 +1039,7 @@ builds:</p>
 <p>Once you have LLVM configured, you can build it by entering the
 <i>OBJ_ROOT</i> directory and issuing the following command:</p>
 
-<div class="doc_code"><pre>% gmake</pre></div>
+<pre>% gmake</pre>
 
 <p>If the build fails, please <a href="#brokengcc">check here</a> to see if you
 are using a version of GCC that is known not to compile LLVM.</p>
@@ -1052,7 +1049,7 @@ If you have multiple processors in your machine, you may wish to use some of
 the parallel build options provided by GNU Make.  For example, you could use the
 command:</p>
 
-<div class="doc_code"><pre>% gmake -j2</pre></div>
+<pre>% gmake -j2</pre>
 
 <p>There are several special targets which are useful when working with the LLVM
 source code:</p>
@@ -1168,12 +1165,12 @@ platforms or configurations using the same source tree.</p>
 <ul>
   <li><p>Change directory to where the LLVM object files should live:</p>
 
-      <div class="doc_code"><pre>% cd <i>OBJ_ROOT</i></pre></div></li>
+      <pre>% cd <i>OBJ_ROOT</i></pre></li>
 
   <li><p>Run the <tt>configure</tt> script found in the LLVM source
       directory:</p>
 
-      <div class="doc_code"><pre>% <i>SRC_ROOT</i>/configure</pre></div></li>
+      <pre>% <i>SRC_ROOT</i>/configure</pre></li>
 </ul>
 
 <p>The LLVM build will place files underneath <i>OBJ_ROOT</i> in directories
@@ -1226,25 +1223,21 @@ module, and you have root access on the system, you can set your system up to
 execute LLVM bitcode files directly. To do this, use commands like this (the
 first command may not be required if you are already using the module):</p>
 
-<div class="doc_code">
 <pre>
 $ mount -t binfmt_misc none /proc/sys/fs/binfmt_misc
 $ echo ':llvm:M::BC::/path/to/lli:' &gt; /proc/sys/fs/binfmt_misc/register
 $ chmod u+x hello.bc   (if needed)
 $ ./hello.bc
 </pre>
-</div>
 
 <p>
 This allows you to execute LLVM bitcode files directly.  On Debian, you 
 can also use this command instead of the 'echo' command above:
 </p>
 
-<div class="doc_code">
 <pre>
 $ sudo update-binfmts --install llvm /path/to/lli --magic 'BC'
 </pre>
-</div>
 
 </div>
 
@@ -1616,7 +1609,6 @@ output.</p>
 <ol>
   <li><p>First, create a simple C file, name it 'hello.c':</p>
 
-<div class="doc_code">
 <pre>
 #include &lt;stdio.h&gt;
 
@@ -1624,11 +1616,11 @@ int main() {
   printf("hello world\n");
   return 0;
 }
-</pre></div></li>
+</pre></li>
 
   <li><p>Next, compile the C file into a native executable:</p>
 
-      <div class="doc_code"><pre>% llvm-gcc hello.c -o hello</pre></div>
+      <pre>% llvm-gcc hello.c -o hello</pre>
 
       <p>Note that llvm-gcc works just like GCC by default.  The standard -S and
         -c arguments work as usual (producing a native .s or .o file,
@@ -1636,8 +1628,7 @@ int main() {
 
   <li><p>Next, compile the C file into a LLVM bitcode file:</p>
 
-      <div class="doc_code">
-      <pre>% llvm-gcc -O3 -emit-llvm hello.c -c -o hello.bc</pre></div>
+      <pre>% llvm-gcc -O3 -emit-llvm hello.c -c -o hello.bc</pre>
 
       <p>The -emit-llvm option can be used with the -S or -c options to emit an
          LLVM ".ll" or ".bc" file (respectively) for the code.  This allows you
@@ -1649,11 +1640,11 @@ int main() {
 
   <li><p>Run the program in both forms. To run the program, use:</p>
       
-      <div class="doc_code"><pre>% ./hello</pre></div>
+      <pre>% ./hello</pre>
  
       <p>and</p>
 
-      <div class="doc_code"><pre>% lli hello.bc</pre></div>
+      <pre>% lli hello.bc</pre>
 
       <p>The second examples shows how to invoke the LLVM JIT, <a
        href="CommandGuide/html/lli.html">lli</a>.</p></li>
@@ -1661,28 +1652,26 @@ int main() {
   <li><p>Use the <tt>llvm-dis</tt> utility to take a look at the LLVM assembly
       code:</p>
 
-<div class="doc_code">
 <pre>llvm-dis &lt; hello.bc | less</pre>
-</div></li>
+</li>
 
   <li><p>Compile the program to native assembly using the LLC code
       generator:</p>
 
-      <div class="doc_code"><pre>% llc hello.bc -o hello.s</pre></div></li>
+      <pre>% llc hello.bc -o hello.s</pre></li>
 
   <li><p>Assemble the native assembly language file into a program:</p>
 
-<div class="doc_code">
 <pre>
 <b>Solaris:</b> % /opt/SUNWspro/bin/cc -xarch=v9 hello.s -o hello.native
 
 <b>Others:</b>  % gcc hello.s -o hello.native
 </pre>
-</div></li>
+</li>
 
   <li><p>Execute the native code program:</p>
 
-      <div class="doc_code"><pre>% ./hello.native</pre></div>
+      <pre>% ./hello.native</pre>
 
       <p>Note that using llvm-gcc to compile directly to native code (i.e. when
          the -emit-llvm option is not present) does steps 6/7/8 for you.</p>

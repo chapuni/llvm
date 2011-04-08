@@ -84,7 +84,7 @@ conservative escape analysis.
     <li> Input source file <tt>a.c</tt> is compiled into LLVM bitcode form.
     <li> Input source file <tt>main.c</tt> is compiled into native object code.
   </ul>
-<pre class="doc_code">
+<pre>
 --- a.h ---
 extern int foo1(void);
 extern void foo2(void);
@@ -292,7 +292,7 @@ $ llvm-gcc a.o main.o -o main # &lt;-- standard link command without any modific
 The following functions allow the linker to check if a file (on disk
 or in a memory buffer) is a file which libLTO can process:</p>
 
-<pre class="doc_code">
+<pre>
 lto_module_is_object_file(const char*)
 lto_module_is_object_file_for_target(const char*, const char*)
 lto_module_is_object_file_in_memory(const void*, size_t)
@@ -302,21 +302,21 @@ lto_module_is_object_file_in_memory_for_target(const void*, size_t, const char*)
 <p>If the object file can be processed by libLTO, the linker creates a
 <tt>lto_module_t</tt> by using one of</p>
 
-<pre class="doc_code">
+<pre>
 lto_module_create(const char*)
 lto_module_create_from_memory(const void*, size_t)
 </pre>
 
 <p>and when done, the handle is released via</p>
 
-<pre class="doc_code">
+<pre>
 lto_module_dispose(lto_module_t)
 </pre>
 
 <p>The linker can introspect the non-native object file by getting the number of
 symbols and getting the name and attributes of each symbol via:</p>
 
-<pre class="doc_code">
+<pre>
 lto_module_get_num_symbols(lto_module_t)
 lto_module_get_symbol_name(lto_module_t, unsigned int)
 lto_module_get_symbol_attribute(lto_module_t, unsigned int)
@@ -337,34 +337,34 @@ lto_module_get_symbol_attribute(lto_module_t, unsigned int)
 generate a native object file.  This is done in a couple of steps.
 First, a code generator is created with:</p>
 
-<pre class="doc_code">lto_codegen_create()</pre>
+<pre>lto_codegen_create()</pre>
 
 <p>Then, each non-native object file is added to the code generator with:</p>
 
-<pre class="doc_code">
+<pre>
 lto_codegen_add_module(lto_code_gen_t, lto_module_t)
 </pre>
 
 <p>The linker then has the option of setting some codegen options.  Whether or
 not to generate DWARF debug info is set with:</p>
   
-<pre class="doc_code">lto_codegen_set_debug_model(lto_code_gen_t)</pre>
+<pre>lto_codegen_set_debug_model(lto_code_gen_t)</pre>
 
 <p>Which kind of position independence is set with:</p>
 
-<pre class="doc_code">lto_codegen_set_pic_model(lto_code_gen_t) </pre>
+<pre>lto_codegen_set_pic_model(lto_code_gen_t) </pre>
   
 <p>And each symbol that is referenced by a native object file or otherwise must
 not be optimized away is set with:</p>
 
-<pre class="doc_code">
+<pre>
 lto_codegen_add_must_preserve_symbol(lto_code_gen_t, const char*)
 </pre>
 
 <p>After all these settings are done, the linker requests that a native object
 file be created from the modules with the settings using:</p>
 
-<pre class="doc_code">lto_codegen_compile(lto_code_gen_t, size*)</pre>
+<pre>lto_codegen_compile(lto_code_gen_t, size*)</pre>
 
 <p>which returns a pointer to a buffer containing the generated native
 object file.  The linker then parses that and links it with the rest 

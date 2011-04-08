@@ -143,7 +143,6 @@ declarations.  This gives the language a very nice and simple syntax.  For
 example, the following simple example computes <a 
 href="http://en.wikipedia.org/wiki/Fibonacci_number">Fibonacci numbers:</a></p>
 
-<div class="doc_code">
 <pre>
 # Compute the x'th fibonacci number.
 def fib(x)
@@ -155,14 +154,12 @@ def fib(x)
 # This expression will compute the 40th number.
 fib(40)
 </pre>
-</div>
 
 <p>We also allow Kaleidoscope to call into standard library functions (the LLVM
 JIT makes this completely trivial).  This means that you can use the 'extern'
 keyword to define a function before you use it (this is also useful for mutually
 recursive functions).  For example:</p>
 
-<div class="doc_code">
 <pre>
 extern sin(arg);
 extern cos(arg);
@@ -170,7 +167,6 @@ extern atan2(arg1 arg2);
 
 atan2(sin(.4), cos(42))
 </pre>
-</div>
 
 <p>A more interesting example is included in Chapter 6 where we write a little
 Kaleidoscope application that <a href="LangImpl6.html#example">displays 
@@ -195,7 +191,6 @@ a token code and potentially some metadata (e.g. the numeric value of a number).
 First, we define the possibilities:
 </p>
 
-<div class="doc_code">
 <pre>
 // The lexer returns tokens [0-255] if it is an unknown character, otherwise one
 // of these for known things.
@@ -212,7 +207,6 @@ enum Token {
 static std::string IdentifierStr;  // Filled in if tok_identifier
 static double NumVal;              // Filled in if tok_number
 </pre>
-</div>
 
 <p>Each token returned by our lexer will either be one of the Token enum values
 or it will be an 'unknown' character like '+', which is returned as its ASCII
@@ -227,7 +221,6 @@ implementation :).
 <tt>gettok</tt>. The <tt>gettok</tt> function is called to return the next token
 from standard input.  Its definition starts as:</p>
 
-<div class="doc_code">
 <pre>
 /// gettok - Return the next token from standard input.
 static int gettok() {
@@ -237,7 +230,6 @@ static int gettok() {
   while (isspace(LastChar))
     LastChar = getchar();
 </pre>
-</div>
 
 <p>
 <tt>gettok</tt> works by calling the C <tt>getchar()</tt> function to read
@@ -249,7 +241,6 @@ accomplished with the loop above.</p>
 <p>The next thing <tt>gettok</tt> needs to do is recognize identifiers and
 specific keywords like "def".  Kaleidoscope does this with this simple loop:</p>
 
-<div class="doc_code">
 <pre>
   if (isalpha(LastChar)) { // identifier: [a-zA-Z][a-zA-Z0-9]*
     IdentifierStr = LastChar;
@@ -261,13 +252,11 @@ specific keywords like "def".  Kaleidoscope does this with this simple loop:</p>
     return tok_identifier;
   }
 </pre>
-</div>
 
 <p>Note that this code sets the '<tt>IdentifierStr</tt>' global whenever it
 lexes an identifier.  Also, since language keywords are matched by the same
 loop, we handle them here inline.  Numeric values are similar:</p>
 
-<div class="doc_code">
 <pre>
   if (isdigit(LastChar) || LastChar == '.') {   // Number: [0-9.]+
     std::string NumStr;
@@ -280,7 +269,6 @@ loop, we handle them here inline.  Numeric values are similar:</p>
     return tok_number;
   }
 </pre>
-</div>
 
 <p>This is all pretty straight-forward code for processing input.  When reading
 a numeric value from input, we use the C <tt>strtod</tt> function to convert it
@@ -289,7 +277,6 @@ sufficient error checking: it will incorrectly read "1.23.45.67" and handle it a
 if you typed in "1.23".  Feel free to extend it :).  Next we handle comments:
 </p>
 
-<div class="doc_code">
 <pre>
   if (LastChar == '#') {
     // Comment until end of line.
@@ -300,14 +287,12 @@ if you typed in "1.23".  Feel free to extend it :).  Next we handle comments:
       return gettok();
   }
 </pre>
-</div>
 
 <p>We handle comments by skipping to the end of the line and then return the
 next token.  Finally, if the input doesn't match one of the above cases, it is
 either an operator character like '+' or the end of the file.  These are handled
 with this code:</p>
 
-<div class="doc_code">
 <pre>
   // Check for end of file.  Don't eat the EOF.
   if (LastChar == EOF)
@@ -319,7 +304,6 @@ with this code:</p>
   return ThisChar;
 }
 </pre>
-</div>
 
 <p>With this, we have the complete lexer for the basic Kaleidoscope language
 (the <a href="LangImpl2.html#code">full code listing</a> for the Lexer is

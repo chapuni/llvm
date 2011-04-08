@@ -58,7 +58,6 @@ Our demonstration for Chapter 3 is elegant and easy to extend.  Unfortunately,
 it does not produce wonderful code.  The IRBuilder, however, does give us
 obvious optimizations when compiling simple code:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) 1+2+x;</b>
 Read function definition:
@@ -68,12 +67,10 @@ entry:
         ret double %addtmp
 }
 </pre>
-</div>
 
 <p>This code is not a literal transcription of the AST built by parsing the 
 input. That would be:
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) 1+2+x;</b>
 Read function definition:
@@ -84,7 +81,6 @@ entry:
         ret double %addtmp1
 }
 </pre>
-</div>
 
 <p>Constant folding, as seen above, in particular, is a very common and very
 important optimization: so much so that many language implementors implement
@@ -106,7 +102,6 @@ preprocessor or that use a lot of constants).</p>
 that it does all of its analysis inline with the code as it is built.  If you
 take a slightly more complex example:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) (1+2+x)*(x+(1+2));</b>
 ready> Read function definition:
@@ -118,7 +113,6 @@ entry:
         ret double %multmp
 }
 </pre>
-</div>
 
 <p>In this case, the LHS and RHS of the multiplication are the same value.  We'd
 really like to see this generate "<tt>tmp = x+3; result = tmp*tmp;</tt>" instead
@@ -167,7 +161,6 @@ we would defer running the optimizer until the entire file has been parsed.</p>
 organize the LLVM optimizations that we want to run.  Once we have that, we can
 add a set of optimizations to run.  The code looks like this:</p>
 
-<div class="doc_code">
 <pre>
   FunctionPassManager OurFPM(TheModule);
 
@@ -193,7 +186,6 @@ add a set of optimizations to run.  The code looks like this:</p>
   // Run the main "interpreter loop" now.
   MainLoop();
 </pre>
-</div>
 
 <p>This code defines a <tt>FunctionPassManager</tt>, "<tt>OurFPM</tt>".  It
 requires a pointer to the <tt>Module</tt> to construct itself.  Once it is set
@@ -212,7 +204,6 @@ they are a good starting place :).</p>
 running it after our newly created function is constructed (in 
 <tt>FunctionAST::Codegen</tt>), but before it is returned to the client:</p>
 
-<div class="doc_code">
 <pre>
   if (Value *RetVal = Body->Codegen()) {
     // Finish off the function.
@@ -227,14 +218,12 @@ running it after our newly created function is constructed (in
     return TheFunction;
   }
 </pre>
-</div>
 
 <p>As you can see, this is pretty straightforward.  The 
 <tt>FunctionPassManager</tt> optimizes and updates the LLVM Function* in place,
 improving (hopefully) its body.  With this in place, we can try our test above
 again:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def test(x) (1+2+x)*(x+(1+2));</b>
 ready> Read function definition:
@@ -245,7 +234,6 @@ entry:
         ret double %multmp
 }
 </pre>
-</div>
 
 <p>As expected, we now get our nicely optimized code, saving a floating point
 add instruction from every execution of this function.</p>
@@ -287,7 +275,6 @@ command line.</p>
 <p>In order to do this, we first declare and initialize the JIT.  This is done
 by adding a global variable and a call in <tt>main</tt>:</p>
 
-<div class="doc_code">
 <pre>
 <b>static ExecutionEngine *TheExecutionEngine;</b>
 ...
@@ -298,7 +285,6 @@ int main() {
   ..
 }
 </pre>
-</div>
 
 <p>This creates an abstract "Execution Engine" which can be either a JIT
 compiler or the LLVM interpreter.  LLVM will automatically pick a JIT compiler
@@ -312,7 +298,6 @@ specified LLVM Function and returns a function pointer to the generated machine
 code.  In our case, this means that we can change the code that parses a
 top-level expression to look like this:</p>
 
-<div class="doc_code">
 <pre>
 static void HandleTopLevelExpression() {
   // Evaluate a top-level expression into an anonymous function.
@@ -329,7 +314,6 @@ static void HandleTopLevelExpression() {
       fprintf(stderr, "Evaluated to %f\n", FP());</b>
     }
 </pre>
-</div>
 
 <p>Recall that we compile top-level expressions into a self-contained LLVM
 function that takes no arguments and returns the computed double.  Because the 
@@ -340,7 +324,6 @@ code that is statically linked into your application.</p>
 
 <p>With just these two changes, lets see how Kaleidoscope works now!</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>4+5;</b>
 define double @""() {
@@ -350,14 +333,12 @@ entry:
 
 <em>Evaluated to 9.000000</em>
 </pre>
-</div>
 
 <p>Well this looks like it is basically working.  The dump of the function
 shows the "no argument function that always returns double" that we synthesize
 for each top-level expression that is typed in.  This demonstrates very basic
 functionality, but can we do more?</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def testfunc(x y) x + y*2; </b> 
 Read function definition:
@@ -377,7 +358,6 @@ entry:
 
 <em>Evaluated to 24.000000</em>
 </pre>
-</div>
 
 <p>This illustrates that we can now call user code, but there is something a bit
 subtle going on here.  Note that we only invoke the JIT on the anonymous
@@ -393,7 +373,6 @@ However, even with this simple code, we get some surprisingly powerful
 capabilities - check this out (I removed the dump of the anonymous functions,
 you should get the idea by now :) :</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern sin(x);</b>
 Read extern: 
@@ -421,7 +400,6 @@ entry:
 ready&gt; <b>foo(4.0);</b>
 <em>Evaluated to 1.000000</em>
 </pre>
-</div>
 
 <p>Whoa, how does the JIT know about sin and cos?  The answer is surprisingly
 simple: in this
@@ -446,7 +424,6 @@ first time they're called.</p>
 by writing arbitrary C++ code to implement operations.  For example, if we add:
 </p>
 
-<div class="doc_code">
 <pre>
 /// putchard - putchar that takes a double and returns 0.
 extern "C" 
@@ -455,7 +432,6 @@ double putchard(double X) {
   return 0;
 }
 </pre>
-</div>
 
 <p>Now we can produce simple output to the console by using things like:
 "<tt>extern putchard(x); putchard(120);</tt>", which prints a lowercase 'x' on
@@ -482,14 +458,12 @@ Here is the complete code listing for our running example, enhanced with the
 LLVM JIT and optimizer.  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
    # Compile
    g++ -g toy.cpp `llvm-config --cppflags --ldflags --libs core jit native` -O3 -o toy
    # Run
    ./toy
 </pre>
-</div>
 
 <p>
 If you are compiling this on Linux, make sure to add the "-rdynamic" option 
@@ -498,7 +472,6 @@ at runtime.</p>
 
 <p>Here is the code:</p>
 
-<div class="doc_code">
 <pre>
 #include "llvm/DerivedTypes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -1114,7 +1087,6 @@ TheExecutionEngine = EngineBuilder(TheModule).setErrorStr(&amp;ErrStr).create();
   return 0;
 }
 </pre>
-</div>
 
 <a href="LangImpl5.html">Next: Extending the language: control flow</a>
 </div>

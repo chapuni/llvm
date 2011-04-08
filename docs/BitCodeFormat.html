@@ -189,7 +189,6 @@ value of 24 (011 << 3) with no continuation.  The sum (3+24) yields the value
 <p>6-bit characters encode common characters into a fixed 6-bit field.  They
 represent the following characters with the following 6-bit values:</p>
 
-<div class="doc_code">
 <pre>
 'a' .. 'z' &mdash;  0 .. 25
 'A' .. 'Z' &mdash; 26 .. 51
@@ -197,7 +196,6 @@ represent the following characters with the following 6-bit values:</p>
        '.' &mdash; 62
        '_' &mdash; 63
 </pre>
-</div>
 
 <p>This encoding is only suitable for encoding characters and strings that
 consist only of the above characters.  It is completely incapable of encoding
@@ -509,13 +507,11 @@ form <tt>[TRIPLE, 'a', 'b', 'c', 'd']</tt>.  Consider if the bitstream emitted
 the following abbrev entry:
 </p>
 
-<div class="doc_code">
 <pre>
 [0, Fixed, 4]
 [0, Array]
 [0, Char6]
 </pre>
-</div>
 
 <p>
 When emitting a record with this abbreviation, the above entry would be emitted
@@ -575,14 +571,12 @@ The <tt>BLOCKINFO</tt> block allows the description of metadata for other
 blocks.  The currently specified records are:
 </p>
 
-<div class="doc_code">
 <pre>
 [SETBID (#1), blockid]
 [DEFINE_ABBREV, ...]
 [BLOCKNAME, ...name...]
 [SETRECORDNAME, RecordID, ...name...]
 </pre>
-</div>
 
 <p>
 The <tt>SETBID</tt> record (code 1) indicates which block ID is being

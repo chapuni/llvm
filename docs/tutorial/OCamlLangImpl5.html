@@ -85,7 +85,6 @@ ideas are discovered.</p>
 want.  The basic idea is that we want to be able to write this sort of thing:
 </p>
 
-<div class="doc_code">
 <pre>
 def fib(x)
   if x &lt; 3 then
@@ -93,7 +92,6 @@ def fib(x)
   else
     fib(x-1)+fib(x-2);
 </pre>
-</div>
 
 <p>In Kaleidoscope, every construct is an expression: there are no statements.
 As such, the if/then/else expression needs to return a value like any other.
@@ -122,17 +120,14 @@ pieces.</p>
 <p>The lexer extensions are straightforward.  First we add new variants
 for the relevant tokens:</p>
 
-<div class="doc_code">
 <pre>
   (* control *)
   | If | Then | Else | For | In
 </pre>
-</div>
 
 <p>Once we have that, we recognize the new keywords in the lexer. This is pretty simple
 stuff:</p>
 
-<div class="doc_code">
 <pre>
       ...
       match Buffer.contents buffer with
@@ -145,7 +140,6 @@ stuff:</p>
       | "in" -&gt; [&lt; 'Token.In; stream &gt;]
       | id -&gt; [&lt; 'Token.Ident id; stream &gt;]
 </pre>
-</div>
 
 </div>
 
@@ -157,14 +151,12 @@ stuff:</p>
 
 <p>To represent the new expression we add a new AST variant for it:</p>
 
-<div class="doc_code">
 <pre>
 type expr =
   ...
   (* variant for if/then/else. *)
   | If of expr * expr * expr
 </pre>
-</div>
 
 <p>The AST variant just has pointers to the various subexpressions.</p>
 
@@ -180,7 +172,6 @@ type expr =
 AST node to build, our parsing logic is relatively straightforward.  First we
 define a new parsing function:</p>
 
-<div class="doc_code">
 <pre>
 let rec parse_primary = parser
   ...
@@ -190,11 +181,9 @@ let rec parse_primary = parser
        'Token.Else ?? "expected 'else'"; e=parse_expr &gt;] -&gt;
       Ast.If (c, t, e)
 </pre>
-</div>
 
 <p>Next we hook it up as a primary expression:</p>
 
-<div class="doc_code">
 <pre>
 let rec parse_primary = parser
   ...
@@ -204,7 +193,6 @@ let rec parse_primary = parser
        'Token.Else ?? "expected 'else'"; e=parse_expr &gt;] -&gt;
       Ast.If (c, t, e)
 </pre>
-</div>
 
 </div>
 
@@ -223,18 +211,15 @@ All of the code above has been thoroughly described in previous chapters.
 <p>To motivate the code we want to produce, lets take a look at a simple
 example.  Consider:</p>
 
-<div class="doc_code">
 <pre>
 extern foo();
 extern bar();
 def baz(x) if x then foo() else bar();
 </pre>
-</div>
 
 <p>If you disable optimizations, the code you'll (soon) get from Kaleidoscope
 looks like this:</p>
 
-<div class="doc_code">
 <pre>
 declare double @foo()
 
@@ -258,7 +243,6 @@ ifcont:    ; preds = %else, %then
   ret double %iftmp
 }
 </pre>
-</div>
 
 <p>To visualize the control flow graph, you can use a nifty feature of the LLVM
 '<a href="http://llvm.org/cmds/opt.html">opt</a>' tool.  If you put this LLVM IR
@@ -334,7 +318,6 @@ directly.</p>
 <p>In order to generate code for this, we implement the <tt>Codegen</tt> method
 for <tt>IfExprAST</tt>:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   ...
@@ -345,13 +328,11 @@ let rec codegen_expr = function
       let zero = const_float double_type 0.0 in
       let cond_val = build_fcmp Fcmp.One cond zero "ifcond" builder in
 </pre>
-</div>
 
 <p>This code is straightforward and similar to what we saw before.  We emit the
 expression for the condition, then compare that value to zero to get a truth
 value as a 1-bit (bool) value.</p>
 
-<div class="doc_code">
 <pre>
       (* Grab the first block so that we might later add the conditional branch
        * to it at the end of the function. *)
@@ -361,7 +342,6 @@ value as a 1-bit (bool) value.</p>
       let then_bb = append_block context "then" the_function in
       position_at_end then_bb builder;
 </pre>
-</div>
 
 <p>
 As opposed to the <a href="LangImpl5.html">C++ tutorial</a>, we have to build
@@ -376,7 +356,6 @@ into).</p>
 <p>Once it has that, it creates one block.  It is automatically appended into
 the function's list of blocks.</p>
 
-<div class="doc_code">
 <pre>
       (* Emit 'then' value. *)
       position_at_end then_bb builder;
@@ -387,7 +366,6 @@ the function's list of blocks.</p>
        * other is used for the conditional branch. *)
       let new_then_bb = insertion_block builder in
 </pre>
-</div>
 
 <p>We move the builder to start inserting into the "then" block.  Strictly
 speaking, this call moves the insertion point to be at the end of the specified
@@ -408,7 +386,6 @@ block that the Builder is emitting into if, for example, it contains a nested
 arbitrarily change the notion of the current block, we are required to get an
 up-to-date value for code that will set up the Phi node.</p>
 
-<div class="doc_code">
 <pre>
       (* Emit 'else' value. *)
       let else_bb = append_block context "else" the_function in
@@ -419,12 +396,10 @@ up-to-date value for code that will set up the Phi node.</p>
        * phi. *)
       let new_else_bb = insertion_block builder in
 </pre>
-</div>
 
 <p>Code generation for the 'else' block is basically identical to codegen for
 the 'then' block.</p>
 
-<div class="doc_code">
 <pre>
       (* Emit merge block. *)
       let merge_bb = append_block context "ifcont" the_function in
@@ -432,27 +407,23 @@ the 'then' block.</p>
       let incoming = [(then_val, new_then_bb); (else_val, new_else_bb)] in
       let phi = build_phi incoming "iftmp" builder in
 </pre>
-</div>
 
 <p>The first two lines here are now familiar: the first adds the "merge" block
 to the Function object.  The second block changes the insertion point so that
 newly created code will go into the "merge" block.  Once that is done, we need
 to create the PHI node and set up the block/value pairs for the PHI.</p>
 
-<div class="doc_code">
 <pre>
       (* Return to the start block to add the conditional branch. *)
       position_at_end start_bb builder;
       ignore (build_cond_br cond_val then_bb else_bb builder);
 </pre>
-</div>
 
 <p>Once the blocks are created, we can emit the conditional branch that chooses
 between them.  Note that creating new blocks does not implicitly affect the
 IRBuilder, so it is still inserting into the block that the condition
 went into.  This is why we needed to save the "start" block.</p>
 
-<div class="doc_code">
 <pre>
       (* Set a unconditional branch at the end of the 'then' block and the
        * 'else' block to the 'merge' block. *)
@@ -464,7 +435,6 @@ went into.  This is why we needed to save the "start" block.</p>
 
       phi
 </pre>
-</div>
 
 <p>To finish off the blocks, we create an unconditional branch
 to the merge block.  One interesting (and very important) aspect of the LLVM IR
@@ -498,7 +468,6 @@ another useful expression that is familiar from non-functional languages...</p>
 we have the tools to add more powerful things.  Lets add something more
 aggressive, a 'for' expression:</p>
 
-<div class="doc_code">
 <pre>
  extern putchard(char);
  def printstar(n)
@@ -508,7 +477,6 @@ aggressive, a 'for' expression:</p>
  # print 100 '*' characters
  printstar(100);
 </pre>
-</div>
 
 <p>This expression defines a new variable ("i" in this case) which iterates from
 a starting value, while the condition ("i &lt; n" in this case) is true,
@@ -529,7 +497,6 @@ support this.</p>
 
 <p>The lexer extensions are the same sort of thing as for if/then/else:</p>
 
-<div class="doc_code">
 <pre>
   ... in Token.token ...
   (* control *)
@@ -547,7 +514,6 @@ support this.</p>
       | "in" -&gt; [&lt; 'Token.In; stream &gt;]</b>
       | id -&gt; [&lt; 'Token.Ident id; stream &gt;]
 </pre>
-</div>
 
 </div>
 
@@ -560,14 +526,12 @@ support this.</p>
 <p>The AST variant is just as simple.  It basically boils down to capturing
 the variable name and the constituent expressions in the node.</p>
 
-<div class="doc_code">
 <pre>
 type expr =
   ...
   (* variant for for/in. *)
   | For of string * expr * expr * expr option * expr
 </pre>
-</div>
 
 </div>
 
@@ -582,7 +546,6 @@ handling of the optional step value.  The parser code handles it by checking to
 see if the second comma is present.  If not, it sets the step value to null in
 the AST node:</p>
 
-<div class="doc_code">
 <pre>
 let rec parse_primary = parser
   ...
@@ -614,7 +577,6 @@ let rec parse_primary = parser
             raise (Stream.Error "expected '=' after for")
       end stream
 </pre>
-</div>
 
 </div>
 
@@ -629,7 +591,6 @@ With the simple example above, we get this LLVM IR (note that this dump is
 generated with optimizations disabled for clarity):
 </p>
 
-<div class="doc_code">
 <pre>
 declare double @putchard(double)
 
@@ -656,7 +617,6 @@ afterloop:    ; preds = %loop
   ret double 0.000000e+00
 }
 </pre>
-</div>
 
 <p>This loop contains all the same constructs we saw before: a phi node, several
 expressions, and some basic blocks.  Lets see how this fits together.</p>
@@ -672,7 +632,6 @@ expressions, and some basic blocks.  Lets see how this fits together.</p>
 <p>The first part of Codegen is very simple: we just output the start expression
 for the loop value:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   ...
@@ -680,14 +639,12 @@ let rec codegen_expr = function
       (* Emit the start code first, without 'variable' in scope. *)
       let start_val = codegen_expr start in
 </pre>
-</div>
 
 <p>With this out of the way, the next step is to set up the LLVM basic block
 for the start of the loop body.  In the case above, the whole loop body is one
 block, but remember that the body code itself could consist of multiple blocks
 (e.g. if it contains an if/then/else or a for/in expression).</p>
 
-<div class="doc_code">
 <pre>
       (* Make the new basic block for the loop header, inserting after current
        * block. *)
@@ -699,14 +656,12 @@ block, but remember that the body code itself could consist of multiple blocks
        * loop_bb. *)
       ignore (build_br loop_bb builder);
 </pre>
-</div>
 
 <p>This code is similar to what we saw for if/then/else.  Because we will need
 it to create the Phi node, we remember the block that falls through into the
 loop.  Once we have that, we create the actual block that starts the loop and
 create an unconditional branch for the fall-through between the two blocks.</p>
 
-<div class="doc_code">
 <pre>
       (* Start insertion in loop_bb. *)
       position_at_end loop_bb builder;
@@ -714,7 +669,6 @@ create an unconditional branch for the fall-through between the two blocks.</p>
       (* Start the PHI node with an entry for start. *)
       let variable = build_phi [(start_val, preheader_bb)] var_name builder in
 </pre>
-</div>
 
 <p>Now that the "preheader" for the loop is set up, we switch to emitting code
 for the loop body.  To begin with, we move the insertion point and create the
@@ -723,7 +677,6 @@ value for the starting value, we add it to the Phi node.  Note that the Phi will
 eventually get a second value for the backedge, but we can't set it up yet
 (because it doesn't exist!).</p>
 
-<div class="doc_code">
 <pre>
       (* Within the loop, the variable is defined equal to the PHI node. If it
        * shadows an existing variable, we have to restore it, so save it
@@ -738,7 +691,6 @@ eventually get a second value for the backedge, but we can't set it up yet
        * don't allow an error *)
       ignore (codegen_expr body);
 </pre>
-</div>
 
 <p>Now the code starts to get more interesting.  Our 'for' loop introduces a new
 variable to the symbol table.  This means that our symbol table can now contain
@@ -755,7 +707,6 @@ no shadowed variable).</p>
 codegen's the body.  This allows the body to use the loop variable: any
 references to it will naturally find it in the symbol table.</p>
 
-<div class="doc_code">
 <pre>
       (* Emit the step value. *)
       let step_val =
@@ -767,14 +718,12 @@ references to it will naturally find it in the symbol table.</p>
 
       let next_var = build_add variable step_val "nextvar" builder in
 </pre>
-</div>
 
 <p>Now that the body is emitted, we compute the next value of the iteration
 variable by adding the step value, or 1.0 if it isn't present.
 '<tt>next_var</tt>' will be the value of the loop variable on the next iteration
 of the loop.</p>
 
-<div class="doc_code">
 <pre>
       (* Compute the end condition. *)
       let end_cond = codegen_expr end_ in
@@ -783,13 +732,11 @@ of the loop.</p>
       let zero = const_float double_type 0.0 in
       let end_cond = build_fcmp Fcmp.One end_cond zero "loopcond" builder in
 </pre>
-</div>
 
 <p>Finally, we evaluate the exit value of the loop, to determine whether the
 loop should exit.  This mirrors the condition evaluation for the if/then/else
 statement.</p>
 
-<div class="doc_code">
 <pre>
       (* Create the "after loop" block and insert it. *)
       let loop_end_bb = insertion_block builder in
@@ -801,7 +748,6 @@ statement.</p>
       (* Any new code will be inserted in after_bb. *)
       position_at_end after_bb builder;
 </pre>
-</div>
 
 <p>With the code for the body of the loop complete, we just need to finish up
 the control flow for it.  This code remembers the end block (for the phi node), then creates the block for the loop exit ("afterloop").  Based on the value of the
@@ -809,7 +755,6 @@ exit condition, it creates a conditional branch that chooses between executing
 the loop again and exiting the loop.  Any future code is emitted in the
 "afterloop" block, so it sets the insertion position to it.</p>
 
-<div class="doc_code">
 <pre>
       (* Add a new entry to the PHI node for the backedge. *)
       add_incoming (next_var, loop_end_bb) variable;
@@ -823,7 +768,6 @@ the loop again and exiting the loop.  Any future code is emitted in the
       (* for expr always returns 0.0. *)
       const_null double_type
 </pre>
-</div>
 
 <p>The final code handles various cleanups: now that we have the
 "<tt>next_var</tt>" value, we can add the incoming value to the loop PHI node.
@@ -853,20 +797,18 @@ Here is the complete code listing for our running example, enhanced with the
 if/then/else and for expressions..  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
 # Compile
 ocamlbuild toy.byte
 # Run
 ./toy.byte
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
 <dl>
 <dt>_tags:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 &lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
 &lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
@@ -876,7 +818,7 @@ ocamlbuild toy.byte
 </dd>
 
 <dt>myocamlbuild.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 open Ocamlbuild_plugin;;
 
@@ -892,7 +834,7 @@ dep ["link"; "ocaml"; "use_bindings"] ["bindings.o"];;
 </dd>
 
 <dt>token.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer Tokens
@@ -917,7 +859,7 @@ type token =
 </dd>
 
 <dt>lexer.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer
@@ -980,7 +922,7 @@ and lex_comment = parser
 </dd>
 
 <dt>ast.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Abstract Syntax Tree (aka Parse Tree)
@@ -1017,7 +959,7 @@ type func = Function of proto * expr
 </dd>
 
 <dt>parser.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===---------------------------------------------------------------------===
  * Parser
@@ -1181,7 +1123,7 @@ let parse_extern = parser
 </dd>
 
 <dt>codegen.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Code Generation
@@ -1412,7 +1354,7 @@ let codegen_func the_fpm = function
 </dd>
 
 <dt>toplevel.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Top-Level parsing and JIT Driver
@@ -1467,7 +1409,7 @@ let rec main_loop the_fpm the_execution_engine stream =
 </dd>
 
 <dt>toy.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Main driver code.
@@ -1526,7 +1468,7 @@ main ()
 </dd>
 
 <dt>bindings.c</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 #include &lt;stdio.h&gt;
 

@@ -192,7 +192,6 @@ laden with target specific assumptions.  As one simple example, the preprocessor
 often destructively removes target-independence from the code when it processes
 the input text:</p>
 
-<div class="doc_code">
 <pre>
 #ifdef __i386__
   int X = 1;
@@ -200,7 +199,6 @@ the input text:</p>
   int X = 42;
 #endif
 </pre>
-</div>
 
 <p>While it is possible to engineer more and more complex solutions to problems
 like this, it cannot be solved in full generality in a way that is better than shipping

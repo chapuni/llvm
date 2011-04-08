@@ -80,7 +80,6 @@ To understand why mutable variables cause complexities in SSA construction,
 consider this extremely simple C example:
 </p>
 
-<div class="doc_code">
 <pre>
 int G, H;
 int test(_Bool Condition) {
@@ -92,14 +91,12 @@ int test(_Bool Condition) {
   return X;
 }
 </pre>
-</div>
 
 <p>In this case, we have the variable "X", whose value depends on the path
 executed in the program.  Because there are two different possible values for X
 before the return instruction, a PHI node is inserted to merge the two values.
 The LLVM IR that we want for this example looks like this:</p>
 
-<div class="doc_code">
 <pre>
 @G = weak global i32 0   ; type of @G is i32*
 @H = weak global i32 0   ; type of @H is i32*
@@ -121,7 +118,6 @@ cond_next:
   ret i32 %X.2
 }
 </pre>
-</div>
 
 <p>In this example, the loads from the G and H global variables are explicit in
 the LLVM IR, and they live in the then/else branches of the if statement
@@ -174,7 +170,6 @@ address for that space.  Stack variables work the same way, except that instead 
 being declared with global variable definitions, they are declared with the
 <a href="../LangRef.html#i_alloca">LLVM alloca instruction</a>:</p>
 
-<div class="doc_code">
 <pre>
 define i32 @example() {
 entry:
@@ -185,7 +180,6 @@ entry:
   store i32 %tmp2, i32* %X  ; store it back
   ...
 </pre>
-</div>
 
 <p>This code shows an example of how you can declare and manipulate a stack
 variable in the LLVM IR.  Stack memory allocated with the alloca instruction is
@@ -193,7 +187,6 @@ fully general: you can pass the address of the stack slot to functions, you can
 store it in other variables, etc.  In our example above, we could rewrite the
 example to use the alloca technique to avoid using a PHI node:</p>
 
-<div class="doc_code">
 <pre>
 @G = weak global i32 0   ; type of @G is i32*
 @H = weak global i32 0   ; type of @H is i32*
@@ -218,7 +211,6 @@ cond_next:
   ret i32 %X.2
 }
 </pre>
-</div>
 
 <p>With this, we have discovered a way to handle arbitrary mutable variables
 without the need to create Phi nodes at all:</p>
@@ -238,7 +230,6 @@ this case, promoting allocas like this into SSA registers, inserting Phi nodes
 as appropriate.  If you run this example through the pass, for example, you'll
 get:</p>
 
-<div class="doc_code">
 <pre>
 $ <b>llvm-as &lt; example.ll | opt -mem2reg | llvm-dis</b>
 @G = weak global i32 0
@@ -261,7 +252,6 @@ cond_next:
   ret i32 %X.01
 }
 </pre>
-</div>
 
 <p>The mem2reg pass implements the standard "iterated dominance frontier"
 algorithm for constructing SSA form and has a number of optimizations that speed
@@ -345,7 +335,6 @@ goes so far :).  Also, the ability to define new variables is a
 useful thing regardless of whether you will be mutating them.  Here's a
 motivating example that shows how we could use these:</p>
 
-<div class="doc_code">
 <pre>
 # Define ':' for sequencing: as a low-precedence operator that ignores operands
 # and just returns the RHS.
@@ -370,7 +359,6 @@ def fibi(x)
 # Call it.
 fibi(10);
 </pre>
-</div>
 
 <p>
 In order to mutate variables, we have to change our existing variables to use
@@ -413,17 +401,14 @@ update:</p>
 <tt>AllocInst*</tt>s as <tt>Llvm.llvalue</tt>s, but this may change in the
 future to be more type safe.</p>
 
-<div class="doc_code">
 <pre>
 let named_values:(string, llvalue) Hashtbl.t = Hashtbl.create 10
 </pre>
-</div>
 
 <p>Also, since we will need to create these alloca's, we'll use a helper
 function that ensures that the allocas are created in the entry block of the
 function:</p>
 
-<div class="doc_code">
 <pre>
 (* Create an alloca instruction in the entry block of the function. This
  * is used for mutable variables etc. *)
@@ -431,7 +416,6 @@ let create_entry_block_alloca the_function var_name =
   let builder = builder_at (instr_begin (entry_block the_function)) in
   build_alloca double_type var_name builder
 </pre>
-</div>
 
 <p>This funny looking code creates an <tt>Llvm.llbuilder</tt> object that is
 pointing at the first instruction of the entry block.  It then creates an alloca
@@ -443,7 +427,6 @@ variable references.  In our new scheme, variables live on the stack, so code
 generating a reference to them actually needs to produce a load from the stack
 slot:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   ...
@@ -454,14 +437,12 @@ let rec codegen_expr = function
       <b>(* Load the value. *)
       build_load v name builder</b>
 </pre>
-</div>
 
 <p>As you can see, this is pretty straightforward.  Now we need to update the
 things that define the variables to set up the alloca.  We'll start with
 <tt>codegen_expr Ast.For ...</tt> (see the <a href="#code">full code listing</a>
 for the unabridged code):</p>
 
-<div class="doc_code">
 <pre>
   | Ast.For (var_name, start, end_, step, body) -&gt;
       let the_function = block_parent (insertion_block builder) in
@@ -497,7 +478,6 @@ for the unabridged code):</p>
       ignore(build_store next_var alloca builder);</b>
       ...
 </pre>
-</div>
 
 <p>This code is virtually identical to the code <a
 href="OCamlLangImpl5.html#forcodegen">before we allowed mutable variables</a>.
@@ -507,7 +487,6 @@ load/store to access the variable as needed.</p>
 <p>To support mutable argument variables, we need to also make allocas for them.
 The code for this is also pretty simple:</p>
 
-<div class="doc_code">
 <pre>
 (* Create an alloca for each argument and register the argument in the symbol
  * table so that references to it will succeed. *)
@@ -527,7 +506,6 @@ let create_argument_allocas the_function proto =
     Hashtbl.add named_values var_name alloca;
   ) (params the_function)
 </pre>
-</div>
 
 <p>For each argument, we make an alloca, store the input value to the function
 into the alloca, and register the alloca as the memory location for the
@@ -537,7 +515,6 @@ it sets up the entry block for the function.</p>
 <p>The final missing piece is adding the mem2reg pass, which allows us to get
 good codegen once again:</p>
 
-<div class="doc_code">
 <pre>
 let main () =
   ...
@@ -556,13 +533,11 @@ let main () =
   (* reassociate expressions. *)
   add_reassociation the_fpm;
 </pre>
-</div>
 
 <p>It is interesting to see what the code looks like before and after the
 mem2reg optimization runs.  For example, this is the before/after code for our
 recursive fib function.  Before the optimization:</p>
 
-<div class="doc_code">
 <pre>
 define double @fib(double %x) {
 entry:
@@ -592,7 +567,6 @@ ifcont:    ; preds = %else, %then
   ret double %iftmp
 }
 </pre>
-</div>
 
 <p>Here there is only one variable (x, the input argument) but you can still
 see the extremely simple-minded code generation strategy we are using.  In the
@@ -604,7 +578,6 @@ PHI node for it, so we still just make the PHI.</p>
 
 <p>Here is the code after the mem2reg pass runs:</p>
 
-<div class="doc_code">
 <pre>
 define double @fib(double %x) {
 entry:
@@ -629,7 +602,6 @@ ifcont:    ; preds = %else, %then
   ret double %iftmp
 }
 </pre>
-</div>
 
 <p>This is a trivial case for mem2reg, since there are no redefinitions of the
 variable.  The point of showing this is to calm your tension about inserting
@@ -637,7 +609,6 @@ such blatent inefficiencies :).</p>
 
 <p>After the rest of the optimizers run, we get:</p>
 
-<div class="doc_code">
 <pre>
 define double @fib(double %x) {
 entry:
@@ -658,7 +629,6 @@ ifcont:
   ret double 1.000000e+00
 }
 </pre>
-</div>
 
 <p>Here we see that the simplifycfg pass decided to clone the return instruction
 into the end of the 'else' block.  This allowed it to eliminate some branches
@@ -680,7 +650,6 @@ simple.  We will parse it just like any other binary operator, but handle it
 internally (instead of allowing the user to define it).  The first step is to
 set a precedence:</p>
 
-<div class="doc_code">
 <pre>
 let main () =
   (* Install standard binary operators.
@@ -691,13 +660,11 @@ let main () =
   Hashtbl.add Parser.binop_precedence '-' 20;
   ...
 </pre>
-</div>
 
 <p>Now that the parser knows the precedence of the binary operator, it takes
 care of all the parsing and AST generation.  We just need to implement codegen
 for the assignment operator.  This looks like:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
       begin match op with
@@ -710,7 +677,6 @@ let rec codegen_expr = function
             | _ -&gt; raise (Error "destination of '=' must be a variable")
           in
 </pre>
-</div>
 
 <p>Unlike the rest of the binary operators, our assignment operator doesn't
 follow the "emit LHS, emit RHS, do computation" model.  As such, it is handled
@@ -720,7 +686,6 @@ have "(x+1) = expr" - only things like "x = expr" are allowed.
 </p>
 
 
-<div class="doc_code">
 <pre>
           (* Codegen the rhs. *)
           let val_ = codegen_expr rhs in
@@ -734,7 +699,6 @@ have "(x+1) = expr" - only things like "x = expr" are allowed.
       | _ -&gt;
 			...
 </pre>
-</div>
 
 <p>Once we have the variable, codegen'ing the assignment is straightforward:
 we emit the RHS of the assignment, create a store, and return the computed
@@ -743,7 +707,6 @@ value.  Returning a value allows for chained assignments like "X = (Y = Z)".</p>
 <p>Now that we have an assignment operator, we can mutate loop variables and
 arguments.  For example, we can now run code like this:</p>
 
-<div class="doc_code">
 <pre>
 # Function to print a double.
 extern printd(x);
@@ -759,7 +722,6 @@ def test(x)
 
 test(123);
 </pre>
-</div>
 
 <p>When run, this example prints "123" and then "4", showing that we did
 actually mutate the value!  Okay, we have now officially implemented our goal:
@@ -781,7 +743,6 @@ Kaleidoscope: we extend the lexer, the parser, the AST and the code generator.
 The first step for adding our new 'var/in' construct is to extend the lexer.
 As before, this is pretty trivial, the code looks like this:</p>
 
-<div class="doc_code">
 <pre>
 type token =
   ...
@@ -798,12 +759,10 @@ and lex_ident buffer = parser
       <b>| "var" -&gt; [&lt; 'Token.Var; stream &gt;]</b>
       ...
 </pre>
-</div>
 
 <p>The next step is to define the AST node that we will construct.  For var/in,
 it looks like this:</p>
 
-<div class="doc_code">
 <pre>
 type expr =
   ...
@@ -811,7 +770,6 @@ type expr =
   | Var of (string * expr option) array * expr
   ...
 </pre>
-</div>
 
 <p>var/in allows a list of names to be defined all at once, and each name can
 optionally have an initializer value.  As such, we capture this information in
@@ -821,7 +779,6 @@ the variables defined by the var/in.</p>
 <p>With this in place, we can define the parser pieces.  The first thing we do
 is add it as a primary expression:</p>
 
-<div class="doc_code">
 <pre>
 (* primary
  *   ::= identifier
@@ -859,12 +816,10 @@ and parse_var_names accumulator = parser
        e=parse_var_names ((id, init) :: accumulator) &gt;] -&gt; e
   | [&lt; &gt;] -&gt; accumulator
 </pre>
-</div>
 
 <p>Now that we can parse and represent the code, we need to support emission of
 LLVM IR for it.  This code starts out with:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   ...
@@ -876,13 +831,11 @@ let rec codegen_expr = function
       (* Register all variables and emit their initializer. *)
       Array.iter (fun (var_name, init) -&gt;
 </pre>
-</div>
 
 <p>Basically it loops over all the variables, installing them one at a time.
 For each variable we put into the symbol table, we remember the previous value
 that we replace in OldBindings.</p>
 
-<div class="doc_code">
 <pre>
         (* Emit the initializer before adding the variable to scope, this
          * prevents the initializer from referencing the variable itself, and
@@ -913,23 +866,19 @@ that we replace in OldBindings.</p>
         Hashtbl.add named_values var_name alloca;
       ) var_names;
 </pre>
-</div>
 
 <p>There are more comments here than code.  The basic idea is that we emit the
 initializer, create the alloca, then update the symbol table to point to it.
 Once all the variables are installed in the symbol table, we evaluate the body
 of the var/in expression:</p>
 
-<div class="doc_code">
 <pre>
       (* Codegen the body, now that all vars are in scope. *)
       let body_val = codegen_expr body in
 </pre>
-</div>
 
 <p>Finally, before returning, we restore the previous variable bindings:</p>
 
-<div class="doc_code">
 <pre>
       (* Pop all our variables from scope. *)
       List.iter (fun (var_name, old_value) -&gt;
@@ -939,7 +888,6 @@ of the var/in expression:</p>
       (* Return the body computation. *)
       body_val
 </pre>
-</div>
 
 <p>The end result of all of this is that we get properly scoped variable
 definitions, and we even (trivially) allow mutation of them :).</p>
@@ -963,20 +911,18 @@ Here is the complete code listing for our running example, enhanced with mutable
 variables and var/in support.  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
 # Compile
 ocamlbuild toy.byte
 # Run
 ./toy.byte
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
 <dl>
 <dt>_tags:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 &lt;{lexer,parser}.ml&gt;: use_camlp4, pp(camlp4of)
 &lt;*.{byte,native}&gt;: g++, use_llvm, use_llvm_analysis
@@ -986,7 +932,7 @@ ocamlbuild toy.byte
 </dd>
 
 <dt>myocamlbuild.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 open Ocamlbuild_plugin;;
 
@@ -1002,7 +948,7 @@ dep ["link"; "ocaml"; "use_bindings"] ["bindings.o"];;
 </dd>
 
 <dt>token.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer Tokens
@@ -1033,7 +979,7 @@ type token =
 </dd>
 
 <dt>lexer.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Lexer
@@ -1099,7 +1045,7 @@ and lex_comment = parser
 </dd>
 
 <dt>ast.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Abstract Syntax Tree (aka Parse Tree)
@@ -1144,7 +1090,7 @@ type func = Function of proto * expr
 </dd>
 
 <dt>parser.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===---------------------------------------------------------------------===
  * Parser
@@ -1371,7 +1317,7 @@ let parse_extern = parser
 </dd>
 
 <dt>codegen.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Code Generation
@@ -1747,7 +1693,7 @@ let codegen_func the_fpm = function
 </dd>
 
 <dt>toplevel.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Top-Level parsing and JIT Driver
@@ -1802,7 +1748,7 @@ let rec main_loop the_fpm the_execution_engine stream =
 </dd>
 
 <dt>toy.ml:</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 (*===----------------------------------------------------------------------===
  * Main driver code.
@@ -1865,7 +1811,7 @@ main ()
 </dd>
 
 <dt>bindings.c</dt>
-<dd class="doc_code">
+<dd>
 <pre>
 #include &lt;stdio.h&gt;
 

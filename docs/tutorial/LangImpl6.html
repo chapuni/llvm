@@ -86,7 +86,6 @@ as the JIT runs.</p>
 now, Kaleidoscope has no unary operators at all) as well as binary operators.
 An example of this is:</p>
 
-<div class="doc_code">
 <pre>
 # Logical unary not.
 def unary!(v)
@@ -112,7 +111,6 @@ def binary| 5 (LHS RHS)
 def binary= 9 (LHS RHS)
   !(LHS &lt; RHS | LHS &gt; RHS);
 </pre>
-</div>
 
 <p>Many languages aspire to being able to implement their standard runtime
 library in the language itself.  In Kaleidoscope, we can implement significant
@@ -133,7 +131,6 @@ operators.</p>
 <p>Adding support for user-defined binary operators is pretty simple with our
 current framework.  We'll first add support for the unary/binary keywords:</p>
 
-<div class="doc_code">
 <pre>
 enum Token {
   ...
@@ -149,7 +146,6 @@ static int gettok() {
     if (IdentifierStr == "unary") return tok_unary;</b>
     return tok_identifier;
 </pre>
-</div>
 
 <p>This just adds lexer support for the unary and binary keywords, like we
 did in <a href="LangImpl5.html#iflexer">previous chapters</a>.  One nice thing
@@ -164,7 +160,6 @@ grammar so far, the "name" for the function definition is parsed as the
 represent our new user-defined operators as prototypes, we have to extend
 the  <tt>PrototypeAST</tt> AST node like this:</p>
 
-<div class="doc_code">
 <pre>
 /// PrototypeAST - This class represents the "prototype" for a function,
 /// which captures its argument names as well as if it is an operator.
@@ -191,7 +186,6 @@ public:
   Function *Codegen();
 };
 </pre>
-</div>
 
 <p>Basically, in addition to knowing a name for the prototype, we now keep track
 of whether it was an operator, and if it was, what precedence level the operator
@@ -199,7 +193,6 @@ is at.  The precedence is only used for binary operators (as you'll see below,
 it just doesn't apply for unary operators).  Now that we have a way to represent
 the prototype for a user-defined operator, we need to parse it:</p>
 
-<div class="doc_code">
 <pre>
 /// prototype
 ///   ::= id '(' id* ')'
@@ -256,7 +249,6 @@ static PrototypeAST *ParsePrototype() {
   return new PrototypeAST(FnName, ArgNames, Kind != 0, BinaryPrecedence);</b>
 }
 </pre>
-</div>
 
 <p>This is all fairly straightforward parsing code, and we have already seen
 a lot of similar code in the past.  One interesting part about the code above is 
@@ -269,7 +261,6 @@ them, including embedded nul characters.</p>
 Given our current structure, this is a simple addition of a default case for our
 existing binary operator node:</p>
 
-<div class="doc_code">
 <pre>
 Value *BinaryExprAST::Codegen() {
   Value *L = LHS-&gt;Codegen();
@@ -298,7 +289,6 @@ Value *BinaryExprAST::Codegen() {
 }
 
 </pre>
-</div>
 
 <p>As you can see above, the new code is actually really simple.  It just does
 a lookup for the appropriate operator in the symbol table and generates a 
@@ -308,7 +298,6 @@ name) everything falls into place.</p>
 
 <p>The final piece of code we are missing, is a bit of top-level magic:</p>
 
-<div class="doc_code">
 <pre>
 Function *FunctionAST::Codegen() {
   NamedValues.clear();
@@ -328,7 +317,6 @@ Function *FunctionAST::Codegen() {
   if (Value *RetVal = Body-&gt;Codegen()) {
     ...
 </pre>
-</div>
 
 <p>Basically, before codegening a function, if it is a user-defined operator, we
 register it in the precedence table.  This allows the binary operator parsing
@@ -352,7 +340,6 @@ language, we'll need to add everything to support them.  Above, we added simple
 support for the 'unary' keyword to the lexer.  In addition to that, we need an
 AST node:</p>
 
-<div class="doc_code">
 <pre>
 /// UnaryExprAST - Expression class for a unary operator.
 class UnaryExprAST : public ExprAST {
@@ -364,14 +351,12 @@ public:
   virtual Value *Codegen();
 };
 </pre>
-</div>
 
 <p>This AST node is very simple and obvious by now.  It directly mirrors the
 binary operator AST node, except that it only has one child.  With this, we
 need to add the parsing logic.  Parsing a unary operator is pretty simple: we'll
 add a new function to do it:</p>
 
-<div class="doc_code">
 <pre>
 /// unary
 ///   ::= primary
@@ -389,7 +374,6 @@ static ExprAST *ParseUnary() {
   return 0;
 }
 </pre>
-</div>
 
 <p>The grammar we add is pretty straightforward here.  If we see a unary
 operator when parsing a primary operator, we eat the operator as a prefix and
@@ -402,7 +386,6 @@ information.</p>
 To do this, we change previous callers of ParsePrimary to call ParseUnary
 instead:</p>
 
-<div class="doc_code">
 <pre>
 /// binoprhs
 ///   ::= ('+' unary)*
@@ -423,14 +406,12 @@ static ExprAST *ParseExpression() {
   return ParseBinOpRHS(0, LHS);
 }
 </pre>
-</div>
 
 <p>With these two simple changes, we are now able to parse unary operators and build the
 AST for them.  Next up, we need to add parser support for prototypes, to parse
 the unary operator prototype.  We extend the binary operator code above 
 with:</p>
 
-<div class="doc_code">
 <pre>
 /// prototype
 ///   ::= id '(' id* ')'
@@ -462,14 +443,12 @@ static PrototypeAST *ParsePrototype() {
   case tok_binary:
     ...
 </pre>
-</div>
 
 <p>As with binary operators, we name unary operators with a name that includes
 the operator character.  This assists us at code generation time.  Speaking of,
 the final piece we need to add is codegen support for unary operators.  It looks
 like this:</p>
 
-<div class="doc_code">
 <pre>
 Value *UnaryExprAST::Codegen() {
   Value *OperandV = Operand->Codegen();
@@ -482,7 +461,6 @@ Value *UnaryExprAST::Codegen() {
   return Builder.CreateCall(F, OperandV, "unop");
 }
 </pre>
-</div>
 
 <p>This code is similar to, but simpler than, the code for binary operators.  It
 is simpler primarily because it doesn't need to handle any predefined operators.
@@ -502,7 +480,6 @@ can do a lot of interesting things, including I/O, math, and a bunch of other
 things.  For example, we can now add a nice sequencing operator (printd is
 defined to print out the specified value and a newline):</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern printd(x);</b>
 Read extern: declare double @printd(double)
@@ -514,11 +491,9 @@ ready&gt; <b>printd(123) : printd(456) : printd(789);</b>
 789.000000
 Evaluated to 0.000000
 </pre>
-</div>
 
 <p>We can also define a bunch of other "primitive" operations, such as:</p>
 
-<div class="doc_code">
 <pre>
 # Logical unary not.
 def unary!(v)
@@ -556,7 +531,6 @@ def binary = 9 (LHS RHS)
   !(LHS &lt; RHS | LHS &gt; RHS);
 
 </pre>
-</div>
 
 
 <p>Given the previous if/then/else support, we can also define interesting
@@ -564,7 +538,6 @@ functions for I/O.  For example, the following prints out a character whose
 "density" reflects the value passed in: the lower the value, the denser the
 character:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt;
 <b>
@@ -584,14 +557,12 @@ ready&gt; <b>printdensity(1): printdensity(2): printdensity(3) :
 *++.. 
 Evaluated to 0.000000
 </pre>
-</div>
 
 <p>Based on these simple primitive operations, we can start to define more
 interesting things.  For example, here's a little function that solves for the
 number of iterations it takes a function in the complex plane to
 converge:</p>
 
-<div class="doc_code">
 <pre>
 # determine whether the specific location diverges.
 # Solve for z = z^2 + c in the complex plane.
@@ -607,7 +578,6 @@ def mandleconverger(real imag iters creal cimag)
 def mandleconverge(real imag)
   mandleconverger(real, imag, 0, real, imag);
 </pre>
-</div>
 
 <p>This "z = z<sup>2</sup> + c" function is a beautiful little creature that is the basis
 for computation of the <a 
@@ -619,7 +589,6 @@ you can see the Mandelbrot set.  Given that we are limited to using putchard
 here, our amazing graphical output is limited, but we can whip together
 something using the density plotter above:</p>
 
-<div class="doc_code">
 <pre>
 # compute and plot the mandlebrot set with the specified 2 dimensional range
 # info.
@@ -636,11 +605,9 @@ def mandel(realstart imagstart realmag imagmag)
   mandelhelp(realstart, realstart+realmag*78, realmag,
              imagstart, imagstart+imagmag*40, imagmag);
 </pre>
-</div>
 
 <p>Given this, we can try plotting out the mandlebrot set!  Lets try it out:</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>mandel(-2.3, -1.3, 0.05, 0.07);</b>
 *******************************+++++++++++*************************************
@@ -773,7 +740,6 @@ ready&gt; <b>mandel(-0.9, -1.4, 0.02, 0.03);</b>
 Evaluated to 0.000000
 ready&gt; <b>^D</b>
 </pre>
-</div>
 
 <p>At this point, you may be starting to realize that Kaleidoscope is a real
 and powerful language.  It may not be self-similar :), but it can be used to
@@ -806,18 +772,15 @@ Here is the complete code listing for our running example, enhanced with the
 if/then/else and for expressions..  To build this example, use:
 </p>
 
-<div class="doc_code">
 <pre>
    # Compile
    g++ -g toy.cpp `llvm-config --cppflags --ldflags --libs core jit native` -O3 -o toy
    # Run
    ./toy
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
-<div class="doc_code">
 <pre>
 #include "llvm/DerivedTypes.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
@@ -1796,7 +1759,6 @@ int main() {
   return 0;
 }
 </pre>
-</div>
 
 <a href="LangImpl7.html">Next: Extending the language: mutable variables / SSA construction</a>
 </div>

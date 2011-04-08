@@ -72,7 +72,6 @@ want one object for each construct in the language, and the AST should closely
 model the language.  In Kaleidoscope, we have expressions, a prototype, and a
 function object.  We'll start with expressions first:</p>
 
-<div class="doc_code">
 <pre>
 /// ExprAST - Base class for all expression nodes.
 class ExprAST {
@@ -87,7 +86,6 @@ public:
   NumberExprAST(double val) : Val(val) {}
 };
 </pre>
-</div>
 
 <p>The code above shows the definition of the base ExprAST class and one
 subclass which we use for numeric literals.  The important thing to note about
@@ -101,7 +99,6 @@ for example.  Here are the other expression AST node definitions that we'll use
 in the basic form of the Kaleidoscope language:
 </p>
 
-<div class="doc_code">
 <pre>
 /// VariableExprAST - Expression class for referencing a variable, like "a".
 class VariableExprAST : public ExprAST {
@@ -128,7 +125,6 @@ public:
     : Callee(callee), Args(args) {}
 };
 </pre>
-</div>
 
 <p>This is all (intentionally) rather straight-forward: variables capture the
 variable name, binary operators capture their opcode (e.g. '+'), and calls
@@ -143,7 +139,6 @@ we'll fix that in a later installment.  The two things we need next are a way
 to talk about the interface to a function, and a way to talk about functions
 themselves:</p>
 
-<div class="doc_code">
 <pre>
 /// PrototypeAST - This class represents the "prototype" for a function,
 /// which captures its name, and its argument names (thus implicitly the number
@@ -165,7 +160,6 @@ public:
     : Proto(proto), Body(body) {}
 };
 </pre>
-</div>
 
 <p>In Kaleidoscope, functions are typed with just a count of their arguments.
 Since all values are double precision floating point, the type of each argument
@@ -188,17 +182,14 @@ it.  The idea here is that we want to parse something like "x+y" (which is
 returned as three tokens by the lexer) into an AST that could be generated with
 calls like this:</p>
 
-<div class="doc_code">
 <pre>
   ExprAST *X = new VariableExprAST("x");
   ExprAST *Y = new VariableExprAST("y");
   ExprAST *Result = new BinaryExprAST('+', X, Y);
 </pre>
-</div>
 
 <p>In order to do this, we'll start by defining some basic helper routines:</p>
 
-<div class="doc_code">
 <pre>
 /// CurTok/getNextToken - Provide a simple token buffer.  CurTok is the current
 /// token the parser is looking at.  getNextToken reads another token from the
@@ -208,7 +199,6 @@ static int getNextToken() {
   return CurTok = gettok();
 }
 </pre>
-</div>
 
 <p>
 This implements a simple token buffer around the lexer.  This allows 
@@ -216,7 +206,6 @@ us to look one token ahead at what the lexer is returning.  Every function in
 our parser will assume that CurTok is the current token that needs to be
 parsed.</p>
 
-<div class="doc_code">
 <pre>
 
 /// Error* - These are little helper functions for error handling.
@@ -224,7 +213,6 @@ ExprAST *Error(const char *Str) { fprintf(stderr, "Error: %s\n", Str);return 0;}
 PrototypeAST *ErrorP(const char *Str) { Error(Str); return 0; }
 FunctionAST *ErrorF(const char *Str) { Error(Str); return 0; }
 </pre>
-</div>
 
 <p>
 The <tt>Error</tt> routines are simple helper routines that our parser will use
@@ -249,7 +237,6 @@ For each production in our grammar, we'll define a function which parses that
 production.  For numeric literals, we have:
 </p>
 
-<div class="doc_code">
 <pre>
 /// numberexpr ::= number
 static ExprAST *ParseNumberExpr() {
@@ -258,7 +245,6 @@ static ExprAST *ParseNumberExpr() {
   return Result;
 }
 </pre>
-</div>
 
 <p>This routine is very simple: it expects to be called when the current token
 is a <tt>tok_number</tt> token.  It takes the current number value, creates 
@@ -272,7 +258,6 @@ production) ready to go.  This is a fairly standard way to go for recursive
 descent parsers.  For a better example, the parenthesis operator is defined like
 this:</p>
 
-<div class="doc_code">
 <pre>
 /// parenexpr ::= '(' expression ')'
 static ExprAST *ParseParenExpr() {
@@ -286,7 +271,6 @@ static ExprAST *ParseParenExpr() {
   return V;
 }
 </pre>
-</div>
 
 <p>This function illustrates a number of interesting things about the 
 parser:</p>
@@ -311,7 +295,6 @@ needed.</p>
 <p>The next simple production is for handling variable references and function
 calls:</p>
 
-<div class="doc_code">
 <pre>
 /// identifierexpr
 ///   ::= identifier
@@ -347,7 +330,6 @@ static ExprAST *ParseIdentifierExpr() {
   return new CallExprAST(IdName, Args);
 }
 </pre>
-</div>
 
 <p>This routine follows the same style as the other routines.  (It expects to be
 called if the current token is a <tt>tok_identifier</tt> token).  It also has
@@ -365,7 +347,6 @@ clear <a href="LangImpl6.html#unary">later in the tutorial</a>.  In order to
 parse an arbitrary primary expression, we need to determine what sort of
 expression it is:</p>
 
-<div class="doc_code">
 <pre>
 /// primary
 ///   ::= identifierexpr
@@ -380,7 +361,6 @@ static ExprAST *ParsePrimary() {
   }
 }
 </pre>
-</div>
 
 <p>Now that you see the definition of this function, it is more obvious why we
 can assume the state of CurTok in the various functions.  This uses look-ahead
@@ -410,7 +390,6 @@ use <a href=
 Parsing</a>.  This parsing technique uses the precedence of binary operators to
 guide recursion.  To start with, we need a table of precedences:</p>
 
-<div class="doc_code">
 <pre>
 /// BinopPrecedence - This holds the precedence for each binary operator that is
 /// defined.
@@ -437,7 +416,6 @@ int main() {
   ...
 }
 </pre>
-</div>
 
 <p>For the basic form of Kaleidoscope, we will only support 4 binary operators
 (this can obviously be extended by you, our brave and intrepid reader).  The
@@ -463,7 +441,6 @@ about nested subexpressions like (c+d) at all.
 To start, an expression is a primary expression potentially followed by a
 sequence of [binop,primaryexpr] pairs:</p>
 
-<div class="doc_code">
 <pre>
 /// expression
 ///   ::= primary binoprhs
@@ -475,7 +452,6 @@ static ExprAST *ParseExpression() {
   return ParseBinOpRHS(0, LHS);
 }
 </pre>
-</div>
 
 <p><tt>ParseBinOpRHS</tt> is the function that parses the sequence of pairs for
 us.  It takes a precedence and a pointer to an expression for the part that has been
@@ -491,7 +467,6 @@ passed in a precedence of 40, it will not consume any tokens (because the
 precedence of '+' is only 20).  With this in mind, <tt>ParseBinOpRHS</tt> starts
 with:</p>
 
-<div class="doc_code">
 <pre>
 /// binoprhs
 ///   ::= ('+' primary)*
@@ -505,7 +480,6 @@ static ExprAST *ParseBinOpRHS(int ExprPrec, ExprAST *LHS) {
     if (TokPrec &lt; ExprPrec)
       return LHS;
 </pre>
-</div>
 
 <p>This code gets the precedence of the current token and checks to see if if is
 too low.  Because we defined invalid tokens to have a precedence of -1, this 
@@ -513,7 +487,6 @@ check implicitly knows that the pair-stream ends when the token stream runs out
 of binary operators.  If this check succeeds, we know that the token is a binary
 operator and that it will be included in this expression:</p>
 
-<div class="doc_code">
 <pre>
     // Okay, we know this is a binop.
     int BinOp = CurTok;
@@ -523,7 +496,6 @@ operator and that it will be included in this expression:</p>
     ExprAST *RHS = ParsePrimary();
     if (!RHS) return 0;
 </pre>
-</div>
 
 <p>As such, this code eats (and remembers) the binary operator and then parses
 the primary expression that follows.  This builds up the whole pair, the first of
@@ -535,14 +507,12 @@ particular, we could have "(a+b) binop unparsed"  or "a + (b binop unparsed)".
 To determine this, we look ahead at "binop" to determine its precedence and 
 compare it to BinOp's precedence (which is '+' in this case):</p>
 
-<div class="doc_code">
 <pre>
     // If BinOp binds less tightly with RHS than the operator after RHS, let
     // the pending operator take RHS as its LHS.
     int NextPrec = GetTokPrecedence();
     if (TokPrec &lt; NextPrec) {
 </pre>
-</div>
 
 <p>If the precedence of the binop to the right of "RHS" is lower or equal to the
 precedence of our current operator, then we know that the parentheses associate
@@ -550,7 +520,6 @@ as "(a+b) binop ...".  In our example, the current operator is "+" and the next
 operator is "+", we know that they have the same precedence.  In this case we'll
 create the AST node for "a+b", and then continue parsing:</p>
 
-<div class="doc_code">
 <pre>
       ... if body omitted ...
     }
@@ -560,7 +529,6 @@ create the AST node for "a+b", and then continue parsing:</p>
   }  // loop around to the top of the while loop.
 }
 </pre>
-</div>
 
 <p>In our example above, this will turn "a+b+" into "(a+b)" and execute the next
 iteration of the loop, with "+" as the current token.  The code above will eat, 
@@ -575,7 +543,6 @@ it needs to get all of "(c+d)*e*f" as the RHS expression variable.  The code to
 do this is surprisingly simple (code from the above two blocks duplicated for
 context):</p>
 
-<div class="doc_code">
 <pre>
     // If BinOp binds less tightly with RHS than the operator after RHS, let
     // the pending operator take RHS as its LHS.
@@ -589,7 +556,6 @@ context):</p>
   }  // loop around to the top of the while loop.
 }
 </pre>
-</div>
 
 <p>At this point, we know that the binary operator to the RHS of our primary
 has higher precedence than the binop we are currently parsing.  As such, we know
@@ -627,7 +593,6 @@ definitions.  The code to do this is straight-forward and not very interesting
 (once you've survived expressions):
 </p>
 
-<div class="doc_code">
 <pre>
 /// prototype
 ///   ::= id '(' id* ')'
@@ -654,12 +619,10 @@ static PrototypeAST *ParsePrototype() {
   return new PrototypeAST(FnName, ArgNames);
 }
 </pre>
-</div>
 
 <p>Given this, a function definition is very simple, just a prototype plus
 an expression to implement the body:</p>
 
-<div class="doc_code">
 <pre>
 /// definition ::= 'def' prototype expression
 static FunctionAST *ParseDefinition() {
@@ -672,13 +635,11 @@ static FunctionAST *ParseDefinition() {
   return 0;
 }
 </pre>
-</div>
 
 <p>In addition, we support 'extern' to declare functions like 'sin' and 'cos' as
 well as to support forward declaration of user functions.  These 'extern's are just
 prototypes with no body:</p>
 
-<div class="doc_code">
 <pre>
 /// external ::= 'extern' prototype
 static PrototypeAST *ParseExtern() {
@@ -686,13 +647,11 @@ static PrototypeAST *ParseExtern() {
   return ParsePrototype();
 }
 </pre>
-</div>
 
 <p>Finally, we'll also let the user type in arbitrary top-level expressions and
 evaluate them on the fly.  We will handle this by defining anonymous nullary
 (zero argument) functions for them:</p>
 
-<div class="doc_code">
 <pre>
 /// toplevelexpr ::= expression
 static FunctionAST *ParseTopLevelExpr() {
@@ -704,7 +663,6 @@ static FunctionAST *ParseTopLevelExpr() {
   return 0;
 }
 </pre>
-</div>
 
 <p>Now that we have all the pieces, let's build a little driver that will let us
 actually <em>execute</em> this code we've built!</p>
@@ -722,7 +680,6 @@ dispatch loop.  There isn't much interesting here, so I'll just include the
 top-level loop.  See <a href="#code">below</a> for full code in the "Top-Level
 Parsing" section.</p>
 
-<div class="doc_code">
 <pre>
 /// top ::= definition | external | expression | ';'
 static void MainLoop() {
@@ -738,7 +695,6 @@ static void MainLoop() {
   }
 }
 </pre>
-</div>
 
 <p>The most interesting part of this is that we ignore top-level semicolons.
 Why is this, you ask?  The basic reason is that if you type "4 + 5" at the
@@ -762,7 +718,6 @@ parser, and AST builder.  With this done, the executable will validate
 Kaleidoscope code and tell us if it is grammatically invalid.  For
 example, here is a sample interaction:</p>
 
-<div class="doc_code">
 <pre>
 $ <b>./a.out</b>
 ready&gt; <b>def foo(x y) x+foo(y, 4.0);</b>
@@ -778,7 +733,6 @@ ready&gt; Parsed an extern
 ready&gt; <b>^D</b>
 $ 
 </pre>
-</div>
 
 <p>There is a lot of room for extension here.  You can define new AST nodes,
 extend the language in many ways, etc.  In the <a href="LangImpl3.html">next
@@ -799,18 +753,15 @@ Note that it is fully self-contained: you don't need LLVM or any external
 libraries at all for this.  (Besides the C and C++ standard libraries, of
 course.)  To build this, just compile with:</p>
 
-<div class="doc_code">
 <pre>
    # Compile
    g++ -g -O3 toy.cpp 
    # Run
    ./a.out 
 </pre>
-</div>
 
 <p>Here is the code:</p>
 
-<div class="doc_code">
 <pre>
 #include &lt;cstdio&gt;
 #include &lt;cstdlib&gt;
@@ -1211,7 +1162,6 @@ int main() {
   return 0;
 }
 </pre>
-</div>
 <a href="LangImpl3.html">Next: Implementing Code Generation to LLVM IR</a>
 </div>
 

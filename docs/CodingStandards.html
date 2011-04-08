@@ -155,7 +155,6 @@ checked into Subversion.  Most source trees will probably have a standard
 file header format.  The standard format for the LLVM source tree looks like
 this:</p>
 
-<div class="doc_code">
 <pre>
 //===-- llvm/Instruction.h - Instruction class definition -------*- C++ -*-===//
 //
@@ -171,7 +170,6 @@ this:</p>
 //
 //===----------------------------------------------------------------------===//
 </pre>
-</div>
 
 <p>A few things to note about this particular format:  The "<tt>-*- C++
 -*-</tt>" string on the first line is there to tell Emacs that the source file
@@ -372,37 +370,31 @@ a good thorough set of warnings, and stick to it.  At least in the case of
 syntax of the code slightly.  For example, a warning that annoys me occurs when
 I write code like this:</p>
 
-<div class="doc_code">
 <pre>
 if (V = getValue()) {
   ...
 }
 </pre>
-</div>
 
 <p><tt>gcc</tt> will warn me that I probably want to use the <tt>==</tt>
 operator, and that I probably mistyped it.  In most cases, I haven't, and I
 really don't want the spurious errors.  To fix this particular problem, I
 rewrite the code like this:</p>
 
-<div class="doc_code">
 <pre>
 if ((V = getValue())) {
   ...
 }
 </pre>
-</div>
 
 <p>which shuts <tt>gcc</tt> up.  Any <tt>gcc</tt> warning that annoys you can
 be fixed by massaging the code appropriately.</p>
 
 <p>These are the <tt>gcc</tt> warnings that I prefer to enable:</p>
 
-<div class="doc_code">
 <pre>
 -Wall -Winline -W -Wwrite-strings -Wno-unused
 </pre>
-</div>
 
 </div>
 
@@ -582,7 +574,6 @@ to understand the code.  One great way to do this is by making use of early
 exits and the <tt>continue</tt> keyword in long loops.  As an example of using
 an early exit from a function, consider this "bad" code:</p>
 
-<div class="doc_code">
 <pre>
 Value *DoSomething(Instruction *I) {
   if (!isa&lt;TerminatorInst&gt;(I) &amp;&amp;
@@ -593,7 +584,6 @@ Value *DoSomething(Instruction *I) {
   return 0;
 }
 </pre>
-</div>
 
 <p>This code has several problems if the body of the '<tt>if</tt>' is large.
 When you're looking at the top of the function, it isn't immediately clear that
@@ -608,7 +598,6 @@ that it returns null.</p>
 
 <p>It is much preferred to format the code like this:</p>
 
-<div class="doc_code">
 <pre>
 Value *DoSomething(Instruction *I) {
   // Terminators never need 'something' done to them because ... 
@@ -627,12 +616,10 @@ Value *DoSomething(Instruction *I) {
   ... some long code ....
 }
 </pre>
-</div>
 
 <p>This fixes these problems.  A similar problem frequently happens in <tt>for</tt>
 loops.  A silly example is something like this:</p>
 
-<div class="doc_code">
 <pre>
   for (BasicBlock::iterator II = BB-&gt;begin(), E = BB-&gt;end(); II != E; ++II) {
     if (BinaryOperator *BO = dyn_cast&lt;BinaryOperator&gt;(II)) {
@@ -644,7 +631,6 @@ loops.  A silly example is something like this:</p>
     }
   }
 </pre>
-</div>
 
 <p>When you have very, very small loops, this sort of structure is fine. But if
 it exceeds more than 10-15 lines, it becomes difficult for people to read and
@@ -654,7 +640,6 @@ context in their brain to remember what is going immediately on in the loop,
 because they don't know if/when the <tt>if</tt> conditions will have elses etc.
 It is strongly preferred to structure the loop like this:</p>
 
-<div class="doc_code">
 <pre>
   for (BasicBlock::iterator II = BB-&gt;begin(), E = BB-&gt;end(); II != E; ++II) {
     BinaryOperator *BO = dyn_cast&lt;BinaryOperator&gt;(II);
@@ -667,7 +652,6 @@ It is strongly preferred to structure the loop like this:</p>
     ...
   }
 </pre>
-</div>
 
 <p>This has all the benefits of using early exits for functions: it reduces
 nesting of the loop, it makes it easier to describe why the conditions are true,
@@ -689,7 +673,6 @@ please do not use '<tt>else</tt>' or '<tt>else if</tt>' after something that
 interrupts control flow &mdash; like <tt>return</tt>, <tt>break</tt>,
 <tt>continue</tt>, <tt>goto</tt>, etc. For example, this is <em>bad</em>:</p>
 
-<div class="doc_code">
 <pre>
   case 'J': {
     if (Signed) {
@@ -712,11 +695,9 @@ interrupts control flow &mdash; like <tt>return</tt>, <tt>break</tt>,
   }
   }
 </pre>
-</div>
 
 <p>It is better to write it like this:</p>
 
-<div class="doc_code">
 <pre>
   case 'J':
     if (Signed) {
@@ -734,11 +715,9 @@ interrupts control flow &mdash; like <tt>return</tt>, <tt>break</tt>,
     }
     <b>break;</b>
 </pre>
-</div>
 
 <p>Or better yet (in this case) as:</p>
 
-<div class="doc_code">
 <pre>
   case 'J':
     if (Signed)
@@ -753,7 +732,6 @@ interrupts control flow &mdash; like <tt>return</tt>, <tt>break</tt>,
     }
     <b>break;</b>
 </pre>
-</div>
 
 <p>The idea is to reduce indentation and the amount of code you have to keep
 track of when reading the code.</p>
@@ -771,7 +749,6 @@ track of when reading the code.</p>
 There are a number of ways that people commonly write these, but an example of
 this sort of thing is:</p>
    
-<div class="doc_code">
 <pre>
   <b>bool FoundFoo = false;</b>
   for (unsigned i = 0, e = BarList.size(); i != e; ++i)
@@ -784,7 +761,6 @@ this sort of thing is:</p>
     ...
   }
 </pre>
-</div>
 
 <p>This sort of code is awkward to write, and is almost always a bad sign.
 Instead of this sort of loop, we strongly prefer to use a predicate function
@@ -792,7 +768,6 @@ Instead of this sort of loop, we strongly prefer to use a predicate function
 <a href="#hl_earlyexit">early exits</a> to compute the predicate.  We prefer
 the code to be structured like this:</p>
 
-<div class="doc_code">
 <pre>
 /// ListContainsFoo - Return true if the specified list has an element that is
 /// a foo.
@@ -808,7 +783,6 @@ static bool ListContainsFoo(const std::vector&lt;Bar*&gt; &amp;List) {
     ...
   }
 </pre>
-</div>
 
 <p>There are many reasons for doing this: it reduces indentation and factors out
 code which can often be shared by other code that checks for the same predicate.
@@ -877,14 +851,12 @@ rules:</p>
     Enumerators that are just convenience constants are exempt from the
     requirement for a prefix.  For instance:</p>
 
-<div class="doc_code">
 <pre>
 enum {
   MaxSize = 42,
   Density = 12
 };
 </pre>
-</div>
 </li>
 
 </ul>
@@ -895,7 +867,6 @@ STL's style of lower-case words separated by underscores (e.g. <tt>begin()</tt>,
 
 <p>Here are some examples of good and bad names:</p>
 
-<div class="doc_code">
 <pre>
 class VehicleMaker {
   ...
@@ -912,7 +883,6 @@ Vehicle MakeVehicle(VehicleType Type) {
   ...
 }
 </pre>
-</div>
 
 </div>
 
@@ -936,18 +906,15 @@ in the assertion statement, which is printed if the assertion is tripped. This
 helps the poor debugger make sense of why an assertion is being made and
 enforced, and hopefully what to do about it.  Here is one complete example:</p>
 
-<div class="doc_code">
 <pre>
 inline Value *getOperand(unsigned i) { 
   assert(i &lt; Operands.size() &amp;&amp; "getOperand() out of range!");
   return Operands[i]; 
 }
 </pre>
-</div>
 
 <p>Here are more examples:</p>
 
-<div class="doc_code">
 <pre>
 assert(Ty-&gt;isPointerType() &amp;&amp; "Can't allocate a non pointer type!");
 
@@ -959,7 +926,6 @@ assert(V1.getType() == V2.getType() &amp;&amp; "Constant types must be identical
 
 assert(isa&lt;PHINode&gt;(Succ-&gt;front()) &amp;&amp; "Only works on PHId BBs!");
 </pre>
-</div>
 
 <p>You get the idea.</p>
 
@@ -967,30 +933,25 @@ assert(isa&lt;PHINode&gt;(Succ-&gt;front()) &amp;&amp; "Only works on PHId BBs!"
 the semantics of the assert.  In some places, asserts are used to indicate a piece of
 code that should not be reached.  These are typically of the form:</p>
 
-<div class="doc_code">
 <pre>
 assert(0 &amp;&amp; "Some helpful error message");
 </pre>
-</div>
 
 <p>When used in a function that returns a value, they should be followed with a return
 statement and a comment indicating that this line is never reached.  This will prevent
 a compiler which is unable to deduce that the assert statement never returns from
 generating a warning.</p>
 
-<div class="doc_code">
 <pre>
 assert(0 &amp;&amp; "Some helpful error message");
 // Not reached
 return 0;
 </pre>
-</div>
 
 <p>Another issue is that values used only by assertions will produce an "unused
 value" warning when assertions are disabled.  For example, this code will
 warn:</p>
 
-<div class="doc_code">
 <pre>
 unsigned Size = V.size();
 assert(Size &gt; 42 &amp;&amp; "Vector smaller than it should be");
@@ -998,7 +959,6 @@ assert(Size &gt; 42 &amp;&amp; "Vector smaller than it should be");
 bool NewToSet = Myset.insert(Value);
 assert(NewToSet &amp;&amp; "The value shouldn't be in the set yet");
 </pre>
-</div>
 
 <p>These are two interesting different cases. In the first case, the call to
 V.size() is only useful for the assert, and we don't want it executed when
@@ -1008,15 +968,12 @@ the assert is enabled or not.  In this case, the value should be cast to void to
 disable the warning.  To be specific, it is preferred to write the code like
 this:</p>
 
-<div class="doc_code">
 <pre>
 assert(V.size() &gt; 42 &amp;&amp; "Vector smaller than it should be");
 
 bool NewToSet = Myset.insert(Value); (void)NewToSet;
 assert(NewToSet &amp;&amp; "The value shouldn't be in the set yet");
 </pre>
-</div>
-
 
 </div>
 
@@ -1089,26 +1046,22 @@ loops that manually iterate from begin to end on a variety of containers or
 through other data structures.  One common mistake is to write a loop in this
 style:</p>
 
-<div class="doc_code">
 <pre>
   BasicBlock *BB = ...
   for (BasicBlock::iterator I = BB->begin(); I != <b>BB->end()</b>; ++I)
      ... use I ...
 </pre>
-</div>
 
 <p>The problem with this construct is that it evaluates "<tt>BB->end()</tt>"
 every time through the loop.  Instead of writing the loop like this, we strongly
 prefer loops to be written so that they evaluate it once before the loop starts.
 A convenient way to do this is like so:</p>
 
-<div class="doc_code">
 <pre>
   BasicBlock *BB = ...
   for (BasicBlock::iterator I = BB->begin(), E = <b>BB->end()</b>; I != E; ++I)
      ... use I ...
 </pre>
-</div>
 
 <p>The observant may quickly point out that these two loops may have different
 semantics: if the container (a basic block in this case) is being mutated, then
@@ -1204,12 +1157,10 @@ declarations and constant references to <tt>raw_ostream</tt> instances.</p>
 newline to the output stream specified.  In addition to doing this, however, it
 also flushes the output stream.  In other words, these are equivalent:</p>
 
-<div class="doc_code">
 <pre>
 std::cout &lt;&lt; std::endl;
 std::cout &lt;&lt; '\n' &lt;&lt; std::flush;
 </pre>
-</div>
 
 <p>Most of the time, you probably have no reason to flush the output stream, so
 it's better to use a literal <tt>'\n'</tt>.</p>
@@ -1240,7 +1191,6 @@ reasoning on why we prefer them.</p>
 statements, but not in normal function call expressions and function-like
 macros.  For example, this is good:</p>
 
-<div class="doc_code">
 <pre>
 <b>if (</b>x) ...
 <b>for (</b>i = 0; i != 100; ++i) ...
@@ -1251,11 +1201,9 @@ macros.  For example, this is good:</p>
   
 a = <b>foo(</b>42, 92) + <b>bar(</b>x);
 </pre>
-</div>
 
 <p>and this is bad:</p>
 
-<div class="doc_code">
 <pre>
 <b>if(</b>x) ...
 <b>for(</b>i = 0; i != 100; ++i) ...
@@ -1266,7 +1214,6 @@ a = <b>foo(</b>42, 92) + <b>bar(</b>x);
   
 a = <b>foo (</b>42, 92) + <b>bar (</b>x);
 </pre>
-</div>
 
 <p>The reason for doing this is not completely arbitrary.  This style makes
 control flow operators stand out more, and makes expressions flow better. The
@@ -1276,11 +1223,9 @@ code might bind the arguments of the left-hand-side of a binary operator with
 the argument list of a function and the name of the right side.  More
 specifically, it is easy to misread the "a" example as:</p>
    
-<div class="doc_code">
 <pre>
 a = foo <b>(</b>(42, 92) + bar<b>)</b> (x);
 </pre>
-</div>
 
 <p>when skimming through the code.  By avoiding a space in a function, we avoid
 this misinterpretation.</p>
@@ -1330,7 +1275,6 @@ less than 35 lines of code), then you should indent its body.  Here's an
 example:
 </p>
 
-<div class="doc_code">
 <pre>
 namespace llvm {
   namespace X86 {
@@ -1355,7 +1299,6 @@ namespace llvm {
   }
 }
 </pre>
-</div>
 
 <p>Since the body is small, indenting adds value because it makes it very clear
 where the namespace starts and ends, and it is easy to take the whole thing in
@@ -1364,7 +1307,6 @@ larger (as it typically is in a header in the <tt>llvm</tt> or <tt>clang</tt> na
 indent the code, and add a comment indicating what namespace is being closed.
 For example:</p>
 
-<div class="doc_code">
 <pre>
 namespace llvm {
 namespace knowledge {
@@ -1384,7 +1326,6 @@ public:
 } // end namespace knowledge
 } // end namespace llvm
 </pre>
-</div>
 
 <p>Because the class is large, we don't expect that the reader can easily
 understand the entire concept in a glance, and the end of the file (where the
@@ -1422,7 +1363,6 @@ a big chunk of the file.</p>
 small as possible, and only use them for class declarations.  For example, this
 is good:</p>
 
-<div class="doc_code">
 <pre>
 <b>namespace {</b>
   class StringSort {
@@ -1442,12 +1382,10 @@ bool StringSort::operator&lt;(const char *RHS) const {
 }
 
 </pre>
-</div>
 
 <p>This is bad:</p>
 
 
-<div class="doc_code">
 <pre>
 <b>namespace {</b>
 class StringSort {
@@ -1468,8 +1406,6 @@ bool StringSort::operator&lt;(const char *RHS) const {
 <b>} // end anonymous namespace</b>
 
 </pre>
-</div>
-
 
 <p>This is bad specifically because if you're looking at "Helper" in the middle
 of a large C++ file, that you have no immediate way to tell if it is local to

@@ -155,7 +155,6 @@
       the major and <tt>Y</tt> the minor release numbers. The branches should be
       created using the following commands:</p>
   
-<div class="doc_code">
 <pre>
 $ svn copy https://llvm.org/svn/llvm-project/llvm/trunk \
            https://llvm.org/svn/llvm-project/llvm/branches/release_<i>XY</i>
@@ -169,7 +168,7 @@ $ svn copy https://llvm.org/svn/llvm-project/test-suite/trunk \
 $ svn copy https://llvm.org/svn/llvm-project/cfe/trunk \
            https://llvm.org/svn/llvm-project/cfe/branches/release_<i>XY</i>
 </pre>
-</div></li>
+</li>
 
   <li><p>Advise developers that they may now check their patches into the
       Subversion tree again.</p></li>
@@ -178,7 +177,6 @@ $ svn copy https://llvm.org/svn/llvm-project/cfe/trunk \
       changes to the release will now be done in the branch. The easiest way to
       do this is to grab a working copy using the following commands:</p>
 
-<div class="doc_code">
 <pre>
 $ svn co https://llvm.org/svn/llvm-project/llvm/branches/release_<i>XY</i> llvm-<i>X.Y</i>
 
@@ -188,7 +186,7 @@ $ svn co https://llvm.org/svn/llvm-project/test-suite/branches/release_<i>XY</i>
 
 $ svn co https://llvm.org/svn/llvm-project/cfe/branches/release_<i>XY</i> clang-<i>X.Y</i>
 </pre>
-</div></li>
+</li>
 </ol>
 
 </div>
@@ -219,7 +217,6 @@ $ svn co https://llvm.org/svn/llvm-project/cfe/branches/release_<i>XY</i> clang-
    the respective release candidate number. For instance, to create <b>Release
    Candidate 1</b> you would issue the following commands:</p>
 
-<div class="doc_code">
 <pre>
 $ svn mkdir https://llvm.org/svn/llvm-project/llvm/tags/RELEASE_<i>XY</i>
 $ svn copy https://llvm.org/svn/llvm-project/llvm/branches/release_<i>XY</i> \
@@ -237,7 +234,6 @@ $ svn mkdir https://llvm.org/svn/llvm-project/cfe/tags/RELEASE_<i>XY</i>
 $ svn copy https://llvm.org/svn/llvm-project/cfe/branches/release_<i>XY</i> \
            https://llvm.org/svn/llvm-project/cfe/tags/RELEASE_<i>XY</i>/rc1
 </pre>
-</div>
 
 <p>Similarly, <b>Release Candidate 2</b> would be named <tt>RC2</tt> and so
    on. This keeps a permanent copy of the release candidate around for people to
@@ -248,7 +244,6 @@ $ svn copy https://llvm.org/svn/llvm-project/cfe/branches/release_<i>XY</i> \
 <p>The Release Manager may supply pre-packaged source tarballs for users. This
    can be done with the following commands:</p>
 
-<div class="doc_code">
 <pre>
 $ svn export https://llvm.org/svn/llvm-project/llvm/tags/RELEASE_<i>XY</i>/rc1 llvm-<i>X.Y</i>rc1
 $ svn export https://llvm.org/svn/llvm-project/llvm-gcc-4.2/tags/RELEASE_<i>XY</i>/rc1 llvm-gcc4.2-<i>X.Y</i>rc1
@@ -260,7 +255,6 @@ $ tar -cvf - llvm-test-<i>X.Y</i>rc1   | gzip &gt; llvm-test-<i>X.Y</i>rc1.src.t
 $ tar -cvf - llvm-gcc4.2-<i>X.Y</i>rc1 | gzip &gt; llvm-gcc-4.2-<i>X.Y</i>rc1.src.tar.gz
 $ tar -cvf - clang-<i>X.Y</i>rc1       | gzip &gt; clang-<i>X.Y</i>rc1.src.tar.gz
 </pre>
-</div>
 
 </div>
 
@@ -533,7 +527,6 @@ $ tar -cvf - clang-<i>X.Y</i>rc1       | gzip &gt; clang-<i>X.Y</i>rc1.src.tar.g
 
 <p>Tag the final release sources using the following procedure:</p>
 
-<div class="doc_code">
 <pre>
 $ svn copy https://llvm.org/svn/llvm-project/llvm/branches/release_XY \
            https://llvm.org/svn/llvm-project/llvm/tags/RELEASE_<i>XY</i>/Final
@@ -547,7 +540,6 @@ $ svn copy https://llvm.org/svn/llvm-project/test-suite/branches/release_XY \
 $ svn copy https://llvm.org/svn/llvm-project/cfe/branches/release_XY \
            https://llvm.org/svn/llvm-project/cfe/tags/RELEASE_<i>XY</i>/Final
 </pre>
-</div>
 
 </div>
 

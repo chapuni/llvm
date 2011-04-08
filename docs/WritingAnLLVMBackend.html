@@ -324,7 +324,6 @@ For instance, for the SPARC target, the header file
 and <tt>getTargetData</tt> methods that simply return a class member.
 </p>
 
-<div class="doc_code">
 <pre>
 namespace llvm {
 
@@ -358,7 +357,6 @@ public:
 
 } // end namespace llvm
 </pre>
-</div>
 
 <ul>
 <li><tt>getInstrInfo()</tt></li>
@@ -383,7 +381,6 @@ endianness. For example, the constructor for SparcTargetMachine contains the
 following:
 </p>
 
-<div class="doc_code">
 <pre>
 SparcTargetMachine::SparcTargetMachine(const Module &amp;M, const std::string &amp;FS)
   : DataLayout("E-p:32:32-f128:128:128"),
@@ -391,7 +388,6 @@ SparcTargetMachine::SparcTargetMachine(const Module &amp;M, const std::string &a
     FrameInfo(TargetFrameInfo::StackGrowsDown, 8, 0) {
 }
 </pre>
-</div>
 
 <p>Hyphens separate portions of the <tt>TargetDescription</tt> string.</p>
 
@@ -435,7 +431,6 @@ library, the target should define that object and use
 the <tt>RegisterTarget</tt> template to register the target. For example, the Sparc registration code looks like this:
 </p>
 
-<div class="doc_code">
 <pre>
 Target llvm::TheSparcTarget;
 
@@ -444,7 +439,6 @@ extern "C" void LLVMInitializeSparcTargetInfo() {
     X(TheSparcTarget, "sparc", "Sparc");
 }
 </pre>
-</div>
 
 <p>
 This allows the <tt>TargetRegistry</tt> to look up the target by name or by
@@ -455,13 +449,11 @@ separate, because some clients may wish to only link in some parts of the target
 example. Here is an example of registering the Sparc assembly printer:
 </p>
 
-<div class="doc_code">
 <pre>
 extern "C" void LLVMInitializeSparcAsmPrinter() { 
   RegisterAsmPrinter&lt;SparcAsmPrinter&gt; X(TheSparcTarget);
 }
 </pre>
-</div>
 
 <p>
 For more information, see
@@ -521,7 +513,6 @@ basic <tt>Register</tt> object does not have any subregisters and does not
 specify any aliases.
 </p>
 
-<div class="doc_code">
 <pre>
 class Register&lt;string n&gt; {
   string Namespace = "";
@@ -534,18 +525,15 @@ class Register&lt;string n&gt; {
   list&lt;int&gt; DwarfNumbers = [];
 }
 </pre>
-</div>
 
 <p>
 For example, in the <tt>X86RegisterInfo.td</tt> file, there are register
 definitions that utilize the Register class, such as:
 </p>
 
-<div class="doc_code">
 <pre>
 def AL : Register&lt;"AL"&gt;, DwarfRegNum&lt;[0, 0, 0]&gt;;
 </pre>
-</div>
 
 <p>
 This defines the register <tt>AL</tt> and assigns it values (with
@@ -563,7 +551,6 @@ From the previously described line in the <tt>X86RegisterInfo.td</tt> file,
 TableGen generates this code in the <tt>X86GenRegisterInfo.inc</tt> file:
 </p>
 
-<div class="doc_code">
 <pre>
 static const unsigned GR8[] = { X86::AL, ... };
 
@@ -573,7 +560,6 @@ const TargetRegisterDesc RegisterDescriptors[] = {
   ...
 { "AL", "AL", AL_AliasSet, Empty_SubRegsSet, Empty_SubRegsSet, AL_SuperRegsSet }, ...
 </pre>
-</div>
 
 <p>
 From the register info file, TableGen generates a <tt>TargetRegisterDesc</tt>
@@ -581,7 +567,6 @@ object for each register. <tt>TargetRegisterDesc</tt> is defined in
 <tt>include/llvm/Target/TargetRegisterInfo.h</tt> with the following fields:
 </p>
 
-<div class="doc_code">
 <pre>
 struct TargetRegisterDesc {
   const char     *AsmName;      // Assembly language name for the register
@@ -591,7 +576,6 @@ struct TargetRegisterDesc {
   const unsigned *ImmSubRegs;   // Immediate sub-register set
   const unsigned *SuperRegs;    // Super-register set
 };</pre>
-</div>
 
 <p>
 TableGen uses the entire target description file (<tt>.td</tt>) to determine
@@ -611,14 +595,12 @@ classes. In <tt>Target.td</tt>, the <tt>Register</tt> class is the base for the
 specify subregisters in the <tt>SubRegs</tt> list, as shown here:
 </p>
 
-<div class="doc_code">
 <pre>
 class RegisterWithSubRegs&lt;string n,
 list&lt;Register&gt; subregs&gt; : Register&lt;n&gt; {
   let SubRegs = subregs;
 }
 </pre>
-</div>
 
 <p>
 In <tt>SparcRegisterInfo.td</tt>, additional register classes are defined for
@@ -629,7 +611,6 @@ numbers, which is a feature common to these subclasses. Note the use of
 superclass (such as <tt>SubRegs</tt> field in the <tt>Rd</tt> class).
 </p>
 
-<div class="doc_code">
 <pre>
 class SparcReg&lt;string n&gt; : Register&lt;n&gt; {
   field bits&lt;5&gt; Num;
@@ -653,14 +634,12 @@ list&lt;Register&gt; subregs&gt; : SparcReg&lt;n&gt; {
   let SubRegs = subregs;
 }
 </pre>
-</div>
 
 <p>
 In the <tt>SparcRegisterInfo.td</tt> file, there are register definitions that
 utilize these subclasses of <tt>Register</tt>, such as:
 </p>
 
-<div class="doc_code">
 <pre>
 def G0 : Ri&lt; 0, "G0"&gt;,
 DwarfRegNum&lt;[0]&gt;;
@@ -676,7 +655,6 @@ DwarfRegNum&lt;[32]&gt;;
 def D1 : Rd&lt; 2, "F2", [F2, F3]&gt;,
 DwarfRegNum&lt;[34]&gt;;
 </pre>
-</div>
 
 <p>
 The last two registers shown above (<tt>D0</tt> and <tt>D1</tt>) are
@@ -703,7 +681,6 @@ the default allocation order of the registers. A target description file
 classes using the following class:
 </p>
 
-<div class="doc_code">
 <pre>
 class RegisterClass&lt;string namespace,
 list&lt;ValueType&gt; regTypes, int alignment,
@@ -726,7 +703,6 @@ list&lt;ValueType&gt; regTypes, int alignment,
   code MethodBodies = [{}];
 }
 </pre>
-</div>
 
 <p>To define a RegisterClass, use the following 4 arguments:</p>
 
@@ -766,7 +742,6 @@ and <tt>MethodBodies</tt> methods are used by TableGen to insert the specified
 code into generated output.
 </p>
 
-<div class="doc_code">
 <pre>
 def FPRegs : RegisterClass&lt;"SP", [f32], 32,
   [F0, F1, F2, F3, F4, F5, F6, F7, F8, F9, F10, F11, F12, F13, F14, F15,
@@ -800,7 +775,6 @@ def IntRegs : RegisterClass&lt;"SP", [i32], 32,
   }];
 }
 </pre>
-</div>
 
 <p>
 Using <tt>SparcRegisterInfo.td</tt> with TableGen generates several output files
@@ -826,7 +800,6 @@ of <tt>MethodBodies</tt> in <tt>SparcRegisterInfo.td</tt> to create code in
 in <tt>SparcGenRegisterInfo.h.inc</tt>.
 </p>
 
-<div class="doc_code">
 <pre>  // IntRegs Register Class...
   static const unsigned IntRegs[] = {
     SP::L0, SP::L1, SP::L2, SP::L3, SP::L4, SP::L5,
@@ -878,7 +851,6 @@ namespace SP {   // Register class instances
     IntRegsSuperRegClasses, 4, 4, 1, IntRegs, IntRegs + 32) {}
 }
 </pre>
-</div>
 
 </div>
 
@@ -997,7 +969,6 @@ The Instruction class (defined in <tt>Target.td</tt>) is mostly used as a base
 for more complex instruction classes.
 </p>
 
-<div class="doc_code">
 <pre>class Instruction {
   string Namespace = "";
   dag OutOperandList;       // An dag containing the MI def operand list.
@@ -1010,7 +981,6 @@ for more complex instruction classes.
   ... remainder not shown for space ...
 }
 </pre>
-</div>
 
 <p>
 A <tt>SelectionDAG</tt> node (<tt>SDNode</tt>) should contain an object
@@ -1069,25 +1039,21 @@ is a register operand and defined in the <tt>Register</tt> target description
 file (<tt>IntRegs</tt>).
 </p>
 
-<div class="doc_code">
 <pre>def LDrr : F3_1 &lt;3, 0b000000, (outs IntRegs:$dst), (ins MEMrr:$addr),
                  "ld [$addr], $dst",
                  [(set IntRegs:$dst, (load ADDRrr:$addr))]&gt;;
 </pre>
-</div>
 
 <p>
 The fourth parameter is the input source, which uses the address
 operand <tt>MEMrr</tt> that is defined earlier in <tt>SparcInstrInfo.td</tt>:
 </p>
 
-<div class="doc_code">
 <pre>def MEMrr : Operand&lt;i32&gt; {
   let PrintMethod = "printMemOperand";
   let MIOperandInfo = (ops IntRegs, IntRegs);
 }
 </pre>
-</div>
 
 <p>
 The fifth parameter is a string that is used by the assembly printer and can be
@@ -1107,12 +1073,10 @@ from an immediate operand to a register, the following instruction class is
 defined:
 </p>
 
-<div class="doc_code">
 <pre>def LDri : F3_2 &lt;3, 0b000000, (outs IntRegs:$dst), (ins MEMri:$addr),
                  "ld [$addr], $dst",
                  [(set IntRegs:$dst, (load ADDRri:$addr))]&gt;;
 </pre>
-</div>
 
 <p>
 Writing these definitions for so many similar instructions can involve a lot of
@@ -1123,7 +1087,6 @@ the <tt>defm</tt> directive). For example in <tt>SparcInstrInfo.td</tt>, the
 classes each time <tt>F3_12</tt> is invoked:
 </p>
 
-<div class="doc_code">
 <pre>multiclass F3_12 &lt;string OpcStr, bits&lt;6&gt; Op3Val, SDNode OpNode&gt; {
   def rr  : F3_1 &lt;2, Op3Val, 
                  (outs IntRegs:$dst), (ins IntRegs:$b, IntRegs:$c),
@@ -1135,7 +1098,6 @@ classes each time <tt>F3_12</tt> is invoked:
                  [(set IntRegs:$dst, (OpNode IntRegs:$b, simm13:$c))]&gt;;
 }
 </pre>
-</div>
 
 <p>
 So when the <tt>defm</tt> directive is used for the <tt>XOR</tt>
@@ -1143,12 +1105,10 @@ and <tt>ADD</tt> instructions, as seen below, it creates four instruction
 objects: <tt>XORrr</tt>, <tt>XORri</tt>, <tt>ADDrr</tt>, and <tt>ADDri</tt>.
 </p>
 
-<div class="doc_code">
 <pre>
 defm XOR   : F3_12&lt;"xor", 0b000011, xor&gt;;
 defm ADD   : F3_12&lt;"add", 0b000000, add&gt;;
 </pre>
-</div>
 
 <p>
 <tt>SparcInstrInfo.td</tt> also includes definitions for condition codes that
@@ -1159,7 +1119,6 @@ condition for integers, and the 22<sup>nd</sup> bit represents the 'greater
 than' condition for floats.
 </p>
 
-<div class="doc_code">
 <pre>
 def ICC_NE  : ICC_VAL&lt; 9&gt;;  // Not Equal
 def ICC_E   : ICC_VAL&lt; 1&gt;;  // Equal
@@ -1170,7 +1129,6 @@ def FCC_G   : FCC_VAL&lt;22&gt;;  // Greater
 def FCC_UG  : FCC_VAL&lt;21&gt;;  // Unordered or Greater
 ...
 </pre>
-</div>
 
 <p>
 (Note that <tt>Sparc.h</tt> also defines enums that correspond to the same SPARC
@@ -1194,21 +1152,18 @@ example, the Sparc target defines the <tt>XNORrr</tt> instruction as
 a <tt>F3_1</tt> format instruction having three operands.
 </p>
 
-<div class="doc_code">
 <pre>
 def XNORrr  : F3_1&lt;2, 0b000111,
                    (outs IntRegs:$dst), (ins IntRegs:$b, IntRegs:$c),
                    "xnor $b, $c, $dst",
                    [(set IntRegs:$dst, (not (xor IntRegs:$b, IntRegs:$c)))]&gt;;
 </pre>
-</div>
 
 <p>
 The instruction templates in <tt>SparcInstrFormats.td</tt> show the base class
 for <tt>F3_1</tt> is <tt>InstSP</tt>.
 </p>
 
-<div class="doc_code">
 <pre>
 class InstSP&lt;dag outs, dag ins, string asmstr, list&lt;dag&gt; pattern&gt; : Instruction {
   field bits&lt;32&gt; Inst;
@@ -1221,11 +1176,9 @@ class InstSP&lt;dag outs, dag ins, string asmstr, list&lt;dag&gt; pattern&gt; : 
   let Pattern = pattern;
 }
 </pre>
-</div>
 
 <p><tt>InstSP</tt> leaves the <tt>op</tt> field unbound.</p>
 
-<div class="doc_code">
 <pre>
 class F3&lt;dag outs, dag ins, string asmstr, list&lt;dag&gt; pattern&gt;
     : InstSP&lt;outs, ins, asmstr, pattern&gt; {
@@ -1238,7 +1191,6 @@ class F3&lt;dag outs, dag ins, string asmstr, list&lt;dag&gt; pattern&gt;
   let Inst{18-14} = rs1;
 }
 </pre>
-</div>
 
 <p>
 <tt>F3</tt> binds the <tt>op</tt> field and defines the <tt>rd</tt>,
@@ -1246,7 +1198,6 @@ class F3&lt;dag outs, dag ins, string asmstr, list&lt;dag&gt; pattern&gt;
 bind the operands <tt>rd</tt>, <tt>op3</tt>, and <tt>rs1</tt> fields.
 </p>
 
-<div class="doc_code">
 <pre>
 class F3_1&lt;bits&lt;2&gt; opVal, bits&lt;6&gt; op3val, dag outs, dag ins,
            string asmstr, list&lt;dag&gt; pattern&gt; : F3&lt;outs, ins, asmstr, pattern&gt; {
@@ -1259,7 +1210,6 @@ class F3_1&lt;bits&lt;2&gt; opVal, bits&lt;6&gt; op3val, dag outs, dag ins,
   let Inst{4-0}  = rs2;
 }
 </pre>
-</div>
 
 <p>
 <tt>F3_1</tt> binds the <tt>op3</tt> field and defines the <tt>rs2</tt>
@@ -1366,7 +1316,6 @@ the <tt>AnalyzeBranch</tt> (see code below for the ARM target) shows the
 function parameters and the code for the simplest case.
 </p>
 
-<div class="doc_code">
 <pre>bool ARMInstrInfo::AnalyzeBranch(MachineBasicBlock &amp;MBB,
         MachineBasicBlock *&amp;TBB, MachineBasicBlock *&amp;FBB,
         std::vector&lt;MachineOperand&gt; &amp;Cond) const
@@ -1375,7 +1324,6 @@ function parameters and the code for the simplest case.
   if (I == MBB.begin() || !isUnpredicatedTerminator(--I))
     return false;
 </pre>
-</div>
 
 <p>
 If a block ends with a single unconditional branch instruction, then
@@ -1383,14 +1331,12 @@ If a block ends with a single unconditional branch instruction, then
 branch in the <tt>TBB</tt> parameter.
 </p>
 
-<div class="doc_code">
 <pre>
   if (LastOpc == ARM::B || LastOpc == ARM::tB) {
     TBB = LastInst-&gt;getOperand(0).getMBB();
     return false;
   }
 </pre>
-</div>
 
 <p>
 If a block ends with two unconditional branches, then the second branch is never
@@ -1398,7 +1344,6 @@ reached. In that situation, as shown below, remove the last branch instruction
 and return the penultimate branch in the <tt>TBB</tt> parameter.
 </p>
 
-<div class="doc_code">
 <pre>
   if ((SecondLastOpc == ARM::B || SecondLastOpc==ARM::tB) &amp;&amp;
       (LastOpc == ARM::B || LastOpc == ARM::tB)) {
@@ -1408,7 +1353,6 @@ and return the penultimate branch in the <tt>TBB</tt> parameter.
     return false;
   }
 </pre>
-</div>
 
 <p>
 A block may end with a single conditional branch instruction that falls through
@@ -1418,7 +1362,6 @@ conditional branch in the <tt>TBB</tt> parameter and a list of operands in
 the <tt>Cond</tt> parameter to evaluate the condition.
 </p>
 
-<div class="doc_code">
 <pre>
   if (LastOpc == ARM::Bcc || LastOpc == ARM::tBcc) {
     // Block ends with fall-through condbranch.
@@ -1428,7 +1371,6 @@ the <tt>Cond</tt> parameter to evaluate the condition.
     return false;
   }
 </pre>
-</div>
 
 <p>
 If a block ends with both a conditional branch and an ensuing unconditional
@@ -1440,7 +1382,6 @@ destination in the <tt>FBB</tt> (corresponding to a conditional evaluation of
 returned in the <tt>Cond</tt> parameter.
 </p>
 
-<div class="doc_code">
 <pre>
   unsigned SecondLastOpc = SecondLastInst-&gt;getOpcode();
 
@@ -1453,7 +1394,6 @@ returned in the <tt>Cond</tt> parameter.
     return false;
   }
 </pre>
-</div>
 
 <p>
 For the last two cases (ending with a single conditional branch or ending with
@@ -1536,23 +1476,19 @@ definitions in <tt>XXXInstrInfo.td</tt>. For example, in
 the last parameter describes a pattern with the store DAG operator.
 </p>
 
-<div class="doc_code">
 <pre>
 def STrr  : F3_1&lt; 3, 0b000100, (outs), (ins MEMrr:$addr, IntRegs:$src),
                  "st $src, [$addr]", [(store IntRegs:$src, ADDRrr:$addr)]&gt;;
 </pre>
-</div>
 
 <p>
 <tt>ADDRrr</tt> is a memory mode that is also defined in
 <tt>SparcInstrInfo.td</tt>:
 </p>
 
-<div class="doc_code">
 <pre>
 def ADDRrr : ComplexPattern&lt;i32, 2, "SelectADDRrr", [], []&gt;;
 </pre>
-</div>
 
 <p>
 The definition of <tt>ADDRrr</tt> refers to <tt>SelectADDRrr</tt>, which is a
@@ -1565,7 +1501,6 @@ In <tt>lib/Target/TargetSelectionDAG.td</tt>, the DAG operator for store is
 defined below:
 </p>
 
-<div class="doc_code">
 <pre>
 def store : PatFrag&lt;(ops node:$val, node:$ptr),
                     (st node:$val, node:$ptr), [{
@@ -1575,7 +1510,6 @@ def store : PatFrag&lt;(ops node:$val, node:$ptr),
   return false;
 }]&gt;;
 </pre>
-</div>
 
 <p>
 <tt>XXXInstrInfo.td</tt> also generates (in <tt>XXXGenDAGISel.inc</tt>) the
@@ -1584,7 +1518,6 @@ method for an instruction. In this example, <tt>SelectCode</tt>
 calls <tt>Select_ISD_STORE</tt> for the <tt>ISD::STORE</tt> opcode.
 </p>
 
-<div class="doc_code">
 <pre>
 SDNode *SelectCode(SDValue N) {
   ... 
@@ -1600,7 +1533,6 @@ SDNode *SelectCode(SDValue N) {
   }
   ...
 </pre>
-</div>
 
 <p>
 The pattern for <tt>STrr</tt> is matched, so elsewhere in
@@ -1610,7 +1542,6 @@ in <tt>XXXGenDAGISel.inc</tt> to complete the processing of this
 instruction.
 </p>
 
-<div class="doc_code">
 <pre>
 SDNode *Select_ISD_STORE(const SDValue &amp;N) {
   SDValue Chain = N.getOperand(0);
@@ -1631,7 +1562,6 @@ SDNode *Select_ISD_STORE(const SDValue &amp;N) {
     }
 ...
 </pre>
-</div>
 
 <!-- ======================================================================= -->
 <h3>
@@ -1657,13 +1587,11 @@ constructor for the SparcTargetLowering class (in
 <tt>SparcISelLowering.cpp</tt>) starts with the following code:
 </p>
 
-<div class="doc_code">
 <pre>
 addRegisterClass(MVT::i32, SP::IntRegsRegisterClass);
 addRegisterClass(MVT::f32, SP::FPRegsRegisterClass);
 addRegisterClass(MVT::f64, SP::DFPRegsRegisterClass); 
 </pre>
-</div>
 
 <p>
 You should examine the node types in the <tt>ISD</tt> namespace
@@ -1720,11 +1648,9 @@ in <tt>SparcISelLowering.cpp</tt> the third parameter below, <tt>Promote</tt>,
 changes <tt>i1</tt> type values to a large type before loading.
 </p>
 
-<div class="doc_code">
 <pre>
 setLoadExtAction(ISD::SEXTLOAD, MVT::i1, Promote);
 </pre>
-</div>
 
 </div>
 
@@ -1744,12 +1670,10 @@ as indicated by the third parameter, <tt>Expand</tt>, to
 <tt>setOperationAction</tt>:
 </p>
 
-<div class="doc_code">
 <pre>
 setOperationAction(ISD::FSIN, MVT::f32, Expand);
 setOperationAction(ISD::FCOS, MVT::f32, Expand);
 </pre>
-</div>
 
 </div>
 
@@ -1778,11 +1702,9 @@ conversion from a floating point value to a signed integer, first the
 parameter:
 </p>
 
-<div class="doc_code">
 <pre>
 setOperationAction(ISD::FP_TO_SINT, MVT::i32, Custom);
 </pre>
-</div>    
 
 <p>
 In the <tt>LowerOperation</tt> method, for each <tt>Custom</tt> operation, a
@@ -1791,7 +1713,6 @@ following code, an <tt>FP_TO_SINT</tt> opcode will call
 the <tt>LowerFP_TO_SINT</tt> method:
 </p>
 
-<div class="doc_code">
 <pre>
 SDValue SparcTargetLowering::LowerOperation(SDValue Op, SelectionDAG &amp;DAG) {
   switch (Op.getOpcode()) {
@@ -1800,14 +1721,12 @@ SDValue SparcTargetLowering::LowerOperation(SDValue Op, SelectionDAG &amp;DAG) {
   }
 }
 </pre>
-</div>
 
 <p>
 Finally, the <tt>LowerFP_TO_SINT</tt> method is implemented, using an FP
 register to convert the floating-point value to an integer.
 </p>
 
-<div class="doc_code">
 <pre>
 static SDValue LowerFP_TO_SINT(SDValue Op, SelectionDAG &amp;DAG) {
   assert(Op.getValueType() == MVT::i32);
@@ -1815,7 +1734,6 @@ static SDValue LowerFP_TO_SINT(SDValue Op, SelectionDAG &amp;DAG) {
   return DAG.getNode(ISD::BITCAST, MVT::i32, Op);
 }
 </pre>
-</div>    
 
 </div>
 
@@ -1835,7 +1753,6 @@ natively supported only for SPARC v9. The following code enables
 the <tt>Expand</tt> conversion technique for non-v9 SPARC implementations.
 </p>
 
-<div class="doc_code">
 <pre>
 setOperationAction(ISD::CTPOP, MVT::i32, Expand);
 ...
@@ -1848,7 +1765,6 @@ if (TM.getSubtarget&lt;SparcSubtarget&gt;().isV9())
   }
 }
 </pre>
-</div>
 
 </div>
 
@@ -1891,11 +1807,9 @@ the argument value to the first available register: either <tt>R0</tt>
 or <tt>R1</tt>.
 </p>
 
-<div class="doc_code">
 <pre>
 CCIfType&lt;[f32,f64], CCAssignToReg&lt;[R0, R1]&gt;&gt;
 </pre>
-</div>
 
 <p>
 <tt>SparcCallingConv.td</tt> contains definitions for a target-specific
@@ -1907,7 +1821,6 @@ double-precision float goes to register <tt>D0</tt>. A 32-bit integer is
 returned in register <tt>I0</tt> or <tt>I1</tt>.
 </p>
 
-<div class="doc_code">
 <pre>
 def RetCC_Sparc32 : CallingConv&lt;[
   CCIfType&lt;[i32], CCAssignToReg&lt;[I0, I1]&gt;&gt;,
@@ -1915,7 +1828,6 @@ def RetCC_Sparc32 : CallingConv&lt;[
   CCIfType&lt;[f64], CCAssignToReg&lt;[D0]&gt;&gt;
 ]&gt;;
 </pre>
-</div>
 
 <p>
 The definition of <tt>CC_Sparc32</tt> in <tt>SparcCallingConv.td</tt> introduces
@@ -1926,7 +1838,6 @@ stack alignment along 4-byte units. (Special cases: if size is zero, then the
 ABI size is used; if alignment is zero, then the ABI alignment is used.)
 </p>
 
-<div class="doc_code">
 <pre>
 def CC_Sparc32 : CallingConv&lt;[
   // All arguments get passed in integer registers if there is space.
@@ -1934,7 +1845,6 @@ def CC_Sparc32 : CallingConv&lt;[
   CCAssignToStack&lt;4, 4&gt;
 ]&gt;;
 </pre>
-</div>
 
 <p>
 <tt>CCDelegateTo</tt> is another commonly used interface, which tries to find a
@@ -1945,7 +1855,6 @@ is assigned to the register <tt>ST0</tt> or <tt>ST1</tt>,
 the <tt>RetCC_X86Common</tt> is invoked.
 </p>
 
-<div class="doc_code">
 <pre>
 def RetCC_X86_32_C : CallingConv&lt;[
   CCIfType&lt;[f32], CCAssignToReg&lt;[ST0, ST1]&gt;&gt;,
@@ -1953,7 +1862,6 @@ def RetCC_X86_32_C : CallingConv&lt;[
   CCDelegateTo&lt;RetCC_X86Common&gt;
 ]&gt;;
 </pre>
-</div>
 
 <p>
 <tt>CCIfCC</tt> is an interface that attempts to match the given name to the
@@ -1964,7 +1872,6 @@ then <tt>RetCC_X86_32_Fast</tt> is invoked. If the <tt>SSECall</tt> calling
 convention is in use, then <tt>RetCC_X86_32_SSE</tt> is invoked.
 </p>
 
-<div class="doc_code">
 <pre>
 def RetCC_X86_32 : CallingConv&lt;[
   CCIfCC&lt;"CallingConv::Fast", CCDelegateTo&lt;RetCC_X86_32_Fast&gt;&gt;,
@@ -1972,7 +1879,6 @@ def RetCC_X86_32 : CallingConv&lt;[
   CCDelegateTo&lt;RetCC_X86_32_C&gt;
 ]&gt;;
 </pre>
-</div>
 
 <p>Other calling convention interfaces include:</p>
 
@@ -2048,7 +1954,6 @@ Similarly, <tt>XXXTargetAsmInfo.cpp</tt> usually has a few declarations of
 in <tt>TargetAsmInfo.cpp</tt>. For example in <tt>SparcTargetAsmInfo.cpp</tt>:
 </p>
 
-<div class="doc_code">
 <pre>
 SparcTargetAsmInfo::SparcTargetAsmInfo(const SparcTargetMachine &amp;TM) {
   Data16bitsDirective = "\t.half\t";
@@ -2059,7 +1964,6 @@ SparcTargetAsmInfo::SparcTargetAsmInfo(const SparcTargetMachine &amp;TM) {
   ConstantPoolSection = "\t.section \".rodata\",#alloc\n";
 }
 </pre>
-</div>
 
 <p>
 The X86 assembly printer implementation (<tt>X86TargetAsmInfo</tt>) is an
@@ -2076,12 +1980,10 @@ following headers that have declarations for the <tt>AsmPrinter</tt> and
 subclass of <tt>FunctionPass</tt>.
 </p>
 
-<div class="doc_code">
 <pre>
 #include "llvm/CodeGen/AsmPrinter.h"
 #include "llvm/CodeGen/MachineFunctionPass.h" 
 </pre>
-</div>
 
 <p>
 As a <tt>FunctionPass</tt>, <tt>AsmPrinter</tt> first
@@ -2199,7 +2101,6 @@ the feature. (The fifth parameter is a list of features whose presence is
 implied, and its default value is an empty array.)
 </p>
 
-<div class="doc_code">
 <pre>
 class SubtargetFeature&lt;string n, string a,  string v, string d,
                        list&lt;SubtargetFeature&gt; i = []&gt; {
@@ -2210,14 +2111,12 @@ class SubtargetFeature&lt;string n, string a,  string v, string d,
   list&lt;SubtargetFeature&gt; Implies = i;
 }
 </pre>
-</div>
 
 <p>
 In the <tt>Sparc.td</tt> file, the SubtargetFeature is used to define the
 following features.
 </p>
 
-<div class="doc_code">
 <pre>
 def FeatureV9 : SubtargetFeature&lt;"v9", "IsV9", "true",
                      "Enable SPARC-V9 instructions"&gt;;
@@ -2227,7 +2126,6 @@ def FeatureV8Deprecated : SubtargetFeature&lt;"deprecated-v8",
 def FeatureVIS : SubtargetFeature&lt;"vis", "IsVIS", "true",
                      "Enable UltraSPARC Visual Instruction Set extensions"&gt;;
 </pre>
-</div>
 
 <p>
 Elsewhere in <tt>Sparc.td</tt>, the Proc class is defined and then is used to
@@ -2235,7 +2133,6 @@ define particular SPARC processor subtypes that may have the previously
 described features.
 </p>
 
-<div class="doc_code">
 <pre>
 class Proc&lt;string Name, list&lt;SubtargetFeature&gt; Features&gt;
   : Processor&lt;Name, NoItineraries, Features&gt;;
@@ -2254,7 +2151,6 @@ def : Proc&lt;"ultrasparc",      [FeatureV9, FeatureV8Deprecated]&gt;;
 def : Proc&lt;"ultrasparc3",     [FeatureV9, FeatureV8Deprecated]&gt;;
 def : Proc&lt;"ultrasparc3-vis", [FeatureV9, FeatureV8Deprecated, FeatureVIS]&gt;;
 </pre>
-</div>
 
 <p>
 From <tt>Target.td</tt> and <tt>Sparc.td</tt> files, the resulting
@@ -2266,7 +2162,6 @@ should be included in the <tt>SparcSubtarget.cpp</tt>. The target-specific
 implementation of the XXXSubtarget method should follow this pseudocode:
 </p>
 
-<div class="doc_code">
 <pre>
 XXXSubtarget::XXXSubtarget(const Module &amp;M, const std::string &amp;FS) {
   // Set the default features
@@ -2275,7 +2170,6 @@ XXXSubtarget::XXXSubtarget(const Module &amp;M, const std::string &amp;FS) {
   // Perform any additional operations
 }
 </pre>
-</div>
 
 </div>
 
@@ -2345,7 +2239,6 @@ the <tt>emitInstruction</tt> method is built around the following switch/case
 statements:
 </p>
 
-<div class="doc_code">
 <pre>
 switch (Desc-&gt;TSFlags &amp; X86::FormMask) {
 case X86II::Pseudo:  // for not yet implemented instructions 
@@ -2386,7 +2279,6 @@ case X86II::MRMInitReg: // for instructions whose source and
    break;
 }
 </pre>
-</div>
 
 <p>
 The implementations of these case statements often first emit the opcode and
@@ -2404,7 +2296,6 @@ as <tt>emitConstant</tt>, <tt>emitGlobalAddress</tt>,
 and <tt>emitJumpTableAddress</tt> that emit the data into the output stream.)
 </p>
 
-<div class="doc_code">
 <pre>
 case X86II::AddRegFrm:
   MCE.emitByte(BaseOpcode + getX86RegNum(MI.getOperand(CurOp++).getReg()));
@@ -2434,7 +2325,6 @@ case X86II::AddRegFrm:
   }
   break;
 </pre>
-</div>
 
 <p>
 In the previous example, <tt>XXXCodeEmitter.cpp</tt> uses the
@@ -2453,7 +2343,6 @@ value already in memory. For <tt>reloc_pcrel_word</tt>
 and <tt>reloc_picrel_word</tt>, there is an additional initial adjustment.
 </p>
 
-<div class="doc_code">
 <pre>
 enum RelocationType {
   reloc_pcrel_word = 0,    // add reloc value after adjusting for the PC loc
@@ -2462,7 +2351,6 @@ enum RelocationType {
   reloc_absolute_dword = 3 // absolute relocation; no additional adjustment
 };
 </pre>
-</div>
 
 </div>
 
@@ -2501,7 +2389,6 @@ callback function that will be used a function wrapper. For the Alpha target
 implementation is simply:
 </p>
 
-<div class="doc_code">
 <pre>
 TargetJITInfo::LazyResolverFn AlphaJITInfo::getLazyResolverFunction(  
                                             JITCompilerFn F) {
@@ -2509,7 +2396,6 @@ TargetJITInfo::LazyResolverFn AlphaJITInfo::getLazyResolverFunction(
   return AlphaCompilationCallback;
 }
 </pre>
-</div>
 
 <p>
 For the X86 target, the <tt>getLazyResolverFunction</tt> implementation is a

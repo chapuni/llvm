@@ -66,13 +66,11 @@ LLVM SVN to work.  LLVM 2.2 and before will not work with it.</p>
 In order to generate LLVM IR, we want some simple setup to get started.  First
 we define virtual code generation (codegen) methods in each AST class:</p>
 
-<div class="doc_code">
 <pre>
 let rec codegen_expr = function
   | Ast.Number n -&gt; ...
   | Ast.Variable name -&gt; ...
 </pre>
-</div>
 
 <p>The <tt>Codegen.codegen_expr</tt> function says to emit IR for that AST node
 along with all the things it depends on, and they all return an LLVM Value
@@ -91,7 +89,6 @@ second thing we want is an "Error" exception like we used for the parser, which
 will be used to report errors found during code generation (for example, use of
 an undeclared parameter):</p>
 
-<div class="doc_code">
 <pre>
 exception Error of string
 
@@ -100,7 +97,6 @@ let builder = builder (global_context ())
 let named_values:(string, llvalue) Hashtbl.t = Hashtbl.create 10
 let double_type = double_type context
 </pre>
-</div>
 
 <p>The static variables will be used during code generation.
 <tt>Codgen.the_module</tt> is the LLVM construct that contains all of the
@@ -137,11 +133,9 @@ that this has already been done, and we'll just use it to emit code.</p>
 than 30 lines of commented code for all four of our expression nodes.  First
 we'll do numeric literals:</p>
 
-<div class="doc_code">
 <pre>
   | Ast.Number n -&gt; const_float double_type n
 </pre>
-</div>
 
 <p>In the LLVM IR, numeric constants are represented with the
 <tt>ConstantFP</tt> class, which holds the numeric value in an <tt>APFloat</tt>
@@ -151,13 +145,11 @@ creates and returns a <tt>ConstantFP</tt>.  Note that in the LLVM IR
 that constants are all uniqued together and shared.  For this reason, the API
 uses "the foo::get(..)" idiom instead of "new foo(..)" or "foo::Create(..)".</p>
 
-<div class="doc_code">
 <pre>
   | Ast.Variable name -&gt;
       (try Hashtbl.find named_values name with
         | Not_found -&gt; raise (Error "unknown variable name"))
 </pre>
-</div>
 
 <p>References to variables are also quite simple using LLVM.  In the simple
 version of Kaleidoscope, we assume that the variable has already been emitted
@@ -169,7 +161,6 @@ we'll add support for <a href="LangImpl5.html#for">loop induction variables</a>
 in the symbol table, and for <a href="LangImpl7.html#localvars">local
 variables</a>.</p>
 
-<div class="doc_code">
 <pre>
   | Ast.Binary (op, lhs, rhs) -&gt;
       let lhs_val = codegen_expr lhs in
@@ -186,7 +177,6 @@ variables</a>.</p>
         | _ -&gt; raise (Error "invalid binary operator")
       end
 </pre>
-</div>
 
 <p>Binary operators start to get more interesting.  The basic idea here is that
 we recursively emit code for the left-hand side of the expression, then the
@@ -222,7 +212,6 @@ as an unsigned value.  In contrast, if we used the <a
 href="../LangRef.html#i_sitofp">sitofp instruction</a>, the Kaleidoscope '&lt;'
 operator would return 0.0 and -1.0, depending on the input value.</p>
 
-<div class="doc_code">
 <pre>
   | Ast.Call (callee, args) -&gt;
       (* Look up the name in the module table. *)
@@ -239,7 +228,6 @@ operator would return 0.0 and -1.0, depending on the input value.</p>
       let args = Array.map codegen_expr args in
       build_call callee args "calltmp" builder
 </pre>
-</div>
 
 <p>Code generation for function calls is quite straightforward with LLVM.  The
 code above initially does a function name lookup in the LLVM Module's symbol
@@ -274,7 +262,6 @@ generation, but allows us to illustrate some important points.  First, lets
 talk about code generation for prototypes: they are used both for function
 bodies and external function declarations.  The code starts with:</p>
 
-<div class="doc_code">
 <pre>
 let codegen_proto = function
   | Ast.Prototype (name, args) -&gt;
@@ -284,7 +271,6 @@ let codegen_proto = function
       let f =
         match lookup_function name the_module with
 </pre>
-</div>
 
 <p>This code packs a lot of power into a few lines.  Note first that this
 function returns a "Function*" instead of a "Value*" (although at the moment
@@ -305,11 +291,9 @@ like <tt>Constant</tt>s are, so you don't "new" a type, you "get" it.</p>
 <p>The final line above checks if the function has already been defined in
 <tt>Codegen.the_module</tt>. If not, we will create it.</p>
 
-<div class="doc_code">
 <pre>
         | None -&gt; declare_function name ft the_module
 </pre>
-</div>
 
 <p>This indicates the type and name to use, as well as which module to insert
 into.  By default we assume a function has
@@ -327,7 +311,6 @@ just have to check that the number of arguments match).  Second, we want to
 allow 'extern'ing a function and then defining a body for it.  This is useful
 when defining mutually recursive functions.</p>
 
-<div class="doc_code">
 <pre>
         (* If 'f' conflicted, there was already something named 'name'. If it
          * has a body, don't allow redefinition or reextern. *)
@@ -342,7 +325,6 @@ when defining mutually recursive functions.</p>
             f
       in
 </pre>
-</div>
 
 <p>In order to verify the logic above, we first check to see if the pre-existing
 function is "empty".  In this case, empty means that it has no basic blocks in
@@ -352,7 +334,6 @@ function, the code rejects this case.  If the previous reference to a function
 was an 'extern', we simply verify that the number of arguments for that
 definition and this one match up.  If not, we emit an error.</p>
 
-<div class="doc_code">
 <pre>
       (* Set names for all arguments. *)
       Array.iteri (fun i a -&gt;
@@ -362,7 +343,6 @@ definition and this one match up.  If not, we emit an error.</p>
       ) (params f);
       f
 </pre>
-</div>
 
 <p>The last bit of code for prototypes loops over all of the arguments in the
 function, setting the name of the LLVM Argument objects to match, and registering
@@ -372,14 +352,12 @@ object to the caller.  Note that we don't check for conflicting
 argument names here (e.g. "extern foo(a b a)").  Doing so would be very
 straight-forward with the mechanics we have already used above.</p>
 
-<div class="doc_code">
 <pre>
 let codegen_func = function
   | Ast.Function (proto, body) -&gt;
       Hashtbl.clear named_values;
       let the_function = codegen_proto proto in
 </pre>
-</div>
 
 <p>Code generation for function definitions starts out simply enough: we just
 codegen the prototype (Proto) and verify that it is ok.  We then clear out the
@@ -387,7 +365,6 @@ codegen the prototype (Proto) and verify that it is ok.  We then clear out the
 from the last function we compiled.  Code generation of the prototype ensures
 that there is an LLVM Function object that is ready to go for us.</p>
 
-<div class="doc_code">
 <pre>
       (* Create a new basic block to start insertion into. *)
       let bb = append_block context "entry" the_function in
@@ -396,7 +373,6 @@ that there is an LLVM Function object that is ready to go for us.</p>
       try
         let ret_val = codegen_expr body in
 </pre>
-</div>
 
 <p>Now we get to the point where the <tt>Codegen.builder</tt> is set up.  The
 first line creates a new
@@ -410,7 +386,6 @@ Since we don't have any control flow, our functions will only contain one
 block at this point.  We'll fix this in <a href="OCamlLangImpl5.html">Chapter
 5</a> :).</p>
 
-<div class="doc_code">
 <pre>
         let ret_val = codegen_expr body in
 
@@ -422,7 +397,6 @@ block at this point.  We'll fix this in <a href="OCamlLangImpl5.html">Chapter
 
         the_function
 </pre>
-</div>
 
 <p>Once the insertion point is set up, we call the <tt>Codegen.codegen_func</tt>
 method for the root expression of the function.  If no error happens, this emits
@@ -436,13 +410,11 @@ determine if our compiler is doing everything right.  Using this is important:
 it can catch a lot of bugs.  Once the function is finished and validated, we
 return it.</p>
 
-<div class="doc_code">
 <pre>
       with e -&gt;
         delete_function the_function;
         raise e
 </pre>
-</div>
 
 <p>The only piece left here is handling of the error case.  For simplicity, we
 handle this by merely deleting the function we produced with the
@@ -455,13 +427,11 @@ can return a previously defined forward declaration, our code can actually delet
 a forward declaration.  There are a number of ways to fix this bug, see what you
 can come up with!  Here is a testcase:</p>
 
-<div class="doc_code">
 <pre>
 extern foo(a b);     # ok, defines foo.
 def foo(a b) c;      # error, 'c' is invalid.
 def bar() foo(1, 2); # error, unknown function "foo"
 </pre>
-</div>
 
 </div>
 
@@ -478,7 +448,6 @@ look at the pretty IR calls.  The sample code inserts calls to Codegen into the
 nice way to look at the LLVM IR for simple functions.  For example:
 </p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>4+5</b>;
 Read top-level expression:
@@ -488,7 +457,6 @@ entry:
         ret double %addtmp
 }
 </pre>
-</div>
 
 <p>Note how the parser turns the top-level expression into anonymous functions
 for us.  This will be handy when we add <a href="OCamlLangImpl4.html#jit">JIT
@@ -497,7 +465,6 @@ transcribed, no optimizations are being performed.  We will
 <a href="OCamlLangImpl4.html#trivialconstfold">add optimizations</a> explicitly
 in the next chapter.</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def foo(a b) a*a + 2*a*b + b*b;</b>
 Read function definition:
@@ -512,12 +479,10 @@ entry:
         ret double %addtmp4
 }
 </pre>
-</div>
 
 <p>This shows some simple arithmetic. Notice the striking similarity to the
 LLVM builder calls that we use to create the instructions.</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>def bar(a) foo(a, 4.0) + bar(31337);</b>
 Read function definition:
@@ -529,13 +494,11 @@ entry:
         ret double %addtmp
 }
 </pre>
-</div>
 
 <p>This shows some function calls.  Note that this function will take a long
 time to execute if you call it.  In the future we'll add conditional control
 flow to actually make recursion useful :).</p>
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>extern cos(x);</b>
 Read extern:
@@ -549,12 +512,10 @@ entry:
         ret double %calltmp
 }
 </pre>
-</div>
 
 <p>This shows an extern for the libm "cos" function, and a call to it.</p>
 
 
-<div class="doc_code">
 <pre>
 ready&gt; <b>^D</b>
 ; ModuleID = 'my cool jit'
@@ -592,7 +553,6 @@ entry:
         ret double %calltmp
 }
 </pre>
-</div>
 
 <p>When you quit the current demo, it dumps out the IR for the entire module
 generated.  Here you can see the big picture with all the functions referencing
@@ -618,14 +578,12 @@ them in.  To do this, we use the <a
 href="http://llvm.org/cmds/llvm-config.html">llvm-config</a> tool to inform
 our makefile/command line about which options to use:</p>
 
-<div class="doc_code">
 <pre>
 # Compile
 ocamlbuild toy.byte
 # Run
 ./toy.byte
 </pre>
-</div>
 
 <p>Here is the code:</p>
 

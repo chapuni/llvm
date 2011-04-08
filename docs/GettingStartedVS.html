@@ -206,22 +206,18 @@
     <li>The LLVM tests can be run by <tt>cd</tt>ing to the llvm source directory
         and running:
 
-<div class="doc_code">
 <pre>
 % llvm-lit test
 </pre>
-</div>
 
     <p>Note that quite a few of these test will fail.</p>
     </li>
 
     <li>A specific test or test directory can be run with:
 
-<div class="doc_code">
 <pre>
 % llvm-lit test/path/to/test
 </pre>
-</div>
     </li>
   </ul>
 </ol>
@@ -239,22 +235,19 @@
 <ol>
   <li><p>First, create a simple C file, name it 'hello.c':</p>
 
-<div class="doc_code">
 <pre>
 #include &lt;stdio.h&gt;
 int main() {
   printf("hello world\n");
   return 0;
 }
-</pre></div></li>
+</pre></li>
 
   <li><p>Next, compile the C file into a LLVM bitcode file:</p>
 
-<div class="doc_code">
 <pre>
 % clang -c hello.c -emit-llvm -o hello.bc
 </pre>
-</div>
 
       <p>This will create the result file <tt>hello.bc</tt> which is the LLVM
          bitcode that corresponds the the compiled program and the library
@@ -265,55 +258,46 @@ int main() {
       <p>Alternatively you can directly output an executable with clang with:
       </p>
 
-<div class="doc_code">
 <pre>
 % clang hello.c -o hello.exe
 </pre>
-</div>
 
   <p>The <tt>-o hello.exe</tt> is required because clang currently outputs
   <tt>a.out</tt> when neither <tt>-o</tt> nor <tt>-c</tt> are given.</p>
 
   <li><p>Run the program using the just-in-time compiler:</p>
 
-<div class="doc_code">
 <pre>
 % lli hello.bc
 </pre>
-</div>
 
   <li><p>Use the <tt>llvm-dis</tt> utility to take a look at the LLVM assembly
       code:</p>
 
-<div class="doc_code">
 <pre>
 % llvm-dis &lt; hello.bc | more
 </pre>
-</div></li>
+</li>
 
   <li><p>Compile the program to object code using the LLC code generator:</p>
 
-<div class="doc_code">
 <pre>
 % llc -filetype=obj hello.bc
 </pre>
-</div></li>
+</li>
 
   <li><p>Link to binary using Microsoft link:</p>
 
-<div class="doc_code">
 <pre>
 % link hello.obj -defaultlib:libcmt
 </pre>
-</div>
 
   <li><p>Execute the native code program:</p>
 
-<div class="doc_code">
 <pre>
 % hello.exe
 </pre>
-</div></li>
+</li>
 </ol>
 
 </div>

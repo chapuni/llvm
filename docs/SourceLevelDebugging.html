@@ -210,12 +210,10 @@ height="369">
    framework to test optimizer's handling of debugging information. It can be
    run like this:</p>
 
-<div class="doc_code">
 <pre>
 % cd llvm/projects/test-suite/MultiSource/Benchmarks  # or some other level
 % make TEST=dbgopt
 </pre>
-</div>
 
 <p>This will test impact of debugging information on optimization passes. If
    debugging information influences optimization passes then it will be reported
@@ -290,14 +288,12 @@ height="369">
    are restricted to only the simple data types <tt>i32</tt>, <tt>i1</tt>,
    <tt>float</tt>, <tt>double</tt>, <tt>mdstring</tt> and <tt>mdnode</tt>. </p>
 
-<div class="doc_code">
 <pre>
 !1 = metadata !{
   i32,   ;; A tag
   ...
 }
 </pre>
-</div>
 
 <p><a name="LLVMDebugVersion">The first field of a descriptor is always an
    <tt>i32</tt> containing a tag value identifying the content of the
@@ -317,7 +313,6 @@ height="369">
 
 <div>
 
-<div class="doc_code">
 <pre>
 !0 = metadata !{
   i32,       ;; Tag = 17 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> 
@@ -333,7 +328,6 @@ height="369">
   i32        ;; Runtime version
 }
 </pre>
-</div>
 
 <p>These descriptors contain a source language ID for the file (we use the DWARF
    3.0 ID numbers, such as <tt>DW_LANG_C89</tt>, <tt>DW_LANG_C_plus_plus</tt>,
@@ -353,7 +347,6 @@ height="369">
 
 <div>
 
-<div class="doc_code">
 <pre>
 !0 = metadata !{
   i32,       ;; Tag = 41 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> 
@@ -363,7 +356,6 @@ height="369">
   metadata   ;; Reference to compile unit where defined
 }
 </pre>
-</div>
 
 <p>These descriptors contain information for a file. Global variables and top
    level functions would be defined using this context.k File descriptors also
@@ -382,7 +374,6 @@ height="369">
 
 <div>
 
-<div class="doc_code">
 <pre>
 !1 = metadata !{
   i32,      ;; Tag = 52 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> 
@@ -400,7 +391,6 @@ height="369">
   {}*       ;; Reference to the global variable
 }
 </pre>
-</div>
 
 <p>These descriptors provide debug information about globals variables.  The
 provide details such as name, type and where the variable is defined. All
@@ -415,7 +405,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32,      ;; Tag = 46 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a>
@@ -441,7 +430,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
   metadata  ;; Function declaration descriptor
 }
 </pre>
-</div>
 
 <p>These descriptors provide debug information about functions, methods and
    subprograms.  They provide details such as name, return types and the source
@@ -459,7 +447,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
 
 <div>
 
-<div class="doc_code">
 <pre>
 !3 = metadata !{
   i32,     ;; Tag = 11 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> (DW_TAG_lexical_block)
@@ -470,7 +457,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
   i32      ;; Unique ID to identify blocks from a template function
 }
 </pre>
-</div>
 
 <p>These descriptors provide debug information about nested blocks within a
    subprogram. The line number and column numbers are used to dinstinguish
@@ -485,7 +471,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
 
 <div>
 
-<div class="doc_code">
 <pre>
 !4 = metadata !{
   i32,      ;; Tag = 36 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> 
@@ -501,7 +486,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
   i32       ;; DWARF type encoding
 }
 </pre>
-</div>
 
 <p>These descriptors define primitive types used in the code. Example int, bool
    and float.  The context provides the scope of the type, which is usually the
@@ -516,7 +500,6 @@ global variables are collected by named metadata <tt>!llvm.dbg.gv</tt>.</p>
 <p>The type encoding provides the details of the type.  The values are typically
    one of the following:</p>
 
-<div class="doc_code">
 <pre>
 DW_ATE_address       = 1
 DW_ATE_boolean       = 2
@@ -526,7 +509,6 @@ DW_ATE_signed_char   = 6
 DW_ATE_unsigned      = 7
 DW_ATE_unsigned_char = 8
 </pre>
-</div>
 
 </div>
 
@@ -537,7 +519,6 @@ DW_ATE_unsigned_char = 8
 
 <div>
 
-<div class="doc_code">
 <pre>
 !5 = metadata !{
   i32,      ;; Tag (see below)
@@ -556,13 +537,11 @@ DW_ATE_unsigned_char = 8
   i32       ;; (optional) Objective C property attributes.
 }
 </pre>
-</div>
 
 <p>These descriptors are used to define types derived from other types.  The
 value of the tag varies depending on the meaning.  The following are possible
 tag values:</p>
 
-<div class="doc_code">
 <pre>
 DW_TAG_formal_parameter = 5
 DW_TAG_member           = 13
@@ -573,7 +552,6 @@ DW_TAG_const_type       = 38
 DW_TAG_volatile_type    = 53
 DW_TAG_restrict_type    = 55
 </pre>
-</div>
 
 <p><tt>DW_TAG_member</tt> is used to define a member of
    a <a href="#format_composite_type">composite type</a>
@@ -609,7 +587,6 @@ DW_TAG_restrict_type    = 55
 
 <div>
 
-<div class="doc_code">
 <pre>
 !6 = metadata !{
   i32,      ;; Tag (see below)
@@ -626,13 +603,11 @@ DW_TAG_restrict_type    = 55
   i32       ;; Runtime languages
 }
 </pre>
-</div>
 
 <p>These descriptors are used to define types that are composed of 0 or more
 elements.  The value of the tag varies depending on the meaning.  The following
 are possible tag values:</p>
 
-<div class="doc_code">
 <pre>
 DW_TAG_array_type       = 1
 DW_TAG_enumeration_type = 4
@@ -642,7 +617,6 @@ DW_TAG_vector_type      = 259
 DW_TAG_subroutine_type  = 21
 DW_TAG_inheritance      = 28
 </pre>
-</div>
 
 <p>The vector flag indicates that an array type is a native packed vector.</p>
 
@@ -696,7 +670,6 @@ DW_TAG_inheritance      = 28
 
 <div>
 
-<div class="doc_code">
 <pre>
 !42 = metadata !{
   i32,    ;; Tag = 33 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> (DW_TAG_subrange_type)
@@ -704,7 +677,6 @@ DW_TAG_inheritance      = 28
   i64     ;; High value
 }
 </pre>
-</div>
 
 <p>These descriptors are used to define ranges of array subscripts for an array
    <a href="#format_composite_type">composite type</a>.  The low value defines
@@ -722,7 +694,6 @@ DW_TAG_inheritance      = 28
 
 <div>
 
-<div class="doc_code">
 <pre>
 !6 = metadata !{
   i32,      ;; Tag = 40 + <a href="#LLVMDebugVersion">LLVMDebugVersion</a> 
@@ -731,7 +702,6 @@ DW_TAG_inheritance      = 28
   i64       ;; Value
 }
 </pre>
-</div>
 
 <p>These descriptors are used to define members of an
    enumeration <a href="#format_composite_type">composite type</a>, it
@@ -746,7 +716,6 @@ DW_TAG_inheritance      = 28
 
 <div>
 
-<div class="doc_code">
 <pre>
 !7 = metadata !{
   i32,      ;; Tag (see below)
@@ -758,18 +727,15 @@ DW_TAG_inheritance      = 28
   metadata  ;; Type descriptor
 }
 </pre>
-</div>
 
 <p>These descriptors are used to define variables local to a sub program.  The
    value of the tag depends on the usage of the variable:</p>
 
-<div class="doc_code">
 <pre>
 DW_TAG_auto_variable   = 256
 DW_TAG_arg_variable    = 257
 DW_TAG_return_variable = 258
 </pre>
-</div>
 
 <p>An auto variable is any variable declared in the body of the function.  An
    argument variable is any variable that appears as a formal argument to the
@@ -848,7 +814,6 @@ DW_TAG_return_variable = 258
    llvm instructions to encode line number and scoping information. Consider
    the following C fragment, for example:</p>
 
-<div class="doc_code">
 <pre>
 1.  void foo() {
 2.    int X = 21;
@@ -860,11 +825,9 @@ DW_TAG_return_variable = 258
 8.    X = Y;
 9.  }
 </pre>
-</div>
 
 <p>Compiled to LLVM, this function would be represented like this:</p>
 
-<div class="doc_code">
 <pre>
 define void @foo() nounwind ssp {
 entry:
@@ -920,7 +883,6 @@ declare void @llvm.dbg.declare(metadata, metadata) nounwind readnone
 !17 = metadata !{i32 8, i32 3, metadata !1, null}
 !18 = metadata !{i32 9, i32 1, metadata !2, null}
 </pre>
-</div>
 
 <p>This example illustrates a few important details about LLVM debugging
    information. In particular, it shows how the <tt>llvm.dbg.declare</tt>
@@ -929,11 +891,9 @@ declare void @llvm.dbg.declare(metadata, metadata) nounwind readnone
    statements, variable definitions, and the code used to implement the
    function.</p>
 
-<div class="doc_code">
 <pre>
 call void @llvm.dbg.declare(metadata, metadata !0), !dbg !7   
 </pre>
-</div>
 
 <p>The first intrinsic
    <tt>%<a href="#format_common_declare">llvm.dbg.declare</a></tt>
@@ -941,7 +901,6 @@ call void @llvm.dbg.declare(metadata, metadata !0), !dbg !7
    <tt>!dbg !7</tt> attached to the intrinsic provides scope information for the
    variable <tt>X</tt>.</p>
 
-<div class="doc_code">
 <pre>
 !7 = metadata !{i32 2, i32 7, metadata !1, null}
 !1 = metadata !{i32 458763, metadata !2}; [DW_TAG_lexical_block ]
@@ -949,7 +908,6 @@ call void @llvm.dbg.declare(metadata, metadata !0), !dbg !7
                 metadata !"foo", metadata !"foo", metadata !3, i32 1, 
                 metadata !4, i1 false, i1 true}; [DW_TAG_subprogram ]   
 </pre>
-</div>
 
 <p>Here <tt>!7</tt> is metadata providing location information. It has four
    fields: line number, column number, scope, and original scope. The original
@@ -964,11 +922,9 @@ call void @llvm.dbg.declare(metadata, metadata !0), !dbg !7
 
 <p>Now lets take another example.</p>
 
-<div class="doc_code">
 <pre>
 call void @llvm.dbg.declare(metadata, metadata !12), !dbg !14
 </pre>
-</div>
 
 <p>The second intrinsic
    <tt>%<a href="#format_common_declare">llvm.dbg.declare</a></tt>
@@ -976,12 +932,10 @@ call void @llvm.dbg.declare(metadata, metadata !12), !dbg !14
    <tt>!dbg !14</tt> attached to the intrinsic provides scope information for
    the variable <tt>Z</tt>.</p>
 
-<div class="doc_code">
 <pre>
 !13 = metadata !{i32 458763, metadata !1}; [DW_TAG_lexical_block ]
 !14 = metadata !{i32 5, i32 9, metadata !13, null}
 </pre>
-</div>
 
 <p>Here <tt>!14</tt> indicates that <tt>Z</tt> is declared at line number 5 and
    column number 9 inside of lexical scope <tt>!13</tt>. The lexical scope
@@ -1031,7 +985,6 @@ call void @llvm.dbg.declare(metadata, metadata !12), !dbg !14
 <p>Given the source files <tt>MySource.cpp</tt> and <tt>MyHeader.h</tt> located
    in the directory <tt>/Users/mine/sources</tt>, the following code:</p>
 
-<div class="doc_code">
 <pre>
 #include "MyHeader.h"
 
@@ -1039,11 +992,9 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ...
 ;;
@@ -1083,7 +1034,6 @@ int main(int argc, char *argv[]) {
 
 ...
 </pre>
-</div>
 
 <p>llvm::Instruction provides easy access to metadata attached with an 
 instruction. One can extract line number information encoded in LLVM IR
@@ -1097,6 +1047,7 @@ using <tt>Instruction::getMetadata()</tt> and
    StringRef Dir = Loc.getDirectory();
  }
 </pre>
+
 </div>
 
 <!-- ======================================================================= -->
@@ -1108,15 +1059,12 @@ using <tt>Instruction::getMetadata()</tt> and
 
 <p>Given an integer global variable declared as follows:</p>
 
-<div class="doc_code">
 <pre>
 int MyGlobal = 100;
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ;;
 ;; Define the global itself.
@@ -1165,7 +1113,6 @@ int MyGlobal = 100;
 }
 
 </pre>
-</div>
 
 </div>
 
@@ -1178,17 +1125,14 @@ int MyGlobal = 100;
 
 <p>Given a function declared as follows:</p>
 
-<div class="doc_code">
 <pre>
 int main(int argc, char *argv[]) {
   return 0;
 }
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ;;
 ;; Define the anchor for subprograms.  Note that the second field of the
@@ -1222,7 +1166,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 ...
 }
 </pre>
-</div>
 
 </div>
 
@@ -1242,7 +1185,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1257,7 +1199,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 2              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1268,7 +1209,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1283,7 +1223,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 6              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1294,7 +1233,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1309,7 +1247,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 8              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1320,7 +1257,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1335,7 +1271,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 5              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1346,7 +1281,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1361,7 +1295,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 7              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1372,7 +1305,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1386,7 +1318,7 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 0,             ;; Flags
   i32 5              ;; Encoding
 }
-</pre></div>
+</pre>
 
 </div>
 
@@ -1397,7 +1329,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1412,7 +1343,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 7              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1423,7 +1353,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1438,7 +1367,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 5              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1449,7 +1377,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1464,7 +1391,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 7              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1475,7 +1401,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1490,7 +1415,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 4              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1501,7 +1425,6 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <div>
 
-<div class="doc_code">
 <pre>
 !2 = metadata !{
   i32 524324,        ;; Tag
@@ -1516,7 +1439,6 @@ define i32 @main(i32 %argc, i8** %argv) {
   i32 4              ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1531,15 +1453,12 @@ define i32 @main(i32 %argc, i8** %argv) {
 
 <p>Given the following as an example of C/C++ derived type:</p>
 
-<div class="doc_code">
 <pre>
 typedef const int *IntPtr;
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ;;
 ;; Define the typedef "IntPtr".
@@ -1603,7 +1522,6 @@ typedef const int *IntPtr;
   5                    ;; Encoding
 }
 </pre>
-</div>
 
 </div>
 
@@ -1616,7 +1534,6 @@ typedef const int *IntPtr;
 
 <p>Given the following as an example of C/C++ struct type:</p>
 
-<div class="doc_code">
 <pre>
 struct Color {
   unsigned Red;
@@ -1624,11 +1541,9 @@ struct Color {
   unsigned Blue;
 };
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ;;
 ;; Define basic type for unsigned int.
@@ -1716,7 +1631,6 @@ struct Color {
 ;;
 !3 = metadata !{metadata !4, metadata !6, metadata !7}
 </pre>
-</div>
 
 </div>
 
@@ -1729,7 +1643,6 @@ struct Color {
 
 <p>Given the following as an example of C/C++ enumeration type:</p>
 
-<div class="doc_code">
 <pre>
 enum Trees {
   Spruce = 100,
@@ -1737,11 +1650,9 @@ enum Trees {
   Maple = 300
 };
 </pre>
-</div>
 
 <p>a C/C++ front-end would generate the following descriptors:</p>
 
-<div class="doc_code">
 <pre>
 ;;
 ;; Define composite type for enum Trees
@@ -1782,7 +1693,6 @@ enum Trees {
 !6 = metadata !{i32 524328, metadata !"Maple", i64 300}
 
 </pre>
-</div>
 
 </div>
 
