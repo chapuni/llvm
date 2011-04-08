@@ -79,17 +79,15 @@
   <li><p>Create a directory for containing the build. It is not
       supported to build LLVM on the source directory. cd to this
       directory:</p>
-    <div class="doc_code">
-      <p><tt>mkdir mybuilddir</tt></p>
-      <p><tt>cd mybuilddir</tt></p>
-    </div>
+<pre>
+$ mkdir mybuilddir
+$ cd mybuilddir
+</pre>
 
   <li><p>Execute this command on the shell
       replacing <i>path/to/llvm/source/root</i> with the path to the
       root of your LLVM source tree:</p>
-    <div class="doc_code">
-      <p><tt>cmake path/to/llvm/source/root</tt></p>
-    </div>
+    <pre>cmake path/to/llvm/source/root</pre>
 
     <p>CMake will detect your development environment, perform a
       series of test and generate the files required for building
@@ -136,16 +134,12 @@
     line option <i>-G "Name of the generator"</i>. For knowing the
     available generators on your platform, execute</p>
 
-    <div class="doc_code">
-      <p><tt>cmake --help</tt></p>
-    </div>
+    <pre>cmake --help</pre>
 
     <p>This will list the generator's names at the end of the help
       text. Generator's names are case-sensitive. Example:</p>
 
-    <div class="doc_code">
-      <p><tt>cmake -G "Visual Studio 8 2005" path/to/llvm/source/root</tt></p>
-    </div>
+    <pre>cmake -G "Visual Studio 8 2005" path/to/llvm/source/root</pre>
 
     <p>For a given development platform there can be more than one
       adequate generator. If you use Visual Studio "NMake Makefiles"
@@ -171,16 +165,12 @@
     boolean variables, with possible values ON/OFF. Options and
     variables are defined on the CMake command line like this:</p>
 
-  <div class="doc_code">
-    <p><tt>cmake -DVARIABLE=value path/to/llvm/source</tt></p>
-  </div>
+  <pre>cmake -DVARIABLE=value path/to/llvm/source</pre>
 
   <p>You can set a variable after the initial CMake invocation for
     changing its value. You can also undefine a variable:</p>
 
-  <div class="doc_code">
-    <p><tt>cmake -UVARIABLE path/to/llvm/source</tt></p>
-  </div>
+  <pre>cmake -UVARIABLE path/to/llvm/source</pre>
 
   <p>Variables are stored on the CMake cache. This is a file
     named <tt>CMakeCache.txt</tt> on the root of the build
@@ -190,9 +180,7 @@
     correct to write the variable and the type on the CMake command
     line:</p>
 
-  <div class="doc_code">
-    <p><tt>cmake -DVARIABLE:TYPE=value path/to/llvm/source</tt></p>
-  </div>
+  <pre>cmake -DVARIABLE:TYPE=value path/to/llvm/source</pre>
 
 <!-- ======================================================================= -->
 <h3>
@@ -369,9 +357,7 @@
   instance, if you are using makefiles, execute this command while on
   the top level of your build directory:</p>
 
-<div class="doc_code">
-  <p><tt>make check</tt></p>
-</div>
+<pre>make check</pre>
 
 <p>On Visual Studio, you may run tests to build the project "check".</p>
 
@@ -411,27 +397,25 @@
     of required LLVM features. What follows is an example of how to
     obtain this information:</p>
 
-  <div class="doc_code">
     <pre>
-    <b># A convenience variable:</b>
-    set(LLVM_ROOT "" CACHE PATH "Root of LLVM install.")
-    <b># A bit of a sanity check:</b>
-    if( NOT EXISTS ${LLVM_ROOT}/include/llvm )
-    message(FATAL_ERROR "LLVM_ROOT (${LLVM_ROOT}) is not a valid LLVM install")
-    endif()
-    <b># We incorporate the CMake features provided by LLVM:</b>
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${LLVM_ROOT}/share/llvm/cmake")
-    include(LLVM)
-    <b># Now set the header and library paths:</b>
-    include_directories( ${LLVM_ROOT}/include )
-    link_directories( ${LLVM_ROOT}/lib )
-    <b># Let's suppose we want to build a JIT compiler with support for
-    # binary code (no interpreter):</b>
-    llvm_map_components_to_libraries(REQ_LLVM_LIBRARIES jit native)
-    <b># Finally, we link the LLVM libraries to our executable:</b>
-    target_link_libraries(mycompiler ${REQ_LLVM_LIBRARIES})
-    </pre>
-  </div>
+<b># A convenience variable:</b>
+set(LLVM_ROOT "" CACHE PATH "Root of LLVM install.")
+<b># A bit of a sanity check:</b>
+if( NOT EXISTS ${LLVM_ROOT}/include/llvm )
+message(FATAL_ERROR "LLVM_ROOT (${LLVM_ROOT}) is not a valid LLVM install")
+endif()
+<b># We incorporate the CMake features provided by LLVM:</b>
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${LLVM_ROOT}/share/llvm/cmake")
+include(LLVM)
+<b># Now set the header and library paths:</b>
+include_directories( ${LLVM_ROOT}/include )
+link_directories( ${LLVM_ROOT}/lib )
+<b># Let's suppose we want to build a JIT compiler with support for
+# binary code (no interpreter):</b>
+llvm_map_components_to_libraries(REQ_LLVM_LIBRARIES jit native)
+<b># Finally, we link the LLVM libraries to our executable:</b>
+target_link_libraries(mycompiler ${REQ_LLVM_LIBRARIES})
+</pre>
 
   <p>This assumes that LLVM_ROOT points to an install of LLVM. The
     procedure works too for uninstalled builds although we need to take

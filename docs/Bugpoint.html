@@ -199,9 +199,9 @@ non-obvious ways.  Here are some hints and tips:<p>
     of time.  It is often useful to capture the output of the program to file.
     For example, in the C shell, you can run:</p>
 
-<div class="doc_code">
-<p><tt>bugpoint  ... |&amp; tee bugpoint.log</tt></p>
-</div>
+<pre>
+bugpoint  ... |&amp; tee bugpoint.log
+</pre>
 
     <p>to get a copy of <tt>bugpoint</tt>'s output in the file
     <tt>bugpoint.log</tt>, as well as on your terminal.</p>
@@ -221,9 +221,9 @@ non-obvious ways.  Here are some hints and tips:<p>
     that is used to specify optimization level to <tt>opt</tt>. You
     can use e.g.</p>
 
-<div class="doc_code">
-<p><tt>opt -O2 -debug-pass=Arguments foo.bc -disable-output</tt></p>
-</div>
+<pre>
+opt -O2 -debug-pass=Arguments foo.bc -disable-output
+</pre>
 
     <p>to get a list of passes that are used with <tt>-O2</tt> and
     then pass this list to <tt>bugpoint</tt>.</p>

@@ -145,10 +145,9 @@ has instructions on the best way to use delta.</p>
 <tt>.bc</tt> file by passing "<tt><b>-emit-llvm -O0 -c -o foo.bc</b></tt>".
 Then run:</p>
 
-<div class="doc_code">
-<p><tt><b>opt</b> -std-compile-opts -debug-pass=Arguments foo.bc
-    -disable-output</tt></p>
-</div>
+<pre>
+<b>opt</b> -std-compile-opts -debug-pass=Arguments foo.bc -disable-output
+</pre>
 
 <p>This command should do two things: it should print out a list of passes, and
 then it should crash in the same was as llvm-gcc.  If it doesn't crash, please
@@ -157,10 +156,7 @@ follow the instructions for a <a href="#front-end">front-end bug</a>.</p>
 <p>If this does crash, then you should be able to debug this with the following
 bugpoint command:</p>
 
-<div class="doc_code">
-<p><tt><b>bugpoint</b> foo.bc &lt;list of passes printed by 
-<b>opt</b>&gt;</tt></p>
-</div>
+<pre><b>bugpoint</b> foo.bc &lt;list of passes printed by <b>opt</b>&gt;</pre>
 
 <p>Please run this, then file a bug with the instructions and reduced .bc files
 that bugpoint emits.  If something goes wrong with bugpoint, please submit the
@@ -228,10 +224,7 @@ we have chased down ended up being bugs in the program being compiled, not
 which code generator you wish to compile the program with (e.g. C backend, the 
 JIT, or LLC) and optionally a series of LLVM passes to run.  For example:</p>
 
-<div class="doc_code">
-<p><tt>
-<b>bugpoint</b> -run-cbe [... optzn passes ...] file-to-test.bc --args -- [program arguments]</tt></p>
-</div>
+<pre><b>bugpoint</b> -run-cbe [... optzn passes ...] file-to-test.bc --args -- [program arguments]</pre>
 
 <p><tt>bugpoint</tt> will try to narrow down your list of passes to the one pass
 that causes an error, and simplify the bitcode file as much as it can to assist
@@ -277,12 +270,10 @@ already exist in the <tt>llvm/test</tt> hierarchy, there is an easier way to
 debug the JIT, LLC, and CBE, using the pre-written Makefile targets, which
 will pass the program options specified in the Makefiles:</p>
 
-<div class="doc_code">
-<p><tt>
-cd llvm/test/../../program<br>
+<pre>
+cd llvm/test/../../program
 make bugpoint-jit
-</tt></p>
-</div>
+</pre>
 
 <p>At the end of a successful <tt>bugpoint</tt> run, you will be presented
 with two bitcode files: a <em>safe</em> file which can be compiled with the C
@@ -296,30 +287,24 @@ the following:</p>
 
 <li><p>Regenerate the shared object from the safe bitcode file:</p>
 
-<div class="doc_code">
-<p><tt>
-<b>llc</b> -march=c safe.bc -o safe.c<br>
+<pre>
+<b>llc</b> -march=c safe.bc -o safe.c
 <b>gcc</b> -shared safe.c -o safe.so
-</tt></p>
-</div></li>
+</pre>
 
 <li><p>If debugging LLC, compile test bitcode native and link with the shared
     object:</p>
 
-<div class="doc_code">
-<p><tt>
-<b>llc</b> test.bc -o test.s<br>
-<b>gcc</b> test.s safe.so -o test.llc<br>
+<pre>
+<b>llc</b> test.bc -o test.s
+<b>gcc</b> test.s safe.so -o test.llc
 ./test.llc [program options]
-</tt></p>
-</div></li>
-    
+</pre>
 <li><p>If debugging the JIT, load the shared object and supply the test
     bitcode:</p>
 
-<div class="doc_code">
-<p><tt><b>lli</b> -load=safe.so test.bc [program options]</tt></p>
-</div></li>  
+<pre><b>lli</b> -load=safe.so test.bc [program options]</pre>
+</li>
 
 </ol>
 
