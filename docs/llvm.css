@@ -90,6 +90,14 @@ h4+div, h4+p, h4+pre {text-align: left; padding-left: 20pt; padding-right: 10pt;
  */
 pre.doc_code, .literal-block { padding: 1em 2em 1em 1em }
 
+pre {
+                border: solid 1px gray;
+                background: #eeeeee;
+                margin: 0 1em 0 1em;
+                padding: 1em 2em 1em 1em;
+                display: table;
+}
+
 .doc_notes      { background: #fafafa; border: 1px solid #cecece;
                   display: table; padding: 0 1em 0 .1em }
 

@@ -139,7 +139,6 @@ symbolic LLVM <tt>Value*</tt>) and a static size.</p>
 important for correct Alias Analyses.  For example, consider this (silly, but
 possible) C code:</p>
 
-<div class="doc_code">
 <pre>
 int i;
 char C[2];
@@ -150,7 +149,6 @@ for (i = 0; i != 10; ++i) {
   C[1] = A[9-i];        /* One byte store */
 }
 </pre>
-</div>
 
 <p>In this case, the <tt>basicaa</tt> pass will disambiguate the stores to
 <tt>C[0]</tt> and <tt>C[1]</tt> because they are accesses to two distinct
@@ -158,7 +156,6 @@ locations one byte apart, and the accesses are each one byte.  In this case, the
 LICM pass can use store motion to remove the stores from the loop.  In
 constrast, the following code:</p>
 
-<div class="doc_code">
 <pre>
 int i;
 char C[2];
@@ -169,7 +166,6 @@ for (i = 0; i != 10; ++i) {
   C[1] = A[9-i];          /* One byte store */
 }
 </pre>
-</div>
 
 <p>In this case, the two stores to C do alias each other, because the access to
 the <tt>&amp;C[0]</tt> element is a two byte access.  If size information wasn't
@@ -365,21 +361,18 @@ the <tt>AliasAnalysis</tt> base class: <tt>getAnalysisUsage</tt> and
 declaring any pass dependencies your pass has.  Thus you should have something
 like this:</p>
 
-<div class="doc_code">
 <pre>
 void getAnalysisUsage(AnalysisUsage &amp;AU) const {
   AliasAnalysis::getAnalysisUsage(AU);
   <i>// declare your dependencies here.</i>
 }
 </pre>
-</div>
 
 <p>Additionally, your must invoke the <tt>InitializeAliasAnalysis</tt> method
 from your analysis run method (<tt>run</tt> for a <tt>Pass</tt>,
 <tt>runOnFunction</tt> for a <tt>FunctionPass</tt>, or <tt>InitializePass</tt>
 for an <tt>ImmutablePass</tt>).  For example (as part of a <tt>Pass</tt>):</p>
 
-<div class="doc_code">
 <pre>
 bool run(Module &amp;M) {
   InitializeAliasAnalysis(this);
@@ -387,7 +380,6 @@ bool run(Module &amp;M) {
   return false;
 }
 </pre>
-</div>
 
 </div>
 
@@ -427,7 +419,6 @@ for methods that you don't override.  For methods that you do override, in code
 paths that return a conservative MayAlias or Mod/Ref result, simply return
 whatever the superclass computes.  For example:</p>
 
-<div class="doc_code">
 <pre>
 AliasAnalysis::AliasResult alias(const Value *V1, unsigned V1Size,
                                  const Value *V2, unsigned V2Size) {
@@ -439,7 +430,6 @@ AliasAnalysis::AliasResult alias(const Value *V1, unsigned V1Size,
   return AliasAnalysis::alias(V1, V1Size, V2, V2Size);
 }
 </pre>
-</div>
 
 <p>In addition to analysis queries, you must make sure to unconditionally pass
 LLVM <a href="#updating">update notification</a> methods to the superclass as
@@ -979,11 +969,9 @@ implementations.  You can use them with commands like '<tt>opt -ds-aa
 href="#ast"><tt>AliasSetTracker</tt></a> class.  This is useful if you're using
 the <tt>AliasSetTracker</tt> class.  To use it, use something like:</p>
 
-<div class="doc_code">
 <pre>
 % opt -ds-aa -print-alias-sets -disable-output
 </pre>
-</div>
 
 </div>
 
@@ -999,11 +987,9 @@ the <tt>AliasSetTracker</tt> class.  To use it, use something like:</p>
 pass is making and what responses are returned by the alias analysis.  As an
 example,</p>
 
-<div class="doc_code">
 <pre>
 % opt -basicaa -count-aa -ds-aa -count-aa -licm
 </pre>
-</div>
 
 <p>will print out how many queries (and what responses are returned) by the
 <tt>-licm</tt> pass (of the <tt>-ds-aa</tt> pass) and how many queries are made
