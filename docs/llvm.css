@@ -76,7 +76,9 @@ h1, h2, h3, h4, h5 {
 
 /******/
 
+/*
 body > div {background: black;}
+*/
 
 h2+div, h2+p, h2+pre {text-align: left; padding-left: 20pt; padding-right: 10pt;}
 h3+div, h3+p, h3+pre {text-align: left; padding-left: 20pt; padding-right: 10pt;}
@@ -119,6 +121,7 @@ th.layout       { border: none; font-weight: bold; font-size: 105%;
 div.contents ul { list-style-type: decimal }
 .toc-backref    { color: black; text-decoration: none; }
 
+/*
 h2 {background: lightgray;}
 h3 {background: lightblue;}
 h4 {background: pink;}
@@ -134,3 +137,4 @@ h5+div, h5+p, h5+pre, h5+.layout, h5+.doc_code {background: yellow;}
 body > ol, body > ul {background: cyan;}
 .question {background: red;}
 .question+.answer {background: pink;}
+*/
