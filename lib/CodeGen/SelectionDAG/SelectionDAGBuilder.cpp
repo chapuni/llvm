@@ -56,6 +56,30 @@
 #include "llvm/Support/MathExtras.h"
 #include "llvm/Support/raw_ostream.h"
 #include <algorithm>
+
+#if defined(__MINGW32__) && defined(__i386__)
+// FIXME: We should use FEnv.h when PR6907 would be resolved.
+#define USE_FE 1
+#endif
+
+class FE53 {
+  unsigned short savew;
+public:
+  FE53() {
+    savew = 0;
+#if USE_FE
+    asm volatile("fnstcw %0": "=m"(savew));
+    unsigned short cw = (savew & ~0x0300U) | 0x0200U;
+    asm volatile("fldcw %0":: "m"(cw));
+#endif
+  }
+  ~FE53() {
+#if USE_FE
+    asm volatile("fldcw %0":: "m"(savew));
+#endif
+  }
+};
+
 using namespace llvm;
 
 /// LimitFloatPrecision - Generate low-precision inline sequences for
@@ -2075,13 +2099,9 @@ bool SelectionDAGBuilder::handleBTSplitSwitchCase(CaseRec& CR,
     APInt Range = ComputeRange(LEnd, RBegin);
     assert((Range - 2ULL).isNonNegative() &&
            "Invalid case distance");
-    // Use volatile double here to avoid excess precision issues on some hosts,
-    // e.g. that use 80-bit X87 registers.
-    volatile double LDensity =
-       (double)LSize.roundToDouble() /
+    double LDensity = (double)LSize.roundToDouble() /
                            (LEnd - First + 1ULL).roundToDouble();
-    volatile double RDensity =
-      (double)RSize.roundToDouble() /
+    double RDensity = (double)RSize.roundToDouble() /
                            (Last - RBegin + 1ULL).roundToDouble();
     double Metric = Range.logBase2()*(LDensity+RDensity);
     // Should always split in some non-trivial place
@@ -2392,6 +2412,7 @@ void SelectionDAGBuilder::visitSwitch(const SwitchInst &SI) {
   WorkList.push_back(CaseRec(SwitchMBB,0,0,
                              CaseRange(Cases.begin(),Cases.end())));
 
+  FE53 fe;
   while (!WorkList.empty()) {
     // Grab a record representing a case range to process off the worklist
     CaseRec CR = WorkList.back();
