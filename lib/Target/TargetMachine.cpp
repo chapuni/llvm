@@ -218,6 +218,7 @@ FunctionSections("ffunction-sections",
 
 TargetMachine::TargetMachine(const Target &T) 
   : TheTarget(T), AsmInfo(0),
+    MCWritableConst(true),
     MCRelaxAll(false),
     MCNoExecStack(false),
     MCSaveTempLabels(false),

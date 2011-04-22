@@ -141,6 +141,11 @@ X86TargetMachine::X86TargetMachine(const Target &T, const std::string &TT,
   assert(getRelocationModel() != Reloc::Default &&
          "Relocation mode not picked");
 
+  assert(MCWritableConst != false);
+  // Constants may be emitted as readonly on Win64 regardless of PIC.
+  if (Subtarget.isTargetWin64())
+    MCWritableConst = false;
+
   // ELF and X86-64 don't have a distinct DynamicNoPIC model.  DynamicNoPIC
   // is defined as a model for code which may be used in static or dynamic
   // executables but not necessarily a shared library. On X86-32 we just

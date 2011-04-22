@@ -104,6 +104,7 @@ protected: // Can only create subclasses.
   ///
   const MCAsmInfo *AsmInfo;
 
+  unsigned MCWritableConst : 1; // able to modify .rodata "writable"
   unsigned MCRelaxAll : 1;
   unsigned MCNoExecStack : 1;
   unsigned MCSaveTempLabels : 1;
@@ -165,6 +166,8 @@ public:
   /// information for it, otherwise return null.
   ///
   virtual const TargetELFWriterInfo *getELFWriterInfo() const { return 0; }
+
+  bool isMCWritableConst() const { return MCWritableConst; }
 
   /// hasMCRelaxAll - Check whether all machine code instructions should be
   /// relaxed.
