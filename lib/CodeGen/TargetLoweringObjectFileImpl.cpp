@@ -1104,9 +1104,6 @@ SelectSectionForGlobal(const GlobalValue *GV, SectionKind Kind,
                           COFF::IMAGE_COMDAT_SELECT_ANY, Kind);
   }
 
-  if (Kind.isText())
-    return getTextSection();
-
-  return getDataSection();
+  return TargetLoweringObjectFile::SelectSectionForGlobal(GV, Kind, Mang, TM);
 }
 
