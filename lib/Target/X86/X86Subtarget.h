@@ -178,7 +178,7 @@ public:
   // ELF is a reasonably sane default and the only other X86 targets we
   // support are Darwin and Windows. Just use "not those".
   bool isTargetELF() const {
-    return !isTargetDarwin() && !isTargetMSVC() && !isTargetCygMing();
+    return !isTargetDarwin() && !isTargetWindows();
   }
   bool isTargetLinux() const { return TargetTriple.getOS() == Triple::Linux; }
 
@@ -189,10 +189,15 @@ public:
     return isTargetMingw() || isTargetCygwin();
   }
 
+  /// Return true if this is based on Win32(x86 and x64) ABI.
+  bool isTargetWindows() const {
+    return (isTargetCygMing() || isTargetMSVC());
+  }
+
   /// isTargetCOFF - Return true if this is based on PE/COFF (and PE+).
   /// Note: Apple EFI uses x86_64-win32-macho. This is not PECOFF.
   bool isTargetCOFF() const {
-    return (isTargetCygMing() || isTargetMSVC()) && !isTargetEnvMacho();
+    return isTargetWindows() && !isTargetEnvMacho();
   }
 
   bool isTargetWin64() const {
