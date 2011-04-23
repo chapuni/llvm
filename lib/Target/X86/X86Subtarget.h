@@ -189,9 +189,10 @@ public:
     return isTargetMingw() || isTargetCygwin();
   }
 
-  /// isTargetCOFF - Return true if this is any COFF/Windows target variant.
+  /// isTargetCOFF - Return true if this is based on PE/COFF (and PE+).
+  /// Note: Apple EFI uses x86_64-win32-macho. This is not PECOFF.
   bool isTargetCOFF() const {
-    return isTargetMingw() || isTargetCygwin() || isTargetMSVC();
+    return (isTargetCygMing() || isTargetMSVC()) && !isTargetEnvMacho();
   }
 
   bool isTargetWin64() const {

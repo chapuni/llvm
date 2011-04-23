@@ -202,7 +202,7 @@ static TargetLoweringObjectFile *createTLOF(X86TargetMachine &TM) {
       return new X8664_ELFTargetObjectFile(TM);
     return new X8632_ELFTargetObjectFile(TM);
   }
-  if (Subtarget->isTargetCOFF() && !Subtarget->isTargetEnvMacho())
+  if (Subtarget->isTargetCOFF())
     return new TargetLoweringObjectFileCOFF();
   llvm_unreachable("unknown subtarget type");
 }
@@ -553,7 +553,6 @@ X86TargetLowering::X86TargetLowering(X86TargetMachine &TM)
   setOperationAction(ISD::DYNAMIC_STACKALLOC,
                      (Subtarget->is64Bit() ? MVT::i64 : MVT::i32),
                      (Subtarget->isTargetCOFF()
-                      && !Subtarget->isTargetEnvMacho()
                       ? Custom : Expand));
 
   if (!UseSoftFloat && X86ScalarSSEf64) {

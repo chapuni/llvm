@@ -54,7 +54,7 @@ using namespace llvm;
 bool X86AsmPrinter::runOnMachineFunction(MachineFunction &MF) {
   SetupMachineFunction(MF);
 
-  if (Subtarget->isTargetCOFF() && !Subtarget->isTargetEnvMacho()) {
+  if (Subtarget->isTargetCOFF()) {
     bool Intrn = MF.getFunction()->hasInternalLinkage();
     OutStreamer.BeginCOFFSymbolDef(CurrentFnSym);
     OutStreamer.EmitCOFFSymbolStorageClass(Intrn ? COFF::IMAGE_SYM_CLASS_STATIC
@@ -591,7 +591,7 @@ void X86AsmPrinter::EmitEndOfAsmFile(Module &M) {
     OutStreamer.EmitSymbolAttribute(S, MCSA_Global);
   }
 
-  if (Subtarget->isTargetCOFF() && !Subtarget->isTargetEnvMacho()) {
+  if (Subtarget->isTargetCOFF()) {
     X86COFFMachineModuleInfo &COFFMMI =
       MMI->getObjFileInfo<X86COFFMachineModuleInfo>();
 
