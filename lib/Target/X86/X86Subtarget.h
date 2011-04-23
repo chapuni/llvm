@@ -178,11 +178,11 @@ public:
   // ELF is a reasonably sane default and the only other X86 targets we
   // support are Darwin and Windows. Just use "not those".
   bool isTargetELF() const {
-    return !isTargetDarwin() && !isTargetWindows() && !isTargetCygMing();
+    return !isTargetDarwin() && !isTargetMSVC() && !isTargetCygMing();
   }
   bool isTargetLinux() const { return TargetTriple.getOS() == Triple::Linux; }
 
-  bool isTargetWindows() const { return TargetTriple.getOS() == Triple::Win32; }
+  bool isTargetMSVC() const { return TargetTriple.getOS() == Triple::Win32; }
   bool isTargetMingw() const { return TargetTriple.getOS() == Triple::MinGW32; }
   bool isTargetCygwin() const { return TargetTriple.getOS() == Triple::Cygwin; }
   bool isTargetCygMing() const {
@@ -191,11 +191,11 @@ public:
 
   /// isTargetCOFF - Return true if this is any COFF/Windows target variant.
   bool isTargetCOFF() const {
-    return isTargetMingw() || isTargetCygwin() || isTargetWindows();
+    return isTargetMingw() || isTargetCygwin() || isTargetMSVC();
   }
 
   bool isTargetWin64() const {
-    return Is64Bit && (isTargetMingw() || isTargetWindows());
+    return Is64Bit && (isTargetMingw() || isTargetMSVC());
   }
 
   bool isTargetEnvMacho() const {
@@ -203,7 +203,7 @@ public:
   }
 
   bool isTargetWin32() const {
-    return !Is64Bit && (isTargetMingw() || isTargetWindows());
+    return !Is64Bit && (isTargetMingw() || isTargetMSVC());
   }
 
   bool isPICStyleSet() const { return PICStyle != PICStyles::None; }

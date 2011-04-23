@@ -92,7 +92,7 @@ X86_32TargetMachine::X86_32TargetMachine(const Target &T, const std::string &TT,
     DataLayout(getSubtargetImpl()->isTargetDarwin() ?
                "e-p:32:32-f64:32:64-i64:32:64-f80:128:128-f128:128:128-n8:16:32" :
                (getSubtargetImpl()->isTargetCygMing() ||
-                getSubtargetImpl()->isTargetWindows()) ?
+                getSubtargetImpl()->isTargetMSVC()) ?
                "e-p:32:32-f64:64:64-i64:64:64-f80:32:32-f128:128:128-n8:16:32" :
                "e-p:32:32-f64:32:64-i64:32:64-f80:32:32-f128:128:128-n8:16:32"),
     InstrInfo(*this),
