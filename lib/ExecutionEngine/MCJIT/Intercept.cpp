@@ -66,7 +66,7 @@ public:
     sys::DynamicLibrary::AddSymbol("stat64", (void*)(intptr_t)stat64);
     sys::DynamicLibrary::AddSymbol("\x1stat64", (void*)(intptr_t)stat64);
     sys::DynamicLibrary::AddSymbol("\x1open64", (void*)(intptr_t)open64);
-    sys::DynamicLibrary::AddSymbol("\x1lseek64", (void*)(intptr_t)lseek64);
+    //    sys::DynamicLibrary::AddSymbol("\x1lseek64", (void*)(intptr_t)lseek64);
     sys::DynamicLibrary::AddSymbol("fstat64", (void*)(intptr_t)fstat64);
     sys::DynamicLibrary::AddSymbol("lstat64", (void*)(intptr_t)lstat64);
     sys::DynamicLibrary::AddSymbol("atexit", (void*)(intptr_t)atexit);
