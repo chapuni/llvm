@@ -196,6 +196,8 @@ TargetLoweringObjectFileELF::getCFIPersonalitySymbol(const GlobalValue *GV,
   }
 }
 
+#pragma optimize("g", off )
+
 void TargetLoweringObjectFileELF::emitPersonalityValue(MCStreamer &Streamer,
                                                        const TargetMachine &TM,
                                                        const MCSymbol *Sym) const {
@@ -222,6 +224,8 @@ void TargetLoweringObjectFileELF::emitPersonalityValue(MCStreamer &Streamer,
   unsigned Size = TM.getTargetData()->getPointerSize();
   Streamer.EmitSymbolValue(Sym, Size);
 }
+
+#pragma optimize("", on )
 
 static SectionKind
 getELFKindForNamedSection(StringRef Name, SectionKind K) {
